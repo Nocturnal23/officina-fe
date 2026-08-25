@@ -1,0 +1,7 @@
+<p>user-dashboard-page works!</p>
+<div>
+    <h1>Pannello Cliente</h1>
+    <p>Benvenuto, {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!</p>
+    <p>Ruolo: <strong>{{ authService.currentUser()?.role }}</strong></p>
+    <button (click)="logout()">Disconnetti</button>
+</div>
