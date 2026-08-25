@@ -1,0 +1,63 @@
+<html>
+    <!-- TODO: COMPLETARE IL CSS -->
+    <div>
+        <button type="button" (click)="toggleMode()">
+            {{ isLogin() ? 'Non hai un account? Registrati' : 'Hai già un account? Accedi' }}
+        </button>
+    </div>
+
+    @if (errorMessage()) {
+        <p style="color: red;">{{ errorMessage() }}</p>
+    } @else if (successMessage()) {
+        <p style="color: green;">{{ successMessage() }}</p>
+    }
+
+    @if (isLogin()) {
+        <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+            <h3> Accedi </h3>
+
+            <div>
+                <label for="login-email">Email:</label>
+                <input id="login-email" type="email" formControlName="email"/>
+            </div>
+
+            <div>
+                <label for="login-password">Password:</label>
+                <input id="login-password" type="password" formControlName="password"/>
+            </div>
+
+            <button type="submit" [disabled]="loginForm.invalid">Accedi</button>
+        </form>
+    } @else {
+        <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()">
+            <h3> Registrati </h3>
+
+            <div>
+                <label for="register-firstName">Nome:</label>
+                <input id="register-firstName" type="text" formControlName="firstName"/>
+            </div>
+
+            <div>
+                <label for="register-lastName">Cognome:</label>
+                <input id="register-lastName" type="text" formControlName="lastName"/>
+            </div>
+
+            <div>
+                <label for="register-email">Email:</label>
+                <input id="register-email" type="email" formControlName="email"/>
+            </div>
+
+            <div>
+                <label for="register-phone">Telefono:</label>
+                <input id="register-phone" type="tel" formControlName="phoneNumber"/>
+            </div>
+
+            <div>
+                <label for="register-password">Password:</label>
+                <input id="register-password" type="password" formControlName="password"/>
+            </div>
+
+            <button type="submit" [disabled]="registerForm.invalid">Registrati</button>
+        </form>
+    }
+</html>
