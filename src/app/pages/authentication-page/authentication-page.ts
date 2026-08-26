@@ -20,6 +20,7 @@ export class AuthenticationPage {
   isLogin = signal<boolean>(true);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
+  showPassword = signal<boolean>(false);
 
   //Logica elementi pagina.
   //Alternare registra/accedi.
@@ -27,6 +28,10 @@ export class AuthenticationPage {
     this.isLogin.update(val => !val);
     this.errorMessage.set(null);
     this.successMessage.set(null);
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword.update(val => !val);
   }
 
   //Form login
