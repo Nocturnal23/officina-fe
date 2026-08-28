@@ -25,6 +25,15 @@ export class Auth {
     );
   }
 
+  updateUser(userId: number, changes: Partial<UserRequest>): Observable<UserResponse> {
+    return this.http.patch<UserResponse>(`${this.url}/${userId}`, changes).pipe(
+      tap((user: UserResponse) => {
+        this.currentUser.set(user);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+      })
+    );
+  }
+
   logout(): void {
     this.currentUser.set(null);
     localStorage.removeItem('currentUser');
