@@ -1,7 +1,37 @@
-<p>user-dashboard-page works!</p>
-<div>
-    <h1>Pannello Cliente</h1>
-    <p>Benvenuto, {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!</p>
-    <p>Ruolo: <strong>{{ authService.currentUser()?.role }}</strong></p>
-    <button (click)="logout()">Disconnetti</button>
+<div class="flex flex-col h-screen">
+
+    <header class="bg-blue-200 flex justify-between items-center px-6">
+        <p class="font-semibold text-slate-800">
+            Benvenuto,  {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!
+        </p>
+
+        <div class="relative">
+            <button
+                type="button"
+                (click)="toggleMenu()"
+                [attr.aria-expanded]="isMenuOpen()"
+                aria-haspopup="menu"
+                class="cursor-pointer"
+            >
+                Menu
+            </button>
+
+            @if (isMenuOpen()) {
+            <div role="menu" class="absolute right-0 mt-2 rounded bg-white p-2 shadow flex flex-col gap-1 z-10">
+                <button type="button"  (click)="openProfile()" class="text-center px-3 py-1 hover:bg-slate-200 rounded">Profilo</button>
+                <button type="button" class="text-center px-3 py-1 hover:bg-slate-200 rounded">Storico</button>
+                <button type="button" (click)="logout()" class="text-center px-3 py-1 hover:bg-red-600 hover:text-white text-red-600 rounded">Disconnetti</button>
+            </div>
+            }
+        </div>
+
+        @if (isProfileOpen()) {
+            <app-profile-menu (close)="closeProfile()"/>
+        }
+    </header>
+
+
+    <main class="flex-1">
+       <p>CORPO PAGINA</p> 
+    </main>
 </div>
