@@ -1,0 +1,55 @@
+<div class="fixed inset-0 z-20 flex items-center justify-center bg-slate-900/40 p-4" role="presentation">
+
+    <button type="button" aria-label="Chiudi profilo" (click)="onClose()"
+        class="absolute inset-0 cursor-default"></button>
+
+    <section role="dialog" aria-modal="true" aria-labelledby="profile-menu-title"
+        class="relative z-10 w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl">
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
+            <h2 id="profile-menu-title" class="text-lg font-semibold text-slate-800">Profilo</h2>
+            <button type="button" (click)="onClose()" aria-label="Chiudi profilo"
+                class="rounded px-2 py-1 text-xl text-slate-500 hover:bg-slate-100">&times;</button>
+        </div>
+
+        <!-- Qui la scatola principale per dividere il tutto in due colonne -->
+        <div class="mt-4 flex gap-6 min-h-80">
+            <!-- Qui la colonna per selezionare le tab -->
+            <div class="w-48 flex flex-col gap-1 rounded-xl bg-slate-100 p-2 h-fit">
+                <button type="button" (click)="setTab('Anagrafica')" [class.bg-white]="activeTab() === 'Anagrafica'"
+                    class="w-full px-4 py-3 text-left text-sm transition duration-150 cursor-pointer">
+                    Anagrafica
+                </button>
+
+                <button type="button" (click)="setTab('Credenziali')" [class.bg-white]="activeTab() === 'Credenziali'"
+                    class="w-full px-4 py-3 text-left text-sm transition duration-150 cursor-pointer">
+                    Credenziali
+                </button>
+
+                <button type="button" (click)="setTab('Le tue auto')" [class.bg-white]="activeTab() === 'Le tue auto'"
+                    class="w-full px-4 py-3 text-left text-sm transition duration-150 cursor-pointer">
+                    Le tue auto
+                </button>
+            </div>
+
+            <!-- Qui la colonna delle informazioni in base alla tab -->
+            <main>
+                <div>
+                    @switch (activeTab()) {
+                        @case ('Anagrafica') {
+                            <app-user-info-tab />
+                        }
+                        @case ('Credenziali') {
+                            <app-user-credential-tab />
+                        }
+                        @case ('Le tue auto') {
+                            <app-user-vehicle-tab />
+                        }
+                    }
+                </div>
+            </main>
+
+        </div>
+
+        <p class="mt-6 text-slate-600">{{ activeTab() }}</p>
+    </section>
+</div>
