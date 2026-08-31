@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../services/auth';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LoginRequest, UserRequest } from '../../models/user.model';
 
 @Component({
@@ -14,7 +14,8 @@ export class AuthenticationPage {
   //Servizi
   private formBuilder = inject(FormBuilder);
   private authService = inject(Auth);
-  private router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   //Signals per variabili reattive.
   isLogin = signal<boolean>(true);
@@ -22,12 +23,26 @@ export class AuthenticationPage {
   successMessage = signal<string | null>(null);
   showPassword = signal<boolean>(false);
 
+  ngOnInit(): void {
+    this.route.url.subscribe(() => {
+      const url = this.router.url;
+      this.isLogin.set(url.includes('/login'));
+    });
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
+  goToRegister(): void {
+    this.router.navigate(['/register']);
+  }
+
   //Logica elementi pagina.
   //Alternare registra/accedi.
   toggleMode(): void {
-    this.isLogin.update(val => !val);
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
+    const nextRoute = this.isLogin() ? '/register' : '/login';
+    this.router.navigate([nextRoute]);
   }
 
   togglePasswordVisibility(): void {
@@ -90,6 +105,7 @@ export class AuthenticationPage {
         this.successMessage.set(`Registrazione completata per ${response.email}! Ora puoi accedere.`);
         this.registerForm.reset();
         this.isLogin.set(true);
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.errorMessage.set(err.error?.message || 'Errore durante la registrazione');

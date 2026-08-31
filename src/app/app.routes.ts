@@ -5,6 +5,7 @@ import { UserDashboardPage } from './pages/user-dashboard-page/user-dashboard-pa
 
 export const routes: Routes = [
     { path: 'login', component: AuthenticationPage },
+    { path: 'register', component: AuthenticationPage },
     { path: 'admin/dashboard', component: AdminDashboardPage },
     { path: 'user/dashboard', component: UserDashboardPage },
     { path: '', redirectTo: 'login', pathMatch: 'full' },
