@@ -8,16 +8,17 @@ import { LoginRequest, UserRequest, UserResponse } from '../models/user.model';
 })
 export class Auth {
   private http = inject(HttpClient);
-  private url = 'http://localhost:8080/users';
+  private authUrl = 'http://localhost:8080/api/auth';
+  private userUrl = 'http://localhost:8080/api/users';
 
   currentUser = signal<UserResponse | null>(this.getUserFromStorage())
 
   register(userData: UserRequest): Observable<UserResponse> {
-    return this.http.post<UserResponse>(`${this.url}/register`, userData);
+    return this.http.post<UserResponse>(`${this.authUrl}/register`, userData);
   }
 
   login(credentials: LoginRequest): Observable<UserResponse> {
-    return this.http.post<UserResponse>(`${this.url}/login`, credentials).pipe(
+    return this.http.post<UserResponse>(`${this.authUrl}/login`, credentials).pipe(
       tap((user: UserResponse) => {
         this.currentUser.set(user);
         localStorage.setItem('currentUser', JSON.stringify(user));
@@ -26,7 +27,7 @@ export class Auth {
   }
 
   updateUser(userId: number, changes: Partial<UserRequest>): Observable<UserResponse> {
-    return this.http.patch<UserResponse>(`${this.url}/${userId}`, changes).pipe(
+    return this.http.patch<UserResponse>(`${this.userUrl}/me`, changes).pipe(
       tap((user: UserResponse) => {
         this.currentUser.set(user);
         localStorage.setItem('currentUser', JSON.stringify(user));
