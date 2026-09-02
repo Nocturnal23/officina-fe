@@ -8,11 +8,6 @@ export interface UserRequest {
   phoneNumber: string;
 }
 
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
 export interface UserResponse {
   id: number;
   email: string;
@@ -20,4 +15,15 @@ export interface UserResponse {
   lastName: string;
   phoneNumber: string;
   role: Role;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+
+export interface LoginResponse {
+  token: string;
+  user: UserResponse;
 }
