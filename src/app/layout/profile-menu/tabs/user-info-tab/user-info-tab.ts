@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Auth } from '../../../../services/auth';
+import { Auth } from '../../../../services/auth/auth';
 
 type EditableField = 'firstName' | 'lastName' | 'phoneNumber' | null;
 
@@ -51,7 +51,7 @@ export class UserInfoTab {
             phoneNumber: this.tempPhoneNumber(),
         };
 
-        this.authService.updateUser(user.id, { [field]: values[field] }).subscribe({
+        this.authService.updateUser({ [field]: values[field] }).subscribe({
             next: () => this.cancelEdit(),
             error: (error) => console.error(`Errore aggiornamento ${field}:`, error),
         });

@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { Auth } from '../../services/auth';
+import { Auth } from '../../services/auth/auth';
 import { Router } from '@angular/router';
 import { ProfileMenu } from "../../layout/profile-menu/profile-menu";
 

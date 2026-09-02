@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, output, signal } from '@angular/core';
-import { Auth } from '../../services/auth';
-import { Vehicle } from '../../services/vehicle';
+import { Auth } from '../../services/auth/auth';
+import { Vehicle } from '../../services/vehicles/vehicle';
 import { VehicleRequest, VehicleResponse } from '../../models/vehicle.model';
 import { UserInfoTab } from './tabs/user-info-tab/user-info-tab';
 import { UserCredentialTab } from './tabs/user-credential-tab/user-credential-tab';

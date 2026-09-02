@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Auth } from '../../../../services/auth';
-import { Vehicle } from '../../../../services/vehicle';
+import { Auth } from '../../../../services/auth/auth';
+import { Vehicle } from '../../../../services/vehicles/vehicle';
 import { VehicleRequest, VehicleResponse } from '../../../../models/vehicle.model';
 
 @Component({

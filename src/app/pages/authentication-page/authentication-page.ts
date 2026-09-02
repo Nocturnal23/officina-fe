@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Auth } from '../../services/auth';
+import { Auth } from '../../services/auth/auth';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoginRequest, UserRequest } from '../../models/user.model';
 
@@ -68,8 +68,8 @@ export class AuthenticationPage {
     const credentials: LoginRequest = this.loginForm.getRawValue();
 
     this.authService.login(credentials).subscribe({
-      next: (user) => {
-        if (user.role === 'ADMIN') {
+      next: (response) => {
+        if (response.user.role === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);
         } else {
           this.router.navigate(['/user/dashboard']);
