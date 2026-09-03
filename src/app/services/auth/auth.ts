@@ -55,4 +55,8 @@ export class Auth {
     const userJson = localStorage.getItem('currentUser');
     return userJson ? JSON.parse(userJson) : null;
   }
+
+  deleteUser() : Observable<void> {
+    return this.http.delete<void>(`${this.userUrl}/me`);
+  }
 }

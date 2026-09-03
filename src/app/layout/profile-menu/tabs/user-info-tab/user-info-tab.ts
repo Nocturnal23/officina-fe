@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../../../../services/auth/auth';
+import { UserResponse } from '../../../../models/user.model';
+import { Router } from '@angular/router';
 
 type EditableField = 'firstName' | 'lastName' | 'phoneNumber' | null;
 
@@ -13,6 +15,7 @@ type EditableField = 'firstName' | 'lastName' | 'phoneNumber' | null;
 })
 export class UserInfoTab {
     protected readonly authService = inject(Auth);
+    private readonly router = inject(Router);
 
     // Campo attualmente in modifica
     editingField = signal<EditableField>(null);
@@ -54,6 +57,19 @@ export class UserInfoTab {
         this.authService.updateUser({ [field]: values[field] }).subscribe({
             next: () => this.cancelEdit(),
             error: (error) => console.error(`Errore aggiornamento ${field}:`, error),
+        });
+    }
+
+    deleteUser() : void {
+        const confirmed = confirm('Sei sicuro di voler eliminare definitivamente il tuo profilo? Questa azione è irreversibile.');
+        if (!confirmed) return;
+
+        this.authService.deleteUser().subscribe({
+            next: () => {
+                this.authService.logout();
+                this.router.navigate(['/login']);
+            },
+            error: (err) => console.error('Errore durante l\'eliminazione del profilo:', err)
         });
     }
 }

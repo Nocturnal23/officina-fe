@@ -1,7 +1,17 @@
-<p>admin-dashboard-page works!</p>
+<!-- <p>admin-dashboard-page works!</p>
 <div>
     <h1>Pannello Amministratore</h1>
     <p>Benvenuto, {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!</p>
     <p>Ruolo: <strong>{{ authService.currentUser()?.role }}</strong></p>
     <button (click)="logout()">Disconnetti</button>
+</div> -->
+
+<div class="flex flex-col h-screen">
+    <div class="bg-blue-200 flex justify-between items-center px-6">
+        <p>Benvenuto,  {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!</p>
+        <button (click)="logout()">Disconnetti</button>
+    </div>
+    <div class="bg-red-200 flex-1">
+       <p>CORPO PAGINA</p> 
+    </div>
 </div>

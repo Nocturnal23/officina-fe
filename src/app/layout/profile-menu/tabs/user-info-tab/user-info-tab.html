@@ -118,7 +118,6 @@
             <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.phoneNumber }}</p>
           </div>
 
-          <!-- Il pulsante di modifica compare solo se NON è Admin, oppure puoi aggiungere un tooltip esplicativo -->
           @if (!isAdmin) {
             <button 
               type="button" 
@@ -132,7 +131,17 @@
           }
         }
       </div>
-
+        @if (!isAdmin) {
+          <button
+            type="button"
+            (click)="deleteUser()"
+            class="text-xl font-semibold text-red-600 hover:underline cursor-pointer"
+          >
+            Elimina profilo
+          </button>
+        } @else {
+            <span class="text-xs text-slate-400 italic">Bloccato da policy</span>
+        }
     </div>
   </div>
 </div>
