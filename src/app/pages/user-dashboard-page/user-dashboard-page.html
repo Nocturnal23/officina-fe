@@ -31,7 +31,26 @@
     </header>
 
 
-    <main class="flex-1">
-       <p>CORPO PAGINA</p> 
+    <main class="flex-1"> 
+        @if(bookings().length > 0) {
+            <div class="p-6 text-center text-slate-500 text-sm">
+                SONO PRESENTI PRENOTAZIONI
+            </div>
+        } @else {
+            <div class="p-6 text-center text-slate-500 text-sm">
+                <p> NON SONO PRESENTI PRENOTAZIONI </p>
+                <button 
+                    type="button"
+                    (click)="openBookingCard()"
+                    class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition shadow-sm cursor-pointer"
+                >
+                    Prenota ora un intervento
+                </button>
+            </div>
+        }
+
+        @if (showBookingCard()) {
+            <app-booking-card (close)="closeBookingCard()" />
+        }
     </main>
 </div>
