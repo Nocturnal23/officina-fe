@@ -4,10 +4,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../../../services/auth/auth';
 import { Vehicle } from '../../../../services/vehicles/vehicle';
 import { VehicleRequest, VehicleResponse } from '../../../../models/vehicle.model';
+import { BookingCard } from "../../../booking-card/booking-card";
 
 @Component({
   selector: 'app-user-vehicle-tab',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, BookingCard],
   templateUrl: './user-vehicle-tab.html',
   styleUrl: './user-vehicle-tab.css',
 })
@@ -18,6 +19,8 @@ export class UserVehicleTab {
 
   vehicles = signal<VehicleResponse[]>([]);
   isAdding = signal<boolean>(false);
+  showBookingCard = signal<boolean>(false);
+  selectedVehicleId = signal<number | null>(null);
 
   vehicleForm = this.fb.nonNullable.group({
     brand: ['', [Validators.required]],
@@ -73,4 +76,15 @@ export class UserVehicleTab {
       error: (err) => console.error('Errore eliminazione veicolo:', err)
     });
   }
+
+  openBookingCard(vehicleId: number): void {
+    this.selectedVehicleId.set(vehicleId);
+    this.showBookingCard.set(true);
+  }
+
+  closeBookingCard(): void {
+    this.showBookingCard.set(false);
+    this.selectedVehicleId.set(null);
+  }
+
 }

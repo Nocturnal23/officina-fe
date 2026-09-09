@@ -19,7 +19,15 @@
             class="text-xs font-semibold text-red-600 hover:underline cursor-pointer">
             Elimina
           </button>
+
+          <button type="button" (click)="openBookingCard(vehicle.id)"
+            class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
+            Richiedi intervento
+          </button>
         </div>
+      }
+      @if (showBookingCard()) {
+        <app-booking-card [selectedVehicleId]="selectedVehicleId()" (close)="closeBookingCard()" />
       }
     </div>
   } @else if (!isAdding()) {
