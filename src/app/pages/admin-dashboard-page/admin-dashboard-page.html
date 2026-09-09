@@ -1,16 +1,30 @@
-<!-- <p>admin-dashboard-page works!</p>
-<div>
-    <h1>Pannello Amministratore</h1>
-    <p>Benvenuto, {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!</p>
-    <p>Ruolo: <strong>{{ authService.currentUser()?.role }}</strong></p>
-    <button (click)="logout()">Disconnetti</button>
-</div> -->
-
 <div class="flex flex-col h-screen">
-    <div class="bg-blue-200 flex justify-between items-center px-6">
-        <p>Benvenuto,  {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!</p>
-        <button (click)="logout()">Disconnetti</button>
-    </div>
+    <header class="bg-blue-200 flex justify-between items-center px-6">
+        <p class="font-semibold text-slate-800">
+            Benvenuto,  {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!
+        </p>
+
+        <div class="relative">
+            <button
+                type="button"
+                (click)="toggleManager()"
+                [attr.aria-expanded]="isManagerOpen()"
+                aria-haspopup="menu"
+                class="cursor-pointer"
+            >
+                Menu
+            </button>
+            
+            @if(isManagerOpen()) {
+                <div role="menu" class="absolute right-0 mt-2 rounded bg-white p-2 shadow flex flex-col gap-1 z-10">
+                    <button type="button" (click)="goToServices()" class="text-center px-3 py-1 hover:bg-slate-200 rounded">Gestisci servizi</button>
+                    <button type="button" (click)="logout()" class="text-center px-3 py-1 hover:bg-red-600 hover:text-white text-red-600 rounded">Disconnetti</button>
+                </div>
+            }
+
+        </div>
+    </header>
+
     <div class="bg-red-200 flex-1">
        <p>CORPO PAGINA</p> 
     </div>
