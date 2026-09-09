@@ -1,9 +1,24 @@
 <div class="fixed inset-0 z-20" (click)="closeCard()">
-  <div
-    class="mx-auto mt-20 w-full max-w-lg rounded bg-white p-6 shadow"
-    (click)="$event.stopPropagation()"
-  >
-    <p>booking-card works!</p>
+  <div class="mx-auto mt-20 w-full max-w-lg rounded bg-white p-6 shadow" (click)="$event.stopPropagation()">
+
+    <form [formGroup]="bookingForm" (ngSubmit)="submitBooking()">
+      <label for="appointmentDate">Giorno</label>
+      <input id="appointmentDate" type="date" formControlName="appointmentDate" />
+
+      <label for="vehicle">Veicolo</label>
+      <select id="vehicle" formControlName="vehicleId">
+        <option [ngValue]=null disabled>Seleziona un veicolo</option>
+        @for (vehicle of vehicles(); track vehicle.id) {
+        <option [ngValue]="vehicle.id">
+          {{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.plate }}
+        </option>
+        }
+      </select>
+      
+      <button type="submit" [disabled]="bookingForm.invalid">
+        Conferma prenotazione
+      </button>
+    </form>
 
     <button type="button" (click)="closeCard()">
       Chiudi
