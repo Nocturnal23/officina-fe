@@ -25,7 +25,7 @@
 
     <div class="overflow-hidden bg-white border border-slate-200 rounded-2xl shadow-sm">
         @if (showServiceCard()) {
-            <app-services-card (close)="closeServiceCard()"/>
+            <app-services-card (close)="closeServiceCard()" (created)="addJobToList($event)"/>
         } 
         <table class="w-full text-left border-collapse">
             <thead>

@@ -44,6 +44,10 @@ export class ServicesList {
     this.showServiceCard.set(false);
   }
 
+  addJobToList(job: JobResponse): void {
+    this.jobs.update(jobs => [...jobs, job]);
+  }
+
   goBackDashboard(): void {
     this.router.navigate(['admin/dashboard']);
   }
