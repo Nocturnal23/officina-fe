@@ -14,7 +14,7 @@ export class Job {
     return this.http.get<JobResponse[]>(`${this.url}/jobs`);
   } 
 
-  createJobs(jobId: number, request: JobRequest): Observable<JobResponse> {
+  createJobs(request: JobRequest): Observable<JobResponse> {
     return this.http.post<JobResponse>(`${this.url}/admin/jobs`, request);
   }
 
