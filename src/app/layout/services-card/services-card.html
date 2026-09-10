@@ -1,0 +1,37 @@
+<div (click)="closeCard()" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+   <div (click)="$event.stopPropagation()" class="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl translate-y-15">
+        <form [formGroup]="serviceForm" (ngSubmit)="addService()" class="flex flex-col gap-5">
+            <h3 class="text-base font-bold text-slate-800">Nuovo Servizio</h3>
+
+            <div class="flex flex-col gap-4">
+                <input type="text" formControlName="type" placeholder="Nome del servizio" class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600"/>
+                
+                <textarea 
+                    rows="3"
+                    formControlName="description" 
+                    placeholder="Descrizione del servizio" 
+                    class="w-full text-sm p-2.5 bg-white border border-slate-200 rounded-lg focus:outline-blue-600 shadow-sm resize-y min-h-[80px] max-h-[220px]"
+                ></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button 
+                    type="submit" 
+                    [disabled]="serviceForm.invalid" 
+                    class="px-4 py-1.5 text-xs bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                >
+                    Conferma Inserimento
+                </button>
+                <button 
+                    type="button" 
+                    (click)="closeCard()"
+                    class="px-4 py-1.5 text-xs bg-red-500 text-white font-semibold rounded-lg hover:bg-red-700 transition cursor-pointer"
+                >
+                    Chiudi
+                </button>
+            </div>
+        </form>
+
+        
+   </div> 
+</div>
