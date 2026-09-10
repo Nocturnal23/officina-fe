@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { JobResponse } from '../../models/job.model';
+import { Job } from '../../services/job/job';
+import { ServicesCard } from "../../layout/services-card/services-card";
 
 export interface JobItem {
   id: number;
@@ -11,12 +14,35 @@ export interface JobItem {
 
 @Component({
   selector: 'app-services-list',
-  imports: [CommonModule],
+  imports: [CommonModule, ServicesCard],
   templateUrl: './services-list.html',
   styleUrl: './services-list.css',
 })
 export class ServicesList {
   private readonly router = inject(Router);
+  private readonly jobsService = inject(Job);
+
+  jobs = signal<JobResponse[]>([]);
+  showServiceCard = signal<boolean>(false);
+
+  ngOnInit(): void{
+    this.loadJobs();
+  }
+
+  private loadJobs(): void {
+    this.jobsService.getJobs().subscribe({
+      next: (data) => this.jobs.set(data),
+      error: (err) => console.log("Errore durante il recupero dei serivizi ", err)
+    })
+  }
+
+  openServiceCard() {
+    this.showServiceCard.set(true);
+  }
+
+  closeServiceCard() {
+    this.showServiceCard.set(false);
+  }
 
   goBackDashboard(): void {
     this.router.navigate(['admin/dashboard']);
