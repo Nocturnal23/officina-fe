@@ -23,7 +23,7 @@ export class ServicesList {
   }
 
   private loadJobs(): void {
-    this.jobsService.getJobs().subscribe({
+    this.jobsService.getAdminJobs().subscribe({
       next: (data) => this.jobs.set(data),
       error: (err) => console.log("Errore durante il recupero dei serivizi ", err)
     })
