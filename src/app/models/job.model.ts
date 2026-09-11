@@ -6,5 +6,10 @@ export interface JobRequest {
 export interface JobResponse {
     id: number,
     type: string,
-    description: string
+    description: string,
+    deleted: boolean
+}
+
+export interface JobAvailabilityRequest {
+  deleted: boolean;
 }
