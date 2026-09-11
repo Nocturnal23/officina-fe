@@ -1,8 +1,9 @@
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
 
 export interface BookingRequest {
+    appointmentDate: string;
+    jobsIds: number[] | null; //TODO: Da rivedere.
     notes?: string;
-    jobsIds: number[];
 }
 
 export interface BookingResponse {
@@ -12,4 +13,5 @@ export interface BookingResponse {
     vehicleId: number;
     userId: number;
     jobsIds: number[];
+    appointmentDate: string;
 }
