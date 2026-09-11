@@ -2,92 +2,101 @@
     <header class="bg-blue-200 flex justify-between items-center py-6 px-8">
         <div class="flex items-center gap-4">
             <div class="flex items-start gap-4">
-                <button class="text-slate-600 hover:text-slate-900 mt-1 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <button class="text-slate-600 hover:text-slate-900 mt-1 cursor-pointer" (click)="goBackDashboard()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </button>
             </div>
 
             <div class="flex flex-col">
                 <h2 class="text-xl font-bold text-slate-900 leading-tight">Catalogo Servizi Offerti</h2>
-                <p class="text-sm text-slate-500 mt-1">Attiva, sospendi o registra gli interventi visualizzabili dai clienti durante la prenotazione.</p>
+                <p class="text-sm text-slate-500 mt-1">Attiva, sospendi o registra gli interventi visualizzabili dai
+                    clienti durante la prenotazione.</p>
             </div>
         </div>
 
         <div>
-            <button type="button" (click)="openServiceCard()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm transition">
+            <button type="button" (click)="openServiceCard()"
+                class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm transition">
                 <span class="text-lg leading-none">+</span>
                 <span>Nuovo Servizio</span>
             </button>
-        </div>       
+        </div>
     </header>
 
-    <div class="overflow-hidden bg-white border border-slate-200 rounded-2xl shadow-sm">
+    <div class="overflow-hidden bg-white border border-slate-200 rounded-2xl shadow-sm p-4">
         @if (showServiceCard()) {
-            <app-services-card (close)="closeServiceCard()" (created)="addJobToList($event)"/>
-        } 
-        <table class="w-full text-left border-collapse">
+        <app-services-card (close)="closeServiceCard()" (created)="addJobToList($event)" />
+        }
+        <table class="w-full table-fixed text-left border-collapse">
             <thead>
-                <tr class="border-b border-slate-200 bg-slate-50/75 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                <th scope="col" class="py-3 px-4 w-1/4">Servizio</th>
-                <th scope="col" class="py-3 px-4 w-1/2">Descrizione</th>
-                <th scope="col" class="py-3 px-4 text-center">Stato</th>
-                <th scope="col" class="py-3 px-4 text-right">Gestisci</th>
+                <tr
+                    class="border-b border-slate-200 bg-slate-50/75 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <th scope="col" class="py-3 px-4 w-1/4">Servizio</th>
+                    <th scope="col" class="py-3 px-4 w-1/2 text-center">Descrizione</th>
+                    <th scope="col" class="py-3 px-4 w-28 text-center">Stato</th>
+                    <th scope="col" class="py-3 px-4 w-32 text-center">Gestisci</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm">
                 @for (job of jobs(); track job.id) {
-                    <tr>
-                        <td class="py-4 px-6 align-middle font-medium text-slate-800">
-                            <span [class.line-through]="!job">{{ job.type }}</span>
-                        </td>
+                <tr>
+                    <td class="py-4 px-6 text-sm"
+                        [class]="job.deleted ? 'line-through text-gray-400 font-normal' : 'font-semibold text-gray-900'">
+                        {{ job.type }}
+                    </td>
 
-                        <td class="py-4 px-6 align-middle text-xs text-slate-500 leading-relaxed">
-                            {{ job.description }}
-                        </td>
+                    <td class="py-4 px-6 text-sm" [class]="job.deleted ? 'text-gray-300' : 'text-gray-500'">
+                        {{ job.description }}
+                    </td>
 
-                        <!-- <td class="py-4 px-4 align-middle text-center">
-                        @if (job.isDisable) {
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Attivo
-                            </span>
+                    <td class="text-center">
+                        <span
+                            class="inline-flex items-center justify-center w-20 py-0.5 rounded-full text-xs font-medium border"
+                            [class]="job.deleted ? 'bg-gray-100 text-gray-500 border-gray-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'">{{
+                            job.deleted ? 'Spospeso' : 'Attivo' }}</span>
+                    </td>
+
+                    <td class="py-4 px-4 text-center">
+                        <button type="button" (click)="job.deleted ? reactivateJob(job) : suspendJob(job)"
+                            class="inline-flex justify-center items-center w-24 text-white text-sm font-semibold py-2 rounded-lg shadow-sm transition"
+                            [class]="job.deleted 
+                            ? 'bg-green-600 hover:bg-green-700' 
+                            : 'bg-red-600 hover:bg-red-700'">
+                            {{ job.deleted ? 'Riattiva' : 'Sospendi' }}
+                        </button>
+                    </td>
+
+                    <!-- <td class="flex justify-end">
+                        @if (job.deleted) {
+                        <button 
+                            type="button" 
+                            (click)="reactivateJob(job)"
+                            class="flex items-center w-24 gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm transition"
+                        >
+                            Riattiva
+                        </button>
                         } @else {
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                                Sospeso
-                            </span>
+                        <button 
+                            type="button" 
+                            (click)="suspendJob(job)"
+                            class="flex items-center w-24 gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm transition"
+                        >
+                            Sospendi
+                        </button>
                         }
-                        </td> -->
+                    </td> -->
 
-                        <!-- <td class="py-4 px-6 align-middle text-right whitespace-nowrap">
-                            <button 
-                                type="button" 
-                                (click)="toggleServiceAvailability(job)"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer"
-                                [ngClass]="job.available 
-                                ? 'text-red-600 hover:bg-red-50 hover:text-red-700' 
-                                : 'text-blue-600 hover:bg-blue-50 hover:text-blue-700'"
-                            >
-                                @if (job.available) {
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 002 0V8a1 1 0 00-1-1zm4 0a1 1 0 00-1 1v4a1 1 0 002 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Sospendi</span>
-                                } @else {
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Riattiva</span>
-                                }
-                            </button>
-                        </td> -->
-                    </tr>
+                </tr>
                 } @empty {
-                    <tr>
-                        <td colspan="4" class="py-10 text-center text-xs text-slate-400">
-                            Nessun servizio presente nel catalogo.
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="4" class="py-10 text-center text-xs text-slate-400">
+                        Nessun servizio presente nel catalogo.
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>

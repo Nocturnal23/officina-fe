@@ -5,13 +5,6 @@ import { JobResponse } from '../../models/job.model';
 import { Job } from '../../services/job/job';
 import { ServicesCard } from "../../layout/services-card/services-card";
 
-export interface JobItem {
-  id: number;
-  name: string;
-  description: string;
-  available: boolean;
-}
-
 @Component({
   selector: 'app-services-list',
   imports: [CommonModule, ServicesCard],
@@ -50,5 +43,28 @@ export class ServicesList {
 
   goBackDashboard(): void {
     this.router.navigate(['admin/dashboard']);
+  }
+
+  suspendJob(job: JobResponse): void {
+    this.changeAvailability(job, true);
+  }
+
+  reactivateJob(job: JobResponse): void {
+    this.changeAvailability(job, false);
+  }
+
+  private changeAvailability(job: JobResponse, deleted: boolean): void {
+    this.jobsService.updateAvailability(job.id, { deleted }).subscribe({
+      next: (updatedJob) => {
+        this.jobs.update(jobs =>
+          jobs.map(item =>
+            item.id === updatedJob.id ? updatedJob : item
+          )
+        );
+      },
+      error: (err) => {
+        console.error('Errore aggiornamento disponibilità:', err);
+      }
+    });
   }
 }
