@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { JobResponse } from '../../models/job.model';
 import { Job } from '../../services/job/job';
@@ -17,6 +17,15 @@ export class ServicesList {
 
   jobs = signal<JobResponse[]>([]);
   showServiceCard = signal<boolean>(false);
+
+  readonly sortedJobs = computed(() => {
+    return [...this.jobs()].sort((a, b) => {
+      if (a.deleted !== b.deleted) {
+        return a.deleted ? 1 : -1;
+      }
+      return a.type.localeCompare(b.type, 'it', { sensitivity: 'base' });
+    });
+  });
 
   ngOnInit(): void{
     this.loadJobs();
