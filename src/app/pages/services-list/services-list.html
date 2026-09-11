@@ -42,7 +42,7 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm">
-                @for (job of jobs(); track job.id) {
+                @for (job of sortedJobs(); track job.id) {
                 <tr>
                     <td class="py-4 px-6 text-sm"
                         [class]="job.deleted ? 'line-through text-gray-400 font-normal' : 'font-semibold text-gray-900'">
@@ -69,27 +69,6 @@
                             {{ job.deleted ? 'Riattiva' : 'Sospendi' }}
                         </button>
                     </td>
-
-                    <!-- <td class="flex justify-end">
-                        @if (job.deleted) {
-                        <button 
-                            type="button" 
-                            (click)="reactivateJob(job)"
-                            class="flex items-center w-24 gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm transition"
-                        >
-                            Riattiva
-                        </button>
-                        } @else {
-                        <button 
-                            type="button" 
-                            (click)="suspendJob(job)"
-                            class="flex items-center w-24 gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm transition"
-                        >
-                            Sospendi
-                        </button>
-                        }
-                    </td> -->
-
                 </tr>
                 } @empty {
                 <tr>
