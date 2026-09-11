@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { JobRequest, JobResponse } from '../../models/job.model';
+import { JobAvailabilityRequest, JobRequest, JobResponse } from '../../models/job.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +24,17 @@ export class Job {
 
   updateJob(jobId: number, changes: Partial<JobRequest>): Observable<JobResponse> {
     return this.http.patch<JobResponse>(`${this.url}/admin/jobs/${jobId}`, changes);
+  }
+
+  updateAvailability(jobId: number, request: JobAvailabilityRequest): Observable<JobResponse> {
+    return this.http.patch<JobResponse>(
+      `${this.url}/admin/jobs/${jobId}/availability`,
+      request
+    );
+  }
+
+  getAdminJobs(): Observable<JobResponse[]> {
+    return this.http.get<JobResponse[]>(`${this.url}/admin/jobs`);
   }
 
 }
