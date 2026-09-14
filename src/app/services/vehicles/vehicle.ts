@@ -10,6 +10,7 @@ import { VehicleRequest, VehicleResponse } from '../../models/vehicle.model';
 export class Vehicle {
   private http = inject(HttpClient);
   private url = 'http://localhost:8080/api/users/me/vehicles';
+  private urlAdmin = 'http://localhost:8080/api/admin/vehicles';
 
   getVehiclesByUser(userId: number): Observable<VehicleResponse[]> {
     return this.http.get<VehicleResponse[]>(this.url);
@@ -21,5 +22,9 @@ export class Vehicle {
 
   createVehicle(userId: number, vehicleData: VehicleRequest): Observable<VehicleResponse> {
     return this.http.post<VehicleResponse>(this.url, vehicleData);
+  }
+
+  getVehicleById(vehicleId: number): Observable<VehicleResponse> {
+    return this.http.get<VehicleResponse>(`${this.url}/${vehicleId}`);
   }
 }
