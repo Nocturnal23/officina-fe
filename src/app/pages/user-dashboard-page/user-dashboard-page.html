@@ -33,8 +33,13 @@
 
     <main class="flex-1"> 
         @if(bookings().length > 0) {
-            <div class="p-6 text-center text-slate-500 text-sm">
-                SONO PRESENTI PRENOTAZIONI
+            <div class="p-6 text-center text-slate-500 text-sm ">
+                @for (b of bookings(); track b.id) {
+                    <app-booking-card-view
+                        [booking]="b" 
+                        (parent)="deleteBooking($event)"
+                    />
+                }
             </div>
         } @else {
             <div class="p-6 text-center text-slate-500 text-sm">

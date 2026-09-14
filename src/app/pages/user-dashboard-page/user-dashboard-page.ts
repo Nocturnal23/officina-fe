@@ -5,10 +5,11 @@ import { ProfileMenu } from "../../layout/profile-menu/profile-menu";
 import { Booking } from '../../services/booking/booking';
 import { BookingResponse } from '../../models/booking.model';
 import { BookingCard } from "../../layout/booking-card/booking-card";
+import { BookingCardView } from '../../layout/booking-card-view/booking-card-view';
 
 @Component({
   selector: 'app-user-dashboard-page',
-  imports: [ProfileMenu, BookingCard],
+  imports: [ProfileMenu, BookingCard, BookingCardView],
   templateUrl: './user-dashboard-page.html',
   styleUrl: './user-dashboard-page.css',
 })
@@ -22,7 +23,7 @@ export class UserDashboardPage {
   isProfileOpen = signal<boolean>(false);
   bookings = signal<BookingResponse[]>([]);
   showBookingCard = signal<boolean>(false);
-  
+
 
   ngOnInit(): void {
     this.loadBookings();
@@ -68,5 +69,17 @@ export class UserDashboardPage {
         console.log("Nessuna prenotazione: ", err);
       }
     })
+  }
+
+  deleteBooking(bookingId: number): void {
+    this.booking.deleteBooking(bookingId).subscribe({
+      next: () => {
+        // Rimuove la prenotazione dall'elenco reattivo (Signal)
+        this.bookings.update(list => list.filter(b => b.id !== bookingId));
+      },
+      error: (err) => {
+        console.error('Errore durante l\'eliminazione della prenotazione', err);
+      }
+    });
   }
 }
