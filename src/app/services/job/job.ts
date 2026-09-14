@@ -37,4 +37,8 @@ export class Job {
     return this.http.get<JobResponse[]>(`${this.url}/admin/jobs`);
   }
 
+  getJobsById(jobId: number): Observable<JobResponse> {
+    return this.http.get<JobResponse>(`${this.url}/jobs/${jobId}`)
+  }
+
 }
