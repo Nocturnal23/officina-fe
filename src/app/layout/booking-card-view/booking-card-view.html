@@ -1,0 +1,67 @@
+<div
+    class="max-w-4xl mx-auto rounded-2xl border border-grey-200 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col gap-4">
+    <div class="flex items-center justify-center gap-2.5 pb-3 border-b border-slate-100">
+        <h3 class="font-semibold text-slate-800 text-sm md:text-base">
+            Intervento Prenotato
+        </h3>
+        <span
+            class="text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-200 bg-amber-50 text-amber-700 uppercase tracking-wide">
+            {{ booking().status }}
+        </span>
+    </div>
+
+
+    <div class="flex flex-col md:fkex-row md:items-center justify-between gap-4 md:gap-6">
+        <div
+            class="rounded-xl bg-blue-50/80 p-2.5 text-blue-600 font-bold text-center shrink-0 border border-blue-100 min-w-14">
+            <span class="block text-[11px] uppercase text-slate-500 font-medium leading-none">
+                {{ booking().appointmentDate | date:'MMM' }}
+            </span>
+            <span class="text-xl">
+                {{ booking().appointmentDate | date:'dd' }}
+            </span>
+        </div>
+
+        <div class="flex flex-col gap-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-medium text-slate-400">Veicolo:</span>
+                <span class="text-sm font-semibold text-slate-800">
+                    {{ vehicleDetails()?.brand }} {{ vehicleDetails()?.model }} {{vehicleDetails()?.plate}}
+                </span>
+                <span class="text-xs font-medium text-slate-400">Targa:</span>
+                <span class="text-sm font-semibold text-slate-800">
+                    {{vehicleDetails()?.plate}}
+                </span>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-medium text-slate-400">Interventi:</span>
+                <span
+                    class="text-xs font-medium px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-slate-700">
+                    {{ jobDetails() }}
+                </span>
+            </div>
+        </div>
+
+
+        <div class="md:max-w-xs shrink-0">
+            <span class="block text-[11px] uppercase tracking-wider font-medium text-slate-400">Note cliente</span>
+            @if (booking().notes) {
+            <p class="text-xs text-slate-600 italic line-clamp-2 mt-0.5">
+                "{{ booking().notes }}"
+            </p>
+            } @else {
+            <span class="text-xs text-slate-400 italic">Nessuna nota presente</span>
+            }
+        </div>
+
+        <div class="shrink-0 flex items-center md:justify-end">
+            @if (canBeDeleted) {
+            <button type="button" (click)="onDelete()"
+                class="w-full md:w-auto px-3.5 py-2 text-xs font-medium text-red-600 hover:text-red-700 bg-red-50/50 hover:bg-red-50 border border-red-200 rounded-lg transition-colors">
+                Annulla prenotazione
+            </button>
+            }
+        </div>
+    </div>
+</div>
