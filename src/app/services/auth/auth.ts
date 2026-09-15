@@ -10,6 +10,7 @@ export class Auth {
   private http = inject(HttpClient);
   private authUrl = 'http://localhost:8080/api/auth';
   private userUrl = 'http://localhost:8080/api/users';
+  private adminUrl = 'http://localhost:8080/api/admin';
 
   currentUser = signal<UserResponse | null>(this.getUserFromStorage())
 
@@ -24,10 +25,10 @@ export class Auth {
 
         localStorage.setItem(
           'currentUser',
-           JSON.stringify(response.user)
-          );
+          JSON.stringify(response.user)
+        );
 
-          localStorage.setItem('token', response.token);
+        localStorage.setItem('token', response.token);
       })
     );
   }
@@ -56,7 +57,11 @@ export class Auth {
     return userJson ? JSON.parse(userJson) : null;
   }
 
-  deleteUser() : Observable<void> {
+  deleteUser(): Observable<void> {
     return this.http.delete<void>(`${this.userUrl}/me`);
+  }
+
+  getUserById(userId: number): Observable<UserResponse> {
+    return this.http.get<UserResponse>(`${this.adminUrl}/users/${userId}`);
   }
 }
