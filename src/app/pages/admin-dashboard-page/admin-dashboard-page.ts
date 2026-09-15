@@ -6,10 +6,7 @@ import { BOOKING_TABS, BookingResponse, BookingStatus, StatusChangeEvent } from 
 import { CommonModule } from '@angular/common';
 import { BookingCardView } from '../../layout/booking-card-view/booking-card-view';
 
-export interface TabConfig {
-  key: BookingStatus;
-  label: string;
-}
+export type AdminBookingAction = 'ACCEPT' | 'REFUSE' | 'ADVANCE';
 
 @Component({
   selector: 'app-admin-dashboard-page',
