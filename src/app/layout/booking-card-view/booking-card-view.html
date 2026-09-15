@@ -4,6 +4,11 @@
         <h3 class="font-semibold text-slate-800 text-sm md:text-base">
             Intervento Prenotato
         </h3>
+        @if (isAdmin()) {
+        <span class="text-xs text-slate-500 font-medium">
+            · {{ customer()?.firstName }} {{ customer()?.lastName }} ({{ customer()?.phoneNumber }})
+        </span>
+        }
         <span
             class="text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-200 bg-amber-50 text-amber-700 uppercase tracking-wide">
             {{ booking().status }}
@@ -56,11 +61,30 @@
         </div>
 
         <div class="shrink-0 flex items-center md:justify-end">
-            @if (canBeDeleted) {
+            @if (canBeDeleted && !isAdmin()) {
             <button type="button" (click)="onDelete()"
                 class="w-full md:w-auto px-3.5 py-2 text-xs font-medium text-red-600 hover:text-red-700 bg-red-50/50 hover:bg-red-50 border border-red-200 rounded-lg transition-colors">
                 Annulla prenotazione
             </button>
+            } @else if(isAdmin() && canBeDeleted) {
+            <div>
+                <button type="button" (click)="onDelete()"
+                    class="w-full md:w-auto px-3.5 py-2 text-xs font-medium text-red-600 hover:text-red-700 bg-red-50/50 hover:bg-red-50 border border-red-200 rounded-lg transition-colors">
+                    Rifiuta prenotazione
+                </button>
+
+                <button type="button" (click)="onAccept()"
+                    class="w-full md:w-auto px-3.5 py-2 text-xs font-medium text-green-600 hover:text-green-700 bg-red-50/50 hover:bg-red-50 border border-red-200 rounded-lg transition-colors">
+                    Accetta prenotazione
+                </button>
+            </div>
+            } @else if(booking().status !== 'COMPLETED' && booking().status !== 'CANCELLED' && isAdmin()){
+                <div>
+                    <button type="button" (click)="onStatusChange()"
+                        class="w-full md:w-auto px-3.5 py-2 text-xs font-medium text-green-600 hover:text-green-700 bg-red-50/50 hover:bg-red-50 border border-red-200 rounded-lg transition-colors">
+                        Aggiorna stato
+                    </button>
+                </div>
             }
         </div>
     </div>

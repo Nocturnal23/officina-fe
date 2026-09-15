@@ -1,4 +1,10 @@
-export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
+export enum BookingStatus {
+    PENDING = 'PENDING',
+    CONFIRMED = 'CONFIRMED',
+    IN_PROGRESS = 'IN_PROGRESS',
+    COMPLETED = 'COMPLETED',
+    CANCELLED = 'CANCELLED'
+}
 
 export interface BookingRequest {
     appointmentDate: string;
@@ -14,4 +20,9 @@ export interface BookingResponse {
     userId: number;
     jobsIds: number[];
     appointmentDate: string;
+}
+
+export interface StatusChangeEvent {
+    id: number;
+    status: BookingStatus;
 }
