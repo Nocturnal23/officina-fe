@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { BookingResponse, BookingStatus, StatusChangeEvent } from '../../models/booking.model';
+import { BOOKING_STATUS_CONFIG, BookingResponse, BookingStatus, StatusChangeEvent } from '../../models/booking.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Vehicle } from '../../services/vehicles/vehicle';
 import { VehicleResponse } from '../../models/vehicle.model';
@@ -39,6 +39,13 @@ export class BookingCardView {
     this.retrieveVehicleInfo();
     this.retrieveJobInfo();
   }
+
+  currentStatusMeta = computed(() =>
+    BOOKING_STATUS_CONFIG[this.booking().status] ?? {
+      label: this.booking().status,
+      badgeClass: 'border-slate-200 bg-slate-50 text-slate-700'
+    }
+  );
 
   get canBeDeleted(): boolean {
     return this.booking().status === BookingStatus.PENDING;

@@ -26,3 +26,38 @@ export interface StatusChangeEvent {
     id: number;
     status: BookingStatus;
 }
+
+export interface BookingStatusMeta {
+    label: string;
+    badgeClass: string;
+}
+
+export const BOOKING_STATUS_CONFIG: Record<BookingStatus, BookingStatusMeta> = {
+    [BookingStatus.PENDING]: {
+        label: 'In attesa',
+        badgeClass: 'border-amber-200 bg-amber-50 text-amber-700'
+    },
+    [BookingStatus.CONFIRMED]: {
+        label: 'Confermata',
+        badgeClass: 'border-blue-200 bg-blue-50 text-blue-700'
+    },
+    [BookingStatus.IN_PROGRESS]: {
+        label: 'In lavorazione',
+        badgeClass: 'border-purple-200 bg-purple-50 text-purple-700'
+    },
+    [BookingStatus.COMPLETED]: {
+        label: 'Completato',
+        badgeClass: 'border-green-200 bg-green-50 text-green-700'
+    },
+    [BookingStatus.CANCELLED]: {
+        label: 'Annullata',
+        badgeClass: 'border-red-200 bg-red-50 text-red-700'
+    }
+};
+
+export const BOOKING_TABS = Object.entries(BOOKING_STATUS_CONFIG).map(
+    ([key, meta]) => ({
+        key: key as BookingStatus,
+        ...meta
+    })
+);

@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Auth } from '../../services/auth/auth';
 import { Router } from '@angular/router';
 import { Booking } from '../../services/booking/booking';
-import { BookingResponse, BookingStatus, StatusChangeEvent } from '../../models/booking.model';
+import { BOOKING_TABS, BookingResponse, BookingStatus, StatusChangeEvent } from '../../models/booking.model';
 import { CommonModule } from '@angular/common';
 import { BookingCardView } from '../../layout/booking-card-view/booking-card-view';
 
@@ -25,13 +25,7 @@ export class AdminDashboardPage {
   isManagerOpen = signal<boolean>(false)
   bookings = signal<BookingResponse[]>([]);
 
-  readonly tabs: TabConfig[] = [
-    { key: BookingStatus.PENDING, label: 'In attesa' },
-    { key: BookingStatus.CONFIRMED, label: 'Confermate' },
-    { key: BookingStatus.IN_PROGRESS, label: 'In lavorazione' },
-    { key: BookingStatus.COMPLETED, label: 'Completate' },
-    { key: BookingStatus.CANCELLED, label: 'Annullate' },
-  ];
+  readonly tabs = BOOKING_TABS;
   activeTab = signal<BookingStatus>(BookingStatus.PENDING);
 
   filteredBookings = computed(() =>
