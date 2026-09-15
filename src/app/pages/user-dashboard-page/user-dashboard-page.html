@@ -37,7 +37,8 @@
                 @for (b of bookings(); track b.id) {
                     <app-booking-card-view
                         [booking]="b" 
-                        (parent)="deleteBooking($event)"
+                        [isAdmin]="false"
+                        (delete)="deleteBooking($event)"
                     />
                 }
             </div>

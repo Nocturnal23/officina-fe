@@ -74,7 +74,6 @@ export class UserDashboardPage {
   deleteBooking(bookingId: number): void {
     this.booking.deleteBooking(bookingId).subscribe({
       next: () => {
-        // Rimuove la prenotazione dall'elenco reattivo (Signal)
         this.bookings.update(list => list.filter(b => b.id !== bookingId));
       },
       error: (err) => {
