@@ -6,6 +6,7 @@ import { VehicleResponse } from '../../models/vehicle.model';
 import { Job } from '../../services/job/job';
 import { UserResponse } from '../../models/user.model';
 import { Auth } from '../../services/auth/auth';
+import { AdminBookingAction } from '../../pages/admin-dashboard-page/admin-dashboard-page';
 
 @Component({
   selector: 'app-booking-card-view',
@@ -56,21 +57,26 @@ export class BookingCardView {
     }
   }
 
-  onAccept(): void {
-    this.statusChange.emit({
-      id: this.booking().id,
-      status: BookingStatus.CONFIRMED
-    });
-  }
-
-  onStatusChange(): void {
+  onStatusChange(action: AdminBookingAction): void {
     const current = this.booking().status;
     let nextStatus: BookingStatus | null = null;
 
-    if (current === BookingStatus.CONFIRMED) {
-      nextStatus = BookingStatus.IN_PROGRESS;
-    } else if (current === BookingStatus.IN_PROGRESS) {
-      nextStatus = BookingStatus.COMPLETED;
+    switch (action) {
+      case 'ACCEPT':
+        nextStatus = BookingStatus.CONFIRMED;
+        break;
+
+      case 'REFUSE':
+        nextStatus = BookingStatus.REFUSED;
+        break;
+
+      case 'ADVANCE':
+        if (current === BookingStatus.CONFIRMED) {
+          nextStatus = BookingStatus.IN_PROGRESS;
+        } else if (current === BookingStatus.IN_PROGRESS) {
+          nextStatus = BookingStatus.COMPLETED;
+        }
+        break;
     }
 
     if (nextStatus) {
