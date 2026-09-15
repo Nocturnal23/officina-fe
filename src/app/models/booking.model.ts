@@ -30,20 +30,24 @@ export interface StatusChangeEvent {
 export interface BookingStatusMeta {
     label: string;
     badgeClass: string;
+    next?: BookingStatus;
 }
 
 export const BOOKING_STATUS_CONFIG: Record<BookingStatus, BookingStatusMeta> = {
     [BookingStatus.PENDING]: {
         label: 'In attesa',
-        badgeClass: 'border-amber-200 bg-amber-50 text-amber-700'
+        badgeClass: 'border-amber-200 bg-amber-50 text-amber-700',
+        next: BookingStatus.CONFIRMED
     },
     [BookingStatus.CONFIRMED]: {
         label: 'Confermata',
-        badgeClass: 'border-blue-200 bg-blue-50 text-blue-700'
+        badgeClass: 'border-blue-200 bg-blue-50 text-blue-700',
+        next: BookingStatus.IN_PROGRESS
     },
     [BookingStatus.IN_PROGRESS]: {
         label: 'In lavorazione',
-        badgeClass: 'border-purple-200 bg-purple-50 text-purple-700'
+        badgeClass: 'border-purple-200 bg-purple-50 text-purple-700',
+        next: BookingStatus.COMPLETED
     },
     [BookingStatus.COMPLETED]: {
         label: 'Completato',

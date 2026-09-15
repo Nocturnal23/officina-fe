@@ -58,26 +58,15 @@ export class BookingCardView {
   }
 
   onStatusChange(action: AdminBookingAction): void {
-    const current = this.booking().status;
-    let nextStatus: BookingStatus | null = null;
-
-    switch (action) {
-      case 'ACCEPT':
-        nextStatus = BookingStatus.CONFIRMED;
-        break;
-
-      case 'REFUSE':
-        nextStatus = BookingStatus.REFUSED;
-        break;
-
-      case 'ADVANCE':
-        if (current === BookingStatus.CONFIRMED) {
-          nextStatus = BookingStatus.IN_PROGRESS;
-        } else if (current === BookingStatus.IN_PROGRESS) {
-          nextStatus = BookingStatus.COMPLETED;
-        }
-        break;
+    if (action === 'REFUSE') {
+      this.statusChange.emit({
+        id: this.booking().id,
+        status: BookingStatus.REFUSED
+      });
+      return;
     }
+
+    const nextStatus = BOOKING_STATUS_CONFIG[this.booking().status]?.next;
 
     if (nextStatus) {
       this.statusChange.emit({
