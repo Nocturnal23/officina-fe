@@ -4,7 +4,6 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Vehicle } from '../../services/vehicles/vehicle';
 import { VehicleResponse } from '../../models/vehicle.model';
 import { Job } from '../../services/job/job';
-import { JobResponse } from '../../models/job.model';
 import { UserResponse } from '../../models/user.model';
 import { Auth } from '../../services/auth/auth';
 
@@ -82,7 +81,7 @@ export class BookingCardView {
     }
   }
 
-  retrieveVehicleInfo(): void {
+  private retrieveVehicleInfo(): void {
     const id = this.booking().vehicleId;
     if (id) {
       this.vehicle.getVehicleById(id).subscribe({
@@ -92,7 +91,7 @@ export class BookingCardView {
     }
   }
 
-  retrieveJobInfo(): void {
+  private retrieveJobInfo(): void {
     const id = this.booking().jobsIds;
     for (var val of id) {
       this.job.getJobsById(val).subscribe({

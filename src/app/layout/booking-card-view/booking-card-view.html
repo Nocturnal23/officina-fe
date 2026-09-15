@@ -31,7 +31,7 @@
             <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-medium text-slate-400">Veicolo:</span>
                 <span class="text-sm font-semibold text-slate-800">
-                    {{ vehicleDetails()?.brand }} {{ vehicleDetails()?.model }} {{vehicleDetails()?.plate}}
+                    {{ vehicleDetails()?.brand }} {{ vehicleDetails()?.model }}
                 </span>
                 <span class="text-xs font-medium text-slate-400">Targa:</span>
                 <span class="text-sm font-semibold text-slate-800">
@@ -78,7 +78,7 @@
                     Accetta prenotazione
                 </button>
             </div>
-            } @else if(booking().status !== 'COMPLETED' && booking().status !== 'CANCELLED' && isAdmin()){
+            } @else if(booking().status !== 'COMPLETED' && isAdmin()){
                 <div>
                     <button type="button" (click)="onStatusChange()"
                         class="w-full md:w-auto px-3.5 py-2 text-xs font-medium text-green-600 hover:text-green-700 bg-red-50/50 hover:bg-red-50 border border-red-200 rounded-lg transition-colors">
