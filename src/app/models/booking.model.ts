@@ -2,7 +2,8 @@ export enum BookingStatus {
     PENDING = 'PENDING',
     CONFIRMED = 'CONFIRMED',
     IN_PROGRESS = 'IN_PROGRESS',
-    COMPLETED = 'COMPLETED'
+    COMPLETED = 'COMPLETED',
+    REFUSED = 'REFUSED'
 }
 
 export interface BookingRequest {
@@ -47,6 +48,10 @@ export const BOOKING_STATUS_CONFIG: Record<BookingStatus, BookingStatusMeta> = {
     [BookingStatus.COMPLETED]: {
         label: 'Completato',
         badgeClass: 'border-green-200 bg-green-50 text-green-700'
+    },
+    [BookingStatus.REFUSED]: {
+        label: 'Rifiutato',
+        badgeClass: 'border-red-200 bg-red-50 text-red-700'
     }
 };
 
