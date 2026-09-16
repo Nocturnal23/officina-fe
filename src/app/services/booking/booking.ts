@@ -36,4 +36,8 @@ export class Booking {
   refuseBooking(bookingId: number): Observable<void> {
     return this.http.delete<void>(`${this.adminUrl}/bookings/${bookingId}`)
   }
+
+  getBookingHistory(): Observable<BookingResponse[]> {
+    return this.http.get<BookingResponse[]>(`${this.url}/history`);
+  }
 }

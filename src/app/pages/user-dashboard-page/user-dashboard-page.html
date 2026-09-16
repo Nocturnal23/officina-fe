@@ -32,7 +32,7 @@
     <main class="flex-1">
         <div class="p-6 text-center text-slate-500 text-sm ">
             @for (b of bookings(); track b.id) {
-                @if(b.status !== 'REFUSED') {
+                @if(b.status !== 'REFUSED' && b.status !== 'COMPLETED') {
                     <app-booking-card-view [booking]="b" [isAdmin]="false" (delete)="deleteBooking($event)" />
                 }
             }
