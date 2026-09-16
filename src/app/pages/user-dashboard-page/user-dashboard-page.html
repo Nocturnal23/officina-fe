@@ -2,58 +2,47 @@
 
     <header class="bg-blue-200 flex justify-between items-center px-6">
         <p class="font-semibold text-slate-800">
-            Benvenuto,  {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!
+            Benvenuto, {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!
         </p>
 
         <div class="relative">
-            <button
-                type="button"
-                (click)="toggleMenu()"
-                [attr.aria-expanded]="isMenuOpen()"
-                aria-haspopup="menu"
-                class="cursor-pointer"
-            >
+            <button type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen()" aria-haspopup="menu"
+                class="cursor-pointer">
                 Menu
             </button>
 
             @if (isMenuOpen()) {
             <div role="menu" class="absolute right-0 mt-2 rounded bg-white p-2 shadow flex flex-col gap-1 z-10">
-                <button type="button"  (click)="openProfile()" class="text-center px-3 py-1 hover:bg-slate-200 rounded">Profilo</button>
-                <button type="button" class="text-center px-3 py-1 hover:bg-slate-200 rounded">Storico</button>
-                <button type="button" (click)="logout()" class="text-center px-3 py-1 hover:bg-red-600 hover:text-white text-red-600 rounded">Disconnetti</button>
+                <button type="button" (click)="openProfile()"
+                    class="text-center px-3 py-1 hover:bg-slate-200 rounded">Profilo</button>
+                <button type="button" (click)="openHistory()"
+                    class="text-center px-3 py-1 hover:bg-slate-200 rounded">Storico</button>
+                <button type="button" (click)="logout()"
+                    class="text-center px-3 py-1 hover:bg-red-600 hover:text-white text-red-600 rounded">Disconnetti</button>
             </div>
             }
         </div>
 
         @if (isProfileOpen()) {
-            <app-profile-menu (close)="closeProfile()"/>
+        <app-profile-menu (close)="closeProfile()" />
         }
     </header>
 
 
-    <main class="flex-1"> 
-        @if(bookings().length > 0) {
-            <div class="p-6 text-center text-slate-500 text-sm ">
-                @for (b of bookings(); track b.id) {
-                    <app-booking-card-view
-                        [booking]="b" 
-                        [isAdmin]="false"
-                        (delete)="deleteBooking($event)"
-                    />
+    <main class="flex-1">
+        <div class="p-6 text-center text-slate-500 text-sm ">
+            @for (b of bookings(); track b.id) {
+                @if(b.status !== 'REFUSED') {
+                    <app-booking-card-view [booking]="b" [isAdmin]="false" (delete)="deleteBooking($event)" />
                 }
-            </div>
-        } @else {
-            <div class="p-6 text-center text-slate-500 text-sm">
-                <p> NON SONO PRESENTI PRENOTAZIONI </p>
-                <button 
-                    type="button"
-                    (click)="openBookingCard()"
-                    class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition shadow-sm cursor-pointer"
-                >
-                    Prenota ora un intervento
-                </button>
-            </div>
-        }
+            }
+        </div>
+        <div class="p-6 text-center text-slate-500 text-sm">
+            <button type="button" (click)="openBookingCard()"
+                class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition shadow-sm cursor-pointer">
+                Prenota ora un intervento
+            </button>
+        </div>
 
         @if (showBookingCard()) {
             <app-booking-card (close)="closeBookingCard()" />

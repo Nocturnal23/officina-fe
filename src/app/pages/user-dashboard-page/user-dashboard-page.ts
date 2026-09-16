@@ -8,77 +8,82 @@ import { BookingCard } from "../../layout/booking-card/booking-card";
 import { BookingCardView } from '../../layout/booking-card-view/booking-card-view';
 
 @Component({
-  selector: 'app-user-dashboard-page',
-  imports: [ProfileMenu, BookingCard, BookingCardView],
-  templateUrl: './user-dashboard-page.html',
-  styleUrl: './user-dashboard-page.css',
+    selector: 'app-user-dashboard-page',
+    imports: [ProfileMenu, BookingCard, BookingCardView],
+    templateUrl: './user-dashboard-page.html',
+    styleUrl: './user-dashboard-page.css',
 })
 export class UserDashboardPage {
-  protected readonly authService = inject(Auth);
-  private router = inject(Router);
-  private booking = inject(Booking);
+    protected readonly authService = inject(Auth);
+    private router = inject(Router);
+    private booking = inject(Booking);
 
 
-  isMenuOpen = signal<boolean>(false);
-  isProfileOpen = signal<boolean>(false);
-  bookings = signal<BookingResponse[]>([]);
-  showBookingCard = signal<boolean>(false);
+    isMenuOpen = signal<boolean>(false);
+    isProfileOpen = signal<boolean>(false);
+    bookings = signal<BookingResponse[]>([]);
+    showBookingCard = signal<boolean>(false);
 
 
-  ngOnInit(): void {
-    this.loadBookings();
-  }
+    ngOnInit(): void {
+        this.loadBookings();
+    }
 
-  toggleMenu(): void {
-    this.isMenuOpen.update(open => !open);
-  }
+    toggleMenu(): void {
+        this.isMenuOpen.update(open => !open);
+    }
 
-  closeMenu(): void {
-    this.isMenuOpen.set(false);
-  }
+    closeMenu(): void {
+        this.isMenuOpen.set(false);
+    }
 
-  openProfile(): void {
-    this.closeMenu();
-    this.isProfileOpen.set(true);
-  }
+    openProfile(): void {
+        this.closeMenu();
+        this.isProfileOpen.set(true);
+    }
 
-  closeProfile(): void {
-    this.isProfileOpen.set(false);
-  }
+    closeProfile(): void {
+        this.isProfileOpen.set(false);
+    }
 
-  openBookingCard(): void {
-    this.showBookingCard.set(true);
-  }
+    openBookingCard(): void {
+        this.showBookingCard.set(true);
+    }
 
-  closeBookingCard(): void {
-    this.showBookingCard.set(false);
-  }
+    closeBookingCard(): void {
+        this.showBookingCard.set(false);
+    }
 
-  logout(): void {
-    this.closeMenu();
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+    openHistory(): void{
+        this.closeMenu();
+        this.router.navigate(['user/history'])
+    }
 
-  private loadBookings() {
-    this.booking.getBooking().subscribe({
-      next: (data) => {
-        this.bookings.set(data);
-      },
-      error: (err) => {
-        console.log("Nessuna prenotazione: ", err);
-      }
-    })
-  }
+    logout(): void {
+        this.closeMenu();
+        this.authService.logout();
+        this.router.navigate(['/login']);
+    }
 
-  deleteBooking(bookingId: number): void {
-    this.booking.deleteBooking(bookingId).subscribe({
-      next: () => {
-        this.bookings.update(list => list.filter(b => b.id !== bookingId));
-      },
-      error: (err) => {
-        console.error('Errore durante l\'eliminazione della prenotazione', err);
-      }
-    });
-  }
+    private loadBookings() {
+        this.booking.getBooking().subscribe({
+            next: (data) => {
+                this.bookings.set(data);
+            },
+            error: (err) => {
+                console.log("Nessuna prenotazione: ", err);
+            }
+        })
+    }
+
+    deleteBooking(bookingId: number): void {
+        this.booking.deleteBooking(bookingId).subscribe({
+            next: () => {
+                this.bookings.update(list => list.filter(b => b.id !== bookingId));
+            },
+            error: (err) => {
+                console.error('Errore durante l\'eliminazione della prenotazione', err);
+            }
+        });
+    }
 }
