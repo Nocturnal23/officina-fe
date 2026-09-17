@@ -13,7 +13,8 @@
 
             <div class="flex flex-col">
                 <h2 class="text-xl font-bold text-slate-900 leading-tight">Storico interventi</h2>
-                <p class="text-sm text-slate-500 mt-1">Visualizza tutti gli interventi richiesti conclusi o rifiutati</p>
+                <p class="text-sm text-slate-500 mt-1">Visualizza tutti gli interventi richiesti conclusi o rifiutati
+                </p>
             </div>
         </div>
     </header>
@@ -21,14 +22,48 @@
 
     <main class="flex-1 p-6 bg-slate-50 overflow-y-auto">
         <div class="flex flex-col gap-4 max-w-4xl mx-auto">
+
+            <div class="flex gap-2 mb-4 bg-white p-2 rounded-xl border border-slate-200">
+                <button (click)="setFilter('ALL')"
+                    [ngClass]="currentFilters().length === 2 ? 'bg-blue-100 text-blue-700' : 'bg-slate-50 text-slate-600'"
+                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    Tutti
+                </button>
+                <button (click)="setFilter(BookingStatuBut.COMPLETED)"
+                    [ngClass]="currentFilters().includes(BookingStatuBut.COMPLETED) && currentFilters().length === 1 ? 'bg-green-100 text-green-700' : 'bg-slate-50 text-slate-600'"
+                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    Solo Completati
+                </button>
+                <button (click)="setFilter(BookingStatuBut.REFUSED)"
+                    [ngClass]="currentFilters().includes(BookingStatuBut.REFUSED) && currentFilters().length === 1 ? 'bg-red-100 text-red-700' : 'bg-slate-50 text-slate-600'"
+                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    Solo Rifiutati
+                </button>
+            </div>
+
             @for (b of historyBookings(); track b.id) {
-                <app-booking-card-view 
-                    [booking]="b" 
-                    [isAdmin]="false"
-                />
+                <app-booking-card-view [booking]="b" [isAdmin]="false" />
             } @empty {
                 <div class="text-center p-8 bg-white rounded-xl border border-slate-200 text-slate-500">
                     Nessun intervento presente nello storico.
+                </div>
+            }
+
+            @if (totalPages() > 1) {
+                <div class="flex justify-between items-center mt-6 bg-white p-4 rounded-xl border border-slate-200">
+                    <button (click)="prevPage()" [disabled]="currentPage() === 0"
+                        class="px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                        Precedente
+                    </button>
+                    
+                    <span class="text-sm font-medium text-slate-500">
+                        Pagina {{ currentPage() + 1 }} di {{ totalPages() }}
+                    </span>
+
+                    <button (click)="nextPage()" [disabled]="isLastPage()"
+                        class="px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                        Successiva
+                    </button>
                 </div>
             }
 
