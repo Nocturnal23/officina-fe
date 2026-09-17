@@ -8,7 +8,7 @@ export enum BookingStatus {
 
 export interface BookingRequest {
     appointmentDate: string;
-    jobsIds: number[] | null; //TODO: Da rivedere.
+    jobsIds: number[] | null;
     notes?: string;
 }
 
@@ -65,3 +65,12 @@ export const BOOKING_TABS = Object.entries(BOOKING_STATUS_CONFIG).map(
         ...meta
     })
 );
+
+export interface PageResponse<T> {
+    content: T[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    last: boolean;
+}
