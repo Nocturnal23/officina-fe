@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BookingRequest, BookingResponse, BookingStatus } from '../../models/booking.model';
+import { BookingRequest, BookingResponse, BookingStatus, PageResponse } from '../../models/booking.model';
 import { Observable, retry } from 'rxjs';
 
 @Injectable({
@@ -20,12 +20,28 @@ export class Booking {
     return this.http.delete<void>(`${this.url}/bookings/${bookingId}`)
   }
 
-  getBooking(): Observable<BookingResponse[]> {
-    return this.http.get<BookingResponse[]>(`${this.url}/bookings`);
+  getBookings(page: number, size: number, statuses?: BookingStatus[]): Observable<PageResponse<BookingResponse>> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    if (statuses && statuses.length > 0) {
+      params = params.set('statuses', statuses.join(','));
+    }
+
+    return this.http.get<PageResponse<BookingResponse>>(`${this.url}/bookings`, { params });
   }
 
-  getAllBooking(): Observable<BookingResponse[]> {
-    return this.http.get<BookingResponse[]>(`${this.adminUrl}/bookings`);
+  getAllBookings(page: number, size: number, statuses?: BookingStatus[]): Observable<PageResponse<BookingResponse>> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    if (statuses && statuses.length > 0) {
+      params = params.set('statuses', statuses.join(','));
+    }
+
+    return this.http.get<PageResponse<BookingResponse>>(`${this.adminUrl}/bookings`, { params });
   }
 
   updateBookingStatus(bookingId: number, status: BookingStatus): Observable<BookingResponse> {
@@ -37,7 +53,15 @@ export class Booking {
     return this.http.delete<void>(`${this.adminUrl}/bookings/${bookingId}`)
   }
 
-  getBookingHistory(): Observable<BookingResponse[]> {
-    return this.http.get<BookingResponse[]>(`${this.url}/history`);
+  getHistory(page: number, size: number, statuses?: BookingStatus[]): Observable<PageResponse<BookingResponse>> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    if (statuses && statuses.length > 0) {
+      params = params.set('statuses', statuses.join(','));
+    }
+
+    return this.http.get<PageResponse<BookingResponse>>(`${this.url}/history`, { params });
   }
 }
