@@ -3,7 +3,7 @@ import { Auth } from '../../services/auth/auth';
 import { Router } from '@angular/router';
 import { ProfileMenu } from "../../layout/profile-menu/profile-menu";
 import { Booking } from '../../services/booking/booking';
-import { BookingResponse } from '../../models/booking.model';
+import { BookingResponse, BookingStatus } from '../../models/booking.model';
 import { BookingCard } from "../../layout/booking-card/booking-card";
 import { BookingCardView } from '../../layout/booking-card-view/booking-card-view';
 
@@ -16,13 +16,18 @@ import { BookingCardView } from '../../layout/booking-card-view/booking-card-vie
 export class UserDashboardPage {
     protected readonly authService = inject(Auth);
     private router = inject(Router);
-    private booking = inject(Booking);
+    private bookingService = inject(Booking);
 
 
     isMenuOpen = signal<boolean>(false);
     isProfileOpen = signal<boolean>(false);
     bookings = signal<BookingResponse[]>([]);
     showBookingCard = signal<boolean>(false);
+
+    currentPage = signal<number>(0);
+    pageSize = signal<number>(3);
+    isLastPage = signal<boolean>(true);
+    totalPages = signal<number>(0);
 
 
     ngOnInit(): void {
@@ -54,7 +59,7 @@ export class UserDashboardPage {
         this.showBookingCard.set(false);
     }
 
-    openHistory(): void{
+    openHistory(): void {
         this.closeMenu();
         this.router.navigate(['user/history'])
     }
@@ -66,9 +71,15 @@ export class UserDashboardPage {
     }
 
     private loadBookings() {
-        this.booking.getBooking().subscribe({
+        this.bookingService.getBookings(
+            this.currentPage(),
+            this.pageSize(),
+            [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS]
+        ).subscribe({
             next: (data) => {
-                this.bookings.set(data);
+                this.bookings.set(data.content);
+                this.isLastPage.set(data.last);
+                this.totalPages.set(data.totalPages);
             },
             error: (err) => {
                 console.log("Nessuna prenotazione: ", err);
@@ -77,7 +88,7 @@ export class UserDashboardPage {
     }
 
     deleteBooking(bookingId: number): void {
-        this.booking.deleteBooking(bookingId).subscribe({
+        this.bookingService.deleteBooking(bookingId).subscribe({
             next: () => {
                 this.bookings.update(list => list.filter(b => b.id !== bookingId));
             },
@@ -85,5 +96,19 @@ export class UserDashboardPage {
                 console.error('Errore durante l\'eliminazione della prenotazione', err);
             }
         });
+    }
+
+    nextPage() {
+        if (!this.isLastPage()) {
+            this.currentPage.update(p => p + 1);
+            this.loadBookings();
+        }
+    }
+
+    prevPage() {
+        if (this.currentPage() > 0) {
+            this.currentPage.update(p => p - 1);
+            this.loadBookings();
+        }
     }
 }
