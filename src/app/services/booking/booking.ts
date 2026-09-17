@@ -64,4 +64,8 @@ export class Booking {
 
     return this.http.get<PageResponse<BookingResponse>>(`${this.url}/history`, { params });
   }
+
+  getSumary(): Observable<Record<BookingStatus, number>>{
+    return this.http.get<Record<BookingStatus, number>>(`${this.adminUrl}/bookings/summary`);
+  }
 }
