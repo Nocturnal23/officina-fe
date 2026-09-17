@@ -59,6 +59,12 @@ export class UserDashboardPage {
         this.showBookingCard.set(false);
     }
 
+    onBookingCreated(): void {
+        this.closeBookingCard();
+        this.currentPage.set(0);
+        this.loadBookings();
+    }
+
     openHistory(): void {
         this.closeMenu();
         this.router.navigate(['user/history'])

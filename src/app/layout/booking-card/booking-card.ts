@@ -29,6 +29,7 @@ export class BookingCard {
 
   selectedVehicleId = input<number | null>(null);
   close = output<void>();
+  created = output<void>();
 
   vehicles = signal<VehicleResponse[]>([]);
   services = signal<JobResponse[]>([]);
@@ -125,6 +126,7 @@ export class BookingCard {
     this.bookingService.createBooking(vehicleId, request).subscribe({
       next: () => {
         this.closeCard();
+        this.created.emit()
       },
       error: (err) => {
         console.log("Errore durante la prenotazione: ", err);

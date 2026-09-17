@@ -51,7 +51,10 @@
         </div>
 
         @if (showBookingCard()) {
-            <app-booking-card (close)="closeBookingCard()" />
+            <app-booking-card 
+                (close)="closeBookingCard()"
+                (created)="onBookingCreated()"
+            />
         }
 
         @if (totalPages() > 1) {
