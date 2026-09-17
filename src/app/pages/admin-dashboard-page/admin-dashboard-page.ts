@@ -17,20 +17,21 @@ export type AdminBookingAction = 'ACCEPT' | 'REFUSE' | 'ADVANCE';
 export class AdminDashboardPage {
   authService = inject(Auth);
   private router = inject(Router);
-  private booking = inject(Booking);
+  private bookingService = inject(Booking);
 
   isManagerOpen = signal<boolean>(false)
   bookings = signal<BookingResponse[]>([]);
-
+  currentPage = signal<number>(0);
+  pageSize = signal<number>(3);
+  isLastPage = signal<boolean>(true);
+  totalPages = signal<number>(0);
   readonly tabs = BOOKING_TABS;
   activeTab = signal<BookingStatus>(BookingStatus.PENDING);
-
-  filteredBookings = computed(() =>
-    this.bookings().filter(b => b.status === this.activeTab())
-  );
-
+  
   selectTab(status: BookingStatus): void {
     this.activeTab.set(status);
+    this.currentPage.set(0);
+    this.loadBookings();
   }
 
   getCountByStatus(status: BookingStatus): number {
@@ -61,9 +62,15 @@ export class AdminDashboardPage {
   }
 
   private loadBookings() {
-    this.booking.getAllBooking().subscribe({
+    this.bookingService.getAllBookings(
+      this.currentPage(),
+      this.pageSize(),
+      [this.activeTab()]
+    ).subscribe({
       next: (data) => {
-        this.bookings.set(data);
+        this.bookings.set(data.content);
+        this.isLastPage.set(data.last);
+        this.totalPages.set(data.totalPages);
       },
       error: (err) => {
         console.log("Nessuna prenotazione: ", err);
@@ -72,7 +79,7 @@ export class AdminDashboardPage {
   }
 
   handleStatusChange(event: StatusChangeEvent): void {
-    this.booking.updateBookingStatus(event.id, event.status).subscribe({
+    this.bookingService.updateBookingStatus(event.id, event.status).subscribe({
       next: (updatedBooking) => {
         this.bookings.update(items =>
           items.map(b => (b.id === updatedBooking.id ? updatedBooking : b))
@@ -83,7 +90,7 @@ export class AdminDashboardPage {
   }
 
   deleteBooking(bookingId: number): void {
-    this.booking.refuseBooking(bookingId).subscribe({
+    this.bookingService.refuseBooking(bookingId).subscribe({
       next: () => {
         this.bookings.update(items => items.filter(b => b.id !== bookingId));
       },
@@ -91,4 +98,17 @@ export class AdminDashboardPage {
     });
   }
 
+  nextPage() {
+    if (!this.isLastPage()) {
+      this.currentPage.update(p => p + 1);
+      this.loadBookings();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 0) {
+      this.currentPage.update(p => p - 1);
+      this.loadBookings();
+    }
+  }
 }

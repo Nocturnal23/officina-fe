@@ -42,7 +42,7 @@
                     <span class="px-1.5 py-0.5 text-[10px] font-bold rounded-full" [ngClass]="activeTab() === tab.key
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600'">
-                        {{ getCountByStatus(tab.key) }}
+                        <!-- {{ getCountByStatus(tab.key) }} -->
                     </span>
                 </button>
                 }
@@ -50,7 +50,7 @@
         </div>
 
         <div class="p-6 text-center text-slate-500 text-sm">
-            @for (item of filteredBookings(); track item.id) {
+            @for (item of bookings(); track item.id) {
             <app-booking-card-view 
                 [booking]="item"
                 [isAdmin]="true"
@@ -63,5 +63,23 @@
             </div>
             }
         </div>
+
+        @if (totalPages() > 1) {
+        <div class="flex justify-between items-center mt-6 max-w-4xl mx-auto bg-white p-4 rounded-xl border border-slate-200">
+            <button (click)="prevPage()" [disabled]="currentPage() === 0"
+                class="px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                Precedente
+            </button>
+            
+            <span class="text-sm font-medium text-slate-500">
+                Pagina {{ currentPage() + 1 }} di {{ totalPages() }}
+            </span>
+
+            <button (click)="nextPage()" [disabled]="isLastPage()"
+                class="px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                Successiva
+            </button>
+        </div>
+    }
     </div>
 </div>
