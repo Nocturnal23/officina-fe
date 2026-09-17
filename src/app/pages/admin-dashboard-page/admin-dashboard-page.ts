@@ -27,6 +27,7 @@ export class AdminDashboardPage {
   totalPages = signal<number>(0);
   readonly tabs = BOOKING_TABS;
   activeTab = signal<BookingStatus>(BookingStatus.PENDING);
+  statusCounts = signal<Record<string, number>>({})
   
   selectTab(status: BookingStatus): void {
     this.activeTab.set(status);
@@ -40,6 +41,7 @@ export class AdminDashboardPage {
 
   ngOnInit(): void {
     this.loadBookings();
+    this.loadCount();
   }
 
   toggleManager(): void {
@@ -78,12 +80,23 @@ export class AdminDashboardPage {
     })
   }
 
+  private loadCount() {
+    this.bookingService.getSumary().subscribe({
+      next:(data) => {
+        this.statusCounts.set(data);
+      },
+      error: (err) => console.error("Errore cont summary:", err)
+    })
+  }
+
   handleStatusChange(event: StatusChangeEvent): void {
     this.bookingService.updateBookingStatus(event.id, event.status).subscribe({
       next: (updatedBooking) => {
         this.bookings.update(items =>
           items.map(b => (b.id === updatedBooking.id ? updatedBooking : b))
         );
+        this.loadCount();
+        this.loadBookings();
       },
       error: (err) => console.error("Errore update stato:", err)
     });
@@ -93,6 +106,7 @@ export class AdminDashboardPage {
     this.bookingService.refuseBooking(bookingId).subscribe({
       next: () => {
         this.bookings.update(items => items.filter(b => b.id !== bookingId));
+        this.loadCount();
       },
       error: (err) => console.error("Errore cancellazione:", err)
     });
