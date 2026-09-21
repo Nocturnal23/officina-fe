@@ -6,32 +6,26 @@ import { Booking } from '../../services/booking/booking';
 import { BookingResponse, BookingStatus } from '../../models/booking.model';
 import { BookingCard } from "../../layout/booking-card/booking-card";
 import { BookingCardView } from '../../layout/booking-card-view/booking-card-view';
+import { Paginator } from '../../layout/paginator/paginator';
+import { BasePaginatorComponent } from '../../abstract/BasePaginatorComponent';
 
 @Component({
     selector: 'app-user-dashboard-page',
-    imports: [ProfileMenu, BookingCard, BookingCardView],
+    imports: [ProfileMenu, BookingCard, BookingCardView, Paginator],
     templateUrl: './user-dashboard-page.html',
     styleUrl: './user-dashboard-page.css',
 })
-export class UserDashboardPage {
+export class UserDashboardPage extends BasePaginatorComponent<BookingResponse> {
     protected readonly authService = inject(Auth);
     private router = inject(Router);
     private bookingService = inject(Booking);
 
-
     isMenuOpen = signal<boolean>(false);
     isProfileOpen = signal<boolean>(false);
-    bookings = signal<BookingResponse[]>([]);
     showBookingCard = signal<boolean>(false);
 
-    currentPage = signal<number>(0);
-    pageSize = signal<number>(3);
-    isLastPage = signal<boolean>(true);
-    totalPages = signal<number>(0);
-
-
     ngOnInit(): void {
-        this.loadBookings();
+        this.loadData();
     }
 
     toggleMenu(): void {
@@ -62,7 +56,7 @@ export class UserDashboardPage {
     onBookingCreated(): void {
         this.closeBookingCard();
         this.currentPage.set(0);
-        this.loadBookings();
+        this.loadData();
     }
 
     openHistory(): void {
@@ -76,45 +70,29 @@ export class UserDashboardPage {
         this.router.navigate(['/login']);
     }
 
-    private loadBookings() {
+    protected loadData(): void {
         this.bookingService.getBookings(
             this.currentPage(),
             this.pageSize(),
             [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS]
         ).subscribe({
             next: (data) => {
-                this.bookings.set(data.content);
-                this.isLastPage.set(data.last);
-                this.totalPages.set(data.totalPages);
+                this.updatePaginationState(data); 
             },
             error: (err) => {
                 console.log("Nessuna prenotazione: ", err);
             }
-        })
+        });
     }
 
     deleteBooking(bookingId: number): void {
         this.bookingService.deleteBooking(bookingId).subscribe({
             next: () => {
-                this.bookings.update(list => list.filter(b => b.id !== bookingId));
+                this.dataList.update(list => list.filter(b => b.id !== bookingId));
             },
             error: (err) => {
                 console.error('Errore durante l\'eliminazione della prenotazione', err);
             }
         });
-    }
-
-    nextPage() {
-        if (!this.isLastPage()) {
-            this.currentPage.update(p => p + 1);
-            this.loadBookings();
-        }
-    }
-
-    prevPage() {
-        if (this.currentPage() > 0) {
-            this.currentPage.update(p => p - 1);
-            this.loadBookings();
-        }
     }
 }
