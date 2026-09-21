@@ -65,12 +65,3 @@ export const BOOKING_TABS = Object.entries(BOOKING_STATUS_CONFIG).map(
         ...meta
     })
 );
-
-export interface PageResponse<T> {
-    content: T[];
-    pageNumber: number;
-    pageSize: number;
-    totalElements: number;
-    totalPages: number;
-    last: boolean;
-}
