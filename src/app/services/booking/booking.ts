@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BookingRequest, BookingResponse, BookingStatus, PageResponse } from '../../models/booking.model';
-import { Observable, retry } from 'rxjs';
+import { BookingRequest, BookingResponse, BookingStatus} from '../../models/booking.model';
+import { Observable } from 'rxjs';
+import { PageResponse } from '../../models/pagination.model';
 
 @Injectable({
   providedIn: 'root',
