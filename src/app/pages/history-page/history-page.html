@@ -41,23 +41,27 @@
                 </button>
             </div>
 
-            @for (b of dataList(); track b.id) {
-                <app-booking-card-view [booking]="b" [isAdmin]="false" />
-            } @empty {
-                <div class="text-center p-8 bg-white rounded-xl border border-slate-200 text-slate-500">
-                    Nessun intervento presente nello storico.
-                </div>
-            }
+            <div class="flex flex-col gap-4 w-full max-w-4xl mx-auto">
+                @for (b of dataList(); track b.id) {
+                    <app-booking-card-view [booking]="b" [isAdmin]="false" />
+                } @empty {
+                    <div class="text-center p-8 bg-white rounded-xl border border-slate-200 text-slate-500">
+                        Nessun intervento presente nello storico.
+                    </div>
+                }
+            </div>
 
             @if (totalPages() > 1) {
-                <app-paginator 
-                    [currentPage]="currentPage()" 
-                    [totalPages]="totalPages()" 
-                    [isLastPage]="isLastPage()"
-                    (next)="nextPage()"
-                    (prev)="prevPage()"
-                >
-                </app-paginator>
+                <div class="w-full max-w-4xl mx-auto">
+                    <app-paginator
+                        [currentPage]="currentPage()" 
+                        [totalPages]="totalPages()" 
+                        [isLastPage]="isLastPage()"
+                        (next)="nextPage()"
+                        (prev)="prevPage()"
+                    >
+                    </app-paginator>     
+                </div>
             }
 
         </div>
