@@ -12,17 +12,18 @@ export class Paginator {
   @Input({ required: true }) totalPages!: number;
   @Input({ required: true }) isLastPage!: boolean;
 
-  @Output() pageChange = new EventEmitter<number>();
+  @Output() next = new EventEmitter<void>();
+  @Output() prev = new EventEmitter<void>();
 
   onNext() {
     if (!this.isLastPage) {
-      this.pageChange.emit(this.currentPage + 1);
+      this.next.emit();
     }
   }
 
   onPrev() {
     if (this.currentPage > 0) {
-      this.pageChange.emit(this.currentPage - 1);
+      this.prev.emit();
     }
   }
 }
