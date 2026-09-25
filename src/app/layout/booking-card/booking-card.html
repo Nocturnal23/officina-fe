@@ -65,13 +65,25 @@
 
       <!-- //Descrzione. -->
       <div class="flex flex-col gap-1">
-        <label for="notes" class="text-sm font-semibold text-gray-700">Note o descrizione aggiuntiva</label>
+        <label for="notes" class="text-sm font-semibold text-gray-700">
+          Note o descrizione aggiuntiva
+
+          @if (idServizioAltro !== null && selectedServiceIds().includes(idServizioAltro)) {
+            <span class="text-red-500 ml-1">*</span>
+          }
+        </label>
         <textarea 
           id="notes" 
           rows="3" 
           formControlName="notes" 
           placeholder="Dettagli sul guasto o richieste particolari..."
           class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"></textarea>
+
+          @if (bookingForm.controls.notes.invalid && bookingForm.controls.notes.touched) {
+            @if (bookingForm.controls.notes.errors?.['required']) {
+              <span class="text-xs text-red-500">La descrizione è obbligatoria se selezioni un servizio generico.</span>
+            }
+          }
       </div>
 
       

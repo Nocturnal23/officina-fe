@@ -36,11 +36,24 @@ export class BookingCard {
   isServicesModalOpen = signal(false);
   selectedServiceIds = signal<number[]>([]);
 
+  idServizioAltro: number | null = null;
+
   ngOnInit(): void {
     this.loadVehicles();
     this.loadJobs();
     this.bookingForm.patchValue({
       vehicleId: this.selectedVehicleId()
+    });
+
+    this.bookingForm.controls.jobsIds.valueChanges.subscribe((selectedIds) => {
+      const notesControl = this.bookingForm.controls.notes;
+
+      if (this.idServizioAltro !== null && selectedIds?.includes(this.idServizioAltro)) {
+        notesControl.setValidators([Validators.required]);
+      } else {
+        notesControl.clearValidators();
+      }
+      notesControl.updateValueAndValidity();
     });
   }
 
@@ -104,7 +117,14 @@ export class BookingCard {
 
   private loadJobs(): void {
     this.jobsService.getJobs().subscribe({
-      next: (data) => this.services.set(data),
+      next: (data) => {
+        this.services.set(data);
+
+        const jobAltro = data.find(job => job.type.toUpperCase() === 'ALTRO');
+        if (jobAltro) {
+          this.idServizioAltro = jobAltro.id;
+        }
+      },
       error: (err) => console.log("Errore durante il recupero dei serivizi ", err)
     })
   }
