@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { LoginRequest, LoginResponse, UserRequest, UserResponse } from '../../models/user.model';
+import { PageResponse } from '../../models/pagination.model';
 
 @Injectable({
   providedIn: 'root',
@@ -63,5 +64,17 @@ export class Auth {
 
   getUserById(userId: number): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.adminUrl}/users/${userId}`);
+  }
+
+  getAllUsers(page: number, size: number, query?: string): Observable<PageResponse<UserResponse>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (query) {
+      params = params.set('query', query);
+    }
+
+    return this.http.get<PageResponse<UserResponse>>(`${this.adminUrl}/users`, { params });
   }
 }
