@@ -7,10 +7,11 @@ import { Job } from '../../services/job/job';
 import { UserResponse } from '../../models/user.model';
 import { Auth } from '../../services/auth/auth';
 import { AdminBookingAction } from '../../pages/admin-dashboard-page/admin-dashboard-page';
+import { InterventionCard } from '../intervention-card/intervention-card';
 
 @Component({
   selector: 'app-booking-card-view',
-  imports: [DatePipe, CommonModule],
+  imports: [DatePipe, CommonModule, InterventionCard],
   templateUrl: './booking-card-view.html',
   styleUrl: './booking-card-view.css',
 })
@@ -28,6 +29,8 @@ export class BookingCardView {
   vehicleDetails = signal<VehicleResponse | null>(null);
   jobDetails = signal<string[]>([]);
   customer = signal<UserResponse | null>(null);
+  isInterventionOpen = signal<boolean>(false);
+  pendingStatus = signal<BookingStatus | null>(null);
 
   ngOnInit(): void {
     if (this.isAdmin() && this.booking().userId) {
@@ -59,21 +62,43 @@ export class BookingCardView {
 
   onStatusChange(action: AdminBookingAction): void {
     if (action === 'REFUSE') {
-      this.statusChange.emit({
-        id: this.booking().id,
-        status: BookingStatus.REFUSED
-      });
+      this.pendingStatus.set(BookingStatus.REFUSED);
+      this.isInterventionOpen.set(true);
       return;
     }
 
     const nextStatus = BOOKING_STATUS_CONFIG[this.booking().status]?.next;
 
     if (nextStatus) {
+      if(nextStatus === BookingStatus.COMPLETED){
+        this.pendingStatus.set(BookingStatus.COMPLETED);
+        this.isInterventionOpen.set(true);
+        return;
+      }
       this.statusChange.emit({
         id: this.booking().id,
         status: nextStatus
       });
     }
+  }
+
+  onInterventionConfirmed(): void {
+    const currentBooking = this.booking();
+    const targetStatus = this.pendingStatus();
+    
+    if (targetStatus) {
+      this.statusChange.emit({
+        id: this.booking().id,
+        status: targetStatus
+      });
+    }
+    
+    this.closeInterventionCard();
+  }
+
+  closeInterventionCard() {
+    this.isInterventionOpen.set(false);
+    this.pendingStatus.set(null);
   }
 
   private retrieveVehicleInfo(): void {
