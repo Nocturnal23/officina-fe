@@ -7,13 +7,12 @@ import { UserResponse } from '../../models/user.model';
 import { VehicleResponse } from '../../models/vehicle.model';
 import { Job } from '../../services/job/job';
 import { JobResponse } from '../../models/job.model';
-import { debounceTime, distinctUntilChanged, findIndex, switchMap } from 'rxjs';
-import { JsonPipe } from '@angular/common';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { Intervention } from '../../services/intervention/intervention';
 
 @Component({
   selector: 'app-intervention-card',
-  imports: [FormsModule, ReactiveFormsModule, JsonPipe],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './intervention-card.html',
   styleUrl: './intervention-card.css',
 })
@@ -55,6 +54,7 @@ export class InterventionCard {
     const currentBooking = this.booking();
 
     if(currentBooking) {
+      console.log(this.targetStatus())
       if (this.customer()) this.usersList.set([this.customer()!]);
       if (this.vehicle()) this.vehiclesList.set([this.vehicle()!]);
 
@@ -67,6 +67,10 @@ export class InterventionCard {
       this.interventionForm.controls.userId.disable();
       this.interventionForm.controls.vehicleId.disable();
       this.selectedServiceIds.set(currentBooking.jobsIds || []);
+
+      if (currentBooking.vehicleId) {
+        this.loadLastKilometers(currentBooking.vehicleId);
+      }
     } else {
       this.loadUsers();
 
@@ -90,6 +94,15 @@ export class InterventionCard {
           this.vehiclesList.set([]);
         }
       });
+
+      this.interventionForm.controls.vehicleId.valueChanges.subscribe(selectedVehicleId => {
+        if (selectedVehicleId) {
+          this.loadLastKilometers(selectedVehicleId);
+        } else {
+          this.interventionForm.controls.kilometers.setValidators([Validators.required, Validators.min(0)]);
+          this.interventionForm.controls.kilometers.updateValueAndValidity();
+        }
+      });
     }
   }
 
@@ -106,6 +119,12 @@ export class InterventionCard {
     return allJobs.filter(job => ids.includes(job.id));
   });
 
+  isRefused() {
+    if(this.targetStatus() === "REFUSED")
+      return true;
+    return false;
+  }
+  
   toggleService(id: number): void {
     const ids = this.selectedServiceIds();
 
@@ -145,6 +164,18 @@ export class InterventionCard {
     this.vehicleService.getVehiclesByUser(userId).subscribe({
       next: (vehicles) => this.vehiclesList.set(vehicles),
       error: (err) => console.error("Errore caricamento veicoli", err)
+    });
+  }
+
+  private loadLastKilometers(vehicleId: number): void {
+    this.interventionService.getLastVehicleKilometers(vehicleId).subscribe({
+      next: (lastKm) => {
+        const kmControl = this.interventionForm.controls.kilometers;
+        
+        kmControl.setValidators([Validators.required, Validators.min(lastKm)]);
+        kmControl.updateValueAndValidity();
+      },
+      error: (err) => console.error("Errore durante il recupero dei chilometri: ", err)
     });
   }
 
