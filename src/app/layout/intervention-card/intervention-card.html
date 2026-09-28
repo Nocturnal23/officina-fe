@@ -54,15 +54,18 @@
           <span class="text-xs text-gray-400 italic">Nessun servizio selezionato</span>
           } @else {
           @for (service of selectedServices(); track service.id) {
-          <span
-            class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">
-            <span>{{ service.type }}</span>
-            <button type="button" (click)="removeService(service.id)"
-              class="text-blue-500 hover:text-blue-800 font-bold ml-0.5 focus:outline-none">
-              X
-            </button>
-          </span>
-          }
+            <span
+              class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">
+              <span>{{ service.type }}</span>
+              @if(!isOriginalJob(service.id)) {
+                <button type="button" (click)="removeService(service.id)"
+                  class="text-blue-500 hover:text-blue-800 font-bold ml-0.5 focus:outline-none">
+                  X
+                </button>
+              }
+              
+            </span>
+            }
           }
         </div>
       </div>
@@ -73,22 +76,19 @@
           <label for="kilometers" class="text-sm font-semibold text-gray-700">Chilometraggio</label>
           <input type="number" id="kilometers" rows="1" formControlName="kilometers"
             placeholder="Inserire il chilometraggio."
-            class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
-          />
+            class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none" />
 
           @if(interventionForm.controls.kilometers.hasError('min') && interventionForm.controls.kilometers.touched) {
-            <span class="text-xs text-red-500">
-              I chilometri non possono essere inferiori a {{ interventionForm.controls.kilometers.getError('min').min }}.
-            </span>
+          <span class="text-xs text-red-500">
+            I chilometri non possono essere inferiori a {{ interventionForm.controls.kilometers.getError('min').min }}.
+          </span>
           }
         </div>
 
         <div class="flex flex-col gap-1">
           <label for="cost" class="text-sm font-semibold text-gray-700">Costo finale</label>
-          <input type="number" id="cost" rows="1" formControlName="cost"
-            placeholder="Costo intervento"
-            class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
-          />
+          <input type="number" id="cost" rows="1" formControlName="cost" placeholder="Costo intervento"
+            class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none" />
         </div>
       </div>
 
@@ -98,35 +98,28 @@
           Note o descrizione aggiuntiva
 
           @if (isRefused()) {
-            <span class="text-red-500 ml-1">*</span>
+          <span class="text-red-500 ml-1">*</span>
           }
         </label>
-        <textarea 
-          id="notes" 
-          rows="3" 
-          formControlName="notes"
+        <textarea id="notes" rows="3" formControlName="notes"
           placeholder="Dettagli sul guasto o richieste particolari..."
           class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"></textarea>
-      
+
         @if (interventionForm.controls.notes.invalid && interventionForm.controls.notes.touched) {
-            @if (interventionForm.controls.notes.errors?.['required']) {
-              <span class="text-xs text-red-500">La descrizione è obbligatoria se selezioni un servizio generico.</span>
-            }
-          }
-    </div>
+        @if (interventionForm.controls.notes.errors?.['required']) {
+        <span class="text-xs text-red-500">La descrizione è obbligatoria se selezioni un servizio generico.</span>
+        }
+        }
+      </div>
 
 
       <div class="flex items-center justify-end gap-3 mt-4 pt-3 border-t border-gray-100">
-        <button 
-          type="button" 
-          (click)="closeCard()"
+        <button type="button" (click)="closeCard()"
           class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
           Annulla
         </button>
 
-        <button 
-          type="submit" 
-          [disabled]="interventionForm.invalid"
+        <button type="submit" [disabled]="interventionForm.invalid"
           class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md shadow transition-colors">
           Conferma prenotazione
         </button>

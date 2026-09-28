@@ -128,7 +128,13 @@ export class InterventionCard {
   toggleService(id: number): void {
     const ids = this.selectedServiceIds();
 
+    const originalJobs = this.booking()?.jobsIds || [];
+
     if (ids.includes(id)) {
+      if (originalJobs.includes(id)) {
+        return; 
+      }
+
       const newIds = ids.filter(serviceId => serviceId !== id);
       this.selectedServiceIds.set(newIds);
       this.interventionForm.patchValue({ jobsIds: newIds });
@@ -213,5 +219,9 @@ export class InterventionCard {
         console.log("Errore durante la registrazione della prestazione.");
       }
     })
+  }
+
+  isOriginalJob(id: number): boolean {
+    return this.booking()?.jobsIds?.includes(id) ?? false;
   }
 }
