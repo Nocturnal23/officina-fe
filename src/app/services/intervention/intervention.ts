@@ -36,4 +36,8 @@ export class Intervention {
 
     return this.http.get<PageResponse<InterventionHistoryResponse>>(`${this.url}/history/interventions`, { params });
   }
+
+  getLastVehicleKilometers(vehicleId: number) : Observable<number>{
+    return this.http.get<number>(`${this.adminUrl}/vehicles/${vehicleId}/kilometers`)
+  }
 }
