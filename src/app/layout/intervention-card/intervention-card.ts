@@ -64,6 +64,13 @@ export class InterventionCard {
         jobsIds: currentBooking.jobsIds || []
       });
 
+      if (status === 'REFUSED') {
+        this.interventionForm.patchValue({
+          cost: 0
+        });
+
+        this.interventionForm.controls.cost.disable();
+      }
       this.interventionForm.controls.userId.disable();
       this.interventionForm.controls.vehicleId.disable();
       this.selectedServiceIds.set(currentBooking.jobsIds || []);
@@ -178,8 +185,13 @@ export class InterventionCard {
       next: (lastKm) => {
         const kmControl = this.interventionForm.controls.kilometers;
         
-        kmControl.setValidators([Validators.required, Validators.min(lastKm)]);
-        kmControl.updateValueAndValidity();
+        if (this.isRefused()) {
+          kmControl.setValue(lastKm);
+          kmControl.disable();
+        } else {
+          kmControl.setValidators([Validators.required, Validators.min(lastKm)]);
+          kmControl.updateValueAndValidity();
+        }
       },
       error: (err) => console.error("Errore durante il recupero dei chilometri: ", err)
     });
