@@ -41,8 +41,8 @@
       <div class="flex flex-col gap-2">
         <div class="flex items-center justify-between">
           <label class="text-sm font-semibold text-gray-700">Servizi richiesti</label>
-          <button type="button" (click)="toggleServicesModal()"
-            class="text-xs font-semibold text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 bg-blue-50 px-3 py-1 rounded-md transition-colors">
+          <button type="button" (click)="toggleServicesModal()" [disabled]="isRefused()"
+            class="text-xs font-semibold text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 bg-blue-50 px-3 py-1 rounded-md transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed">
             + Aggiungi servizi
           </button>
         </div>
@@ -51,7 +51,7 @@
         <div
           class="flex flex-wrap gap-2 min-h-9.5 p-2 border border-dashed border-gray-300 rounded-md bg-gray-50 items-center">
           @if (selectedServices().length === 0) {
-          <span class="text-xs text-gray-400 italic">Nessun servizio selezionato</span>
+            <span class="text-xs text-gray-400 italic">Nessun servizio selezionato</span>
           } @else {
           @for (service of selectedServices(); track service.id) {
             <span
@@ -98,17 +98,15 @@
           Note o descrizione aggiuntiva
 
           @if (isRefused()) {
-          <span class="text-red-500 ml-1">*</span>
+            <span class="text-red-500 ml-1">*</span>
           }
         </label>
         <textarea id="notes" rows="3" formControlName="notes"
           placeholder="Dettagli sul guasto o richieste particolari..."
           class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"></textarea>
 
-        @if (interventionForm.controls.notes.invalid && interventionForm.controls.notes.touched) {
-        @if (interventionForm.controls.notes.errors?.['required']) {
-        <span class="text-xs text-red-500">La descrizione è obbligatoria se selezioni un servizio generico.</span>
-        }
+        @if (notesErrorMessage) {
+          <span class="text-xs text-red-500">{{ notesErrorMessage }}</span>
         }
       </div>
 

@@ -42,8 +42,8 @@ export class InterventionCard {
     userId: [null as number | null, Validators.required],
     vehicleId: [null as number | null, Validators.required],
     jobsIds: [[] as number[], [Validators.required, Validators.minLength(1)]],
-    kilometers: [null, [Validators.required, Validators.min(0)]],
-    cost: [null, [Validators.required, Validators.min(0)]],
+    kilometers: [null as number | null, [Validators.required, Validators.min(0)]],
+    cost: [null as number | null, [Validators.required, Validators.min(0)]],
     notes: [''],
   });
 
@@ -52,9 +52,9 @@ export class InterventionCard {
   ngOnInit(): void {
     this.loadJobs();
     const currentBooking = this.booking();
+    const status = this.targetStatus();
 
     if(currentBooking) {
-      console.log(this.targetStatus())
       if (this.customer()) this.usersList.set([this.customer()!]);
       if (this.vehicle()) this.vehiclesList.set([this.vehicle()!]);
 
@@ -71,9 +71,12 @@ export class InterventionCard {
 
         this.interventionForm.controls.cost.disable();
       }
+
       this.interventionForm.controls.userId.disable();
       this.interventionForm.controls.vehicleId.disable();
       this.selectedServiceIds.set(currentBooking.jobsIds || []);
+      
+      this.updateNotesValidation();
 
       if (currentBooking.vehicleId) {
         this.loadLastKilometers(currentBooking.vehicleId);
@@ -113,6 +116,7 @@ export class InterventionCard {
     }
   }
 
+
   private loadJobs(): void {
     this.jobsService.getJobs().subscribe({
       next: (data) => this.jobsList.set(data),
@@ -145,10 +149,12 @@ export class InterventionCard {
       const newIds = ids.filter(serviceId => serviceId !== id);
       this.selectedServiceIds.set(newIds);
       this.interventionForm.patchValue({ jobsIds: newIds });
+      
     } else {
       const newIds = [...ids, id];
       this.selectedServiceIds.set(newIds);
       this.interventionForm.patchValue({ jobsIds: newIds });
+      this.updateNotesValidation();
     }
 
     this.interventionForm.get('jobsIds')?.markAsDirty();
@@ -156,6 +162,7 @@ export class InterventionCard {
 
   removeService(id: number): void {
     this.toggleService(id);
+    this.updateNotesValidation();
   }
 
   toggleServicesModal(): void {
@@ -235,5 +242,39 @@ export class InterventionCard {
 
   isOriginalJob(id: number): boolean {
     return this.booking()?.jobsIds?.includes(id) ?? false;
+  }
+
+  get notesErrorMessage(): string | null {
+    const control = this.interventionForm.controls.notes;
+    
+    if (control.valid || !control.touched) {
+      return null;
+    }
+
+    if (control.hasError('required')) {
+      if (this.isRefused()) {
+        return "Se rifiuti l'incarico devi specificare il motivo.";
+      }
+      return "La descrizione è obbligatoria se selezioni un servizio generico.";
+    }
+
+    if (control.hasError('maxlength')) {
+      return `La descrizione deve essere al massimo di ${control.getError('maxlength').requiredLength} caratteri.`;
+    }
+
+    return null;
+  }
+
+  private updateNotesValidation(): void {
+    const hasAltro = this.selectedServices().some(s => s.type.toUpperCase() === 'ALTRO');
+
+    const activeValidators = [Validators.maxLength(500)];
+
+    if (this.isRefused() || hasAltro) {
+      activeValidators.push(Validators.required);
+    }
+
+    this.interventionForm.controls.notes.setValidators(activeValidators);
+    this.interventionForm.controls.notes.updateValueAndValidity();
   }
 }
