@@ -1,0 +1,67 @@
+<div
+    class="w-full max-w-4xl mx-auto rounded-2xl border border-grey-200 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col gap-4">
+    <div class="flex items-center justify-center gap-2.5 pb-3 border-b border-slate-100">
+        <h3 class="font-semibold text-slate-800 text-sm md:text-base">
+            Intervento Concluso
+        </h3>
+
+        <span
+            class="text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-200 bg-amber-50 text-amber-700 uppercase tracking-wide">
+            {{ currentStatusMeta().label }}
+        </span>
+    </div>
+
+    <div class="flex flex-col items-center md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+        <div
+            class="rounded-xl bg-blue-50/80 p-2.5 text-blue-600 font-bold text-center shrink-0 border border-blue-100 min-w-14">
+            <span class="block text-[11px] uppercase text-slate-500 font-medium leading-none">
+                {{ intervention().completedAt | date:'MMM' }}
+            </span>
+            <span class="text-xl">
+                {{ intervention().completedAt | date:'dd' }}
+            </span>
+        </div>
+
+        <div class="flex flex-col gap-1 min-w-0 items-center md:items-start">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-medium text-slate-400">Veicolo:</span>
+                <span class="text-sm font-semibold text-slate-800">
+                    {{ vehicleDetails()?.brand }} {{ vehicleDetails()?.model }}
+                </span>
+                <span class="text-xs font-medium text-slate-400">Targa:</span>
+                <span class="text-sm font-semibold text-slate-800">
+                    {{vehicleDetails()?.plate}}
+                </span>
+                <span class="text-xs font-medium text-slate-400">Chilometri rilevati:</span>
+                <span class="text-sm font-semibold text-slate-800">
+                    {{intervention().kilometers}} KM
+                </span>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-medium text-slate-400">Interventi:</span>
+                <span
+                    class="text-xs font-medium px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-slate-700">
+                    {{ jobDetails() }}
+                </span>
+
+                <span class="text-xs font-medium text-slate-400">Costo:</span>
+                <span
+                    class="text-xs font-medium px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-slate-700">
+                    {{ intervention().cost }} €
+                </span>
+            </div>
+        </div>
+
+        <div class="md:max-w-xs shrink-0">
+            <span class="block text-[11px] uppercase tracking-wider font-medium text-slate-400">Note del meccanico</span>
+            @if (intervention().notes) {
+            <p class="text-xs text-slate-600 italic line-clamp-2 mt-0.5">
+                "{{ intervention().notes }}"
+            </p>
+            } @else {
+            <span class="text-xs text-slate-400 italic">Nessuna nota presente</span>
+            }
+        </div>
+    </div>
+</div>
