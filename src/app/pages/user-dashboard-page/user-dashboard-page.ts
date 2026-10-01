@@ -64,6 +64,11 @@ export class UserDashboardPage extends BasePaginatorComponent<BookingResponse> {
         this.router.navigate(['user/history'])
     }
 
+    openInterventionHistory(): void {
+        this.closeMenu();
+        this.router.navigate(['user/interventionhistory'])
+    }
+
     logout(): void {
         this.closeMenu();
         this.authService.logout();
