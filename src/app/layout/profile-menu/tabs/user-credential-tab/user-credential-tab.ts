@@ -1,10 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { Auth } from '../../../../services/auth/auth';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+type EditableField = 'email' | 'password' | null;
 
 @Component({
   selector: 'app-user-credential-tab',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './user-credential-tab.html',
   styleUrl: './user-credential-tab.css',
 })
@@ -12,20 +15,42 @@ export class UserCredentialTab {
     protected readonly authService = inject(Auth);
     isChangingPassword = signal<boolean>(false);
 
+    editingField = signal<EditableField>(null);
+    tempEmail = signal<string>('');
+
     isAdmin(): boolean {
         return this.authService.currentUser()?.role === 'ADMIN';
     }
 
+    startEdit(field: EditableField): void {
+        const user = this.authService.currentUser();
+        if (!user) return;
+
+        if (field === 'email') this.tempEmail.set(user.email || '');
+
+        this.editingField.set(field);
+    }
+
+    cancelEdit(): void {
+        this.editingField.set(null);
+    }
+
+    saveField(field: 'email'): void {
+        const user = this.authService.currentUser();
+        if (!user) return;
+
+        const values = {
+            email: this.tempEmail(),
+        };
+
+        this.authService.updateUser({ [field]: values[field] }).subscribe({
+            next: () => this.cancelEdit(),
+            error: (error) => console.error(`Errore aggiornamento ${field}:`, error),
+        });
+    }
+
     togglePasswordForm(): void {
         this.isChangingPassword.update(prev => !prev);
-    } 
-
-    onDeleteAccount(): void {
-        const confirmDelete = confirm('Sei sicuro di voler eliminare definitivamente il tuo account? L\'azione è irreversibile.');
-        if (confirmDelete) {
-            console.log('Eliminazione account...');
-            //TODO: chiamata al backend per delete/disattivazione account
-        }
     }
 }
 
