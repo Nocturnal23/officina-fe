@@ -68,6 +68,9 @@ export class UserVehicleTab {
   }
 
   deleteVehicle(vehicle: VehicleResponse): void {
+    const confirmed = confirm('Sei sicuro di voler eliminare definitivamente il tuo profilo? Questa azione è irreversibile.');
+    if (!confirmed) return;
+
     const user = this.authService.currentUser();
     if (!user?.id) return;
 
