@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { LoginRequest, LoginResponse, UserRequest, UserResponse } from '../../models/user.model';
+import { ChangePasswordRequest, LoginRequest, LoginResponse, UserRequest, UserResponse } from '../../models/user.model';
 import { PageResponse } from '../../models/pagination.model';
 
 @Injectable({
@@ -76,5 +76,9 @@ export class Auth {
     }
 
     return this.http.get<PageResponse<UserResponse>>(`${this.adminUrl}/users`, { params });
+  }
+
+  changePassword(passwords: ChangePasswordRequest): Observable<void> {
+    return this.http.patch<void>(`${this.userUrl}/me/password`, passwords);
   }
 }

@@ -27,3 +27,8 @@ export interface LoginResponse {
   token: string;
   user: UserResponse;
 }
+
+export interface ChangePasswordRequest {
+  oldPassword: string;
+  newPassword: string;
+}

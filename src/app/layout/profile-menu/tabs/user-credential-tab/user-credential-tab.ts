@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Auth } from '../../../../services/auth/auth';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ChangePasswordRequest } from '../../../../models/user.model';
 
 type EditableField = 'email' | 'password' | null;
 
@@ -54,5 +54,24 @@ export class UserCredentialTab {
     }
 }
 
+    submitPasswordChange() {
+        if (this.passwordForm.invalid) {
+            this.passwordForm.markAllAsTouched();
+            return;
+        }
+        
+        const request: ChangePasswordRequest = {
+            oldPassword: this.passwordForm.value.oldPassword ?? '',
+            newPassword: this.passwordForm.value.newPassword ?? ''
+        };
 
+        this.authService.changePassword(request).subscribe({
+            next: () => {
+                this.togglePasswordForm();
+            },
+            error: (error) => {
+                console.error('Errore cambio password:', error);
+            }
+        });
+    }
 
