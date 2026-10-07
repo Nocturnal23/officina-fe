@@ -3,10 +3,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../services/auth/auth';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoginRequest, UserRequest } from '../../models/user.model';
+import { checkPasswordRequirements, passwordValidator } from '../../shared/validators/password.validator';
+import { PasswordRequirementsComponent } from '../../shared/components/password-requirements-component/password-requirements-component';
+import { PasswordInputComponent } from '../../shared/components/password-input-component/password-input-component';
 
 @Component({
   selector: 'app-authentication-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, PasswordRequirementsComponent, PasswordInputComponent],
   templateUrl: './authentication-page.html',
   styleUrl: './authentication-page.css',
 })
@@ -87,7 +90,7 @@ export class AuthenticationPage {
     lastName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[0-9. ()-]{7,25}$/)]],
-    password: ['', [Validators.required, Validators.minLength(8)]]
+    password: ['', [Validators.required, passwordValidator()]]
   });
 
   //Metodo registra
@@ -111,5 +114,10 @@ export class AuthenticationPage {
         this.errorMessage.set(err.error?.message || 'Errore durante la registrazione');
       }
     });
+  }
+
+  get registerPasswordReqs() {
+    const value = this.registerForm.get('password')?.value || '';
+    return checkPasswordRequirements(value);
   }
 }
