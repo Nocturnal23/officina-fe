@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-paginator',
@@ -8,21 +8,21 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './paginator.css',
 })
 export class Paginator {
-  @Input({ required: true }) currentPage!: number;
-  @Input({ required: true }) totalPages!: number;
-  @Input({ required: true }) isLastPage!: boolean;
+  currentPage = input.required<number>();
+  totalPages = input.required<number>();
+  isLastPage = input.required<boolean>();
 
-  @Output() next = new EventEmitter<void>();
-  @Output() prev = new EventEmitter<void>();
+  next = output<void>();
+  prev = output<void>();
 
   onNext() {
-    if (!this.isLastPage) {
+    if (!this.isLastPage()) {
       this.next.emit();
     }
   }
 
   onPrev() {
-    if (this.currentPage > 0) {
+    if (this.currentPage() > 0) {
       this.prev.emit();
     }
   }
