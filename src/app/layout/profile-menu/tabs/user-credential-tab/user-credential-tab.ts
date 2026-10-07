@@ -1,22 +1,32 @@
 import { Component, inject, signal } from '@angular/core';
 import { Auth } from '../../../../services/auth/auth';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ChangePasswordRequest } from '../../../../models/user.model';
+import { PasswordInputComponent } from '../../../../shared/components/password-input-component/password-input-component';
 
-type EditableField = 'email' | 'password' | null;
+type EditableField = 'email' | null;
 
 @Component({
   selector: 'app-user-credential-tab',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordRequirementsComponent, PasswordInputComponent],
   templateUrl: './user-credential-tab.html',
   styleUrl: './user-credential-tab.css',
 })
 export class UserCredentialTab {
     protected readonly authService = inject(Auth);
+    private fb = inject(FormBuilder);
+    
     isChangingPassword = signal<boolean>(false);
 
     editingField = signal<EditableField>(null);
     tempEmail = signal<string>('');
+
+    passwordForm = this.fb.group({
+        oldPassword: ['', Validators.required],
+        newPassword: ['', [Validators.required, passwordValidator()]],
+        confirmPassword: ['', Validators.required]
+    }, { validators: passwordMatchValidator('newPassword', 'confirmPassword') });
 
     isAdmin(): boolean {
         return this.authService.currentUser()?.role === 'ADMIN';
@@ -51,6 +61,8 @@ export class UserCredentialTab {
 
     togglePasswordForm(): void {
         this.isChangingPassword.update(prev => !prev);
+        if(!this.isChangingPassword()){
+            this.passwordForm.reset();
     }
 }
 
@@ -73,5 +85,7 @@ export class UserCredentialTab {
                 console.error('Errore cambio password:', error);
             }
         });
+    }
+
     }
 
