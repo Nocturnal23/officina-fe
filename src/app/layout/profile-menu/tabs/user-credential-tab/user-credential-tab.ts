@@ -2,23 +2,24 @@ import { Component, inject, signal } from '@angular/core';
 import { Auth } from '../../../../services/auth/auth';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { checkPasswordRequirements, passwordMatchValidator, passwordValidator } from '../../../../shared/validators/password.validator';
 import { ChangePasswordRequest } from '../../../../models/user.model';
+import { PasswordRequirementsComponent } from '../../../../shared/components/password-requirements-component/password-requirements-component';
 import { PasswordInputComponent } from '../../../../shared/components/password-input-component/password-input-component';
 
 type EditableField = 'email' | null;
 
 @Component({
-  selector: 'app-user-credential-tab',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordRequirementsComponent, PasswordInputComponent],
-  templateUrl: './user-credential-tab.html',
-  styleUrl: './user-credential-tab.css',
+    selector: 'app-user-credential-tab',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordRequirementsComponent, PasswordInputComponent],
+    templateUrl: './user-credential-tab.html',
+    styleUrl: './user-credential-tab.css',
 })
 export class UserCredentialTab {
     protected readonly authService = inject(Auth);
     private fb = inject(FormBuilder);
-    
-    isChangingPassword = signal<boolean>(false);
 
+    isChangingPassword = signal<boolean>(false);
     editingField = signal<EditableField>(null);
     tempEmail = signal<string>('');
 
@@ -63,15 +64,15 @@ export class UserCredentialTab {
         this.isChangingPassword.update(prev => !prev);
         if(!this.isChangingPassword()){
             this.passwordForm.reset();
+        }
     }
-}
 
     submitPasswordChange() {
         if (this.passwordForm.invalid) {
             this.passwordForm.markAllAsTouched();
             return;
         }
-        
+
         const request: ChangePasswordRequest = {
             oldPassword: this.passwordForm.value.oldPassword ?? '',
             newPassword: this.passwordForm.value.newPassword ?? ''
@@ -87,5 +88,9 @@ export class UserCredentialTab {
         });
     }
 
+    get newPasswordReqs() {
+        const value = this.passwordForm.get('newPassword')?.value || '';
+        return checkPasswordRequirements(value);
     }
+}
 
