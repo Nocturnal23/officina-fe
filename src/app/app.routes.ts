@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
-import { AuthenticationPage } from './pages/authentication-page/authentication-page';
-import { AdminDashboardPage } from './pages/admin-dashboard-page/admin-dashboard-page';
-import { UserDashboardPage } from './pages/user-dashboard-page/user-dashboard-page';
-import { authGuard } from './services/guard/authGuard';
-import { ServicesList } from './pages/services-list/services-list';
-import { HistoryPage } from './pages/history-page/history-page';
-import { InterventionHistoryPage } from './pages/intervention-history-page/intervention-history-page';
+import { authGuard } from './core/guards/authGuard';
+import { AdminDashboardPage } from './pages/admin/admin-dashboard-page/admin-dashboard-page';
+import { ServicesList } from './pages/admin/services-list/services-list';
+import { AuthenticationPage } from './pages/auth/authentication-page/authentication-page';
+import { HistoryPage } from './pages/user/history-page/history-page';
+import { InterventionHistoryPage } from './pages/user/intervention-history-page/intervention-history-page';
+import { UserDashboardPage } from './pages/user/user-dashboard-page/user-dashboard-page';
+
 
 export const routes: Routes = [
     { path: 'login', component: AuthenticationPage },

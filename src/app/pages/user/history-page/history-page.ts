@@ -1,0 +1,53 @@
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { BookingResponse, BookingStatus } from '../../../models/booking.model';
+import { CommonModule } from '@angular/common';
+import { Paginator } from '../../../shared/components/paginator/paginator';
+import { BasePaginatorComponent } from '../../../core/base/BasePaginatorComponent';
+import { BookingCardView } from '../../../features/booking/components/booking-card-view/booking-card-view';
+import { BookingService } from '../../../features/booking/services/booking/booking.service';
+
+@Component({
+  selector: 'app-history-page',
+  imports: [BookingCardView, CommonModule, Paginator],
+  templateUrl: './history-page.html',
+  styleUrl: './history-page.css',
+})
+export class HistoryPage extends BasePaginatorComponent<BookingResponse> {
+  private readonly router = inject(Router);
+  private bookingService = inject(BookingService)
+
+  currentFilters = signal<BookingStatus[]>([BookingStatus.COMPLETED, BookingStatus.REFUSED]);
+
+  BookingStatuBut = BookingStatus;
+
+  ngOnInit() {
+    this.loadData();
+  }
+
+  goBackDashboard(): void {
+    this.router.navigate(['user/dashboard']);
+  }
+
+  protected loadData() {
+    this.bookingService.getHistory(
+      this.currentPage(),
+      this.pageSize(),
+      this.currentFilters()
+    ).subscribe({
+      next: (data) => this.updatePaginationState(data),
+      error: (err) => console.log("Errore: ", err)
+    });
+  }
+
+  setFilter(status: BookingStatus | 'ALL') {
+    if (status === 'ALL') {
+      this.currentFilters.set([BookingStatus.COMPLETED, BookingStatus.REFUSED]);
+    } else {
+      this.currentFilters.set([status]);
+    }
+
+    this.currentPage.set(0); 
+    this.loadData();
+  }
+}
