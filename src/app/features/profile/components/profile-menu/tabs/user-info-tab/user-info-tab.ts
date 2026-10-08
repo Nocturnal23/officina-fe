@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../../../core/services/auth/auth.service';
+import { UserService } from '../../../../../user/services/user.service';
 
 type EditableField = 'firstName' | 'lastName' | 'phoneNumber' | null;
 
@@ -14,6 +15,7 @@ type EditableField = 'firstName' | 'lastName' | 'phoneNumber' | null;
 })
 export class UserInfoTab {
     protected readonly authService = inject(AuthService);
+    private userService = inject(UserService);
     private readonly router = inject(Router);
 
     // Campo attualmente in modifica
@@ -53,7 +55,7 @@ export class UserInfoTab {
             phoneNumber: this.tempPhoneNumber(),
         };
 
-        this.authService.updateUser({ [field]: values[field] }).subscribe({
+        this.userService.updateUser({ [field]: values[field] }).subscribe({
             next: () => this.cancelEdit(),
             error: (error) => console.error(`Errore aggiornamento ${field}:`, error),
         });
@@ -63,7 +65,7 @@ export class UserInfoTab {
         const confirmed = confirm('Sei sicuro di voler eliminare definitivamente il tuo profilo? Questa azione è irreversibile.');
         if (!confirmed) return;
 
-        this.authService.deleteUser().subscribe({
+        this.userService.deleteUser().subscribe({
             next: () => {
                 this.authService.logout();
                 this.router.navigate(['/login']);

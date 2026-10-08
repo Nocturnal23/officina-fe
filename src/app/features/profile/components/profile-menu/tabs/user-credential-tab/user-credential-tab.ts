@@ -6,6 +6,7 @@ import { ChangePasswordRequest } from '../../../../../../models/user.model';
 import { PasswordRequirementsComponent } from '../../../../../../shared/components/password-requirements-component/password-requirements-component';
 import { PasswordInputComponent } from '../../../../../../shared/components/password-input-component/password-input-component';
 import { AuthService } from '../../../../../../core/services/auth/auth.service';
+import { UserService } from '../../../../../user/services/user.service';
 
 type EditableField = 'email' | null;
 
@@ -17,6 +18,7 @@ type EditableField = 'email' | null;
 })
 export class UserCredentialTab {
     protected readonly authService = inject(AuthService);
+    private userService = inject(UserService);
     private fb = inject(FormBuilder);
 
     isChangingPassword = signal<boolean>(false);
@@ -54,7 +56,7 @@ export class UserCredentialTab {
             email: this.tempEmail(),
         };
 
-        this.authService.updateUser({ [field]: values[field] }).subscribe({
+        this.userService.updateUser({ [field]: values[field] }).subscribe({
             next: () => this.cancelEdit(),
             error: (error) => console.error(`Errore aggiornamento ${field}:`, error),
         });
@@ -78,7 +80,7 @@ export class UserCredentialTab {
             newPassword: this.passwordForm.value.newPassword ?? ''
         };
 
-        this.authService.changePassword(request).subscribe({
+        this.userService.changePassword(request).subscribe({
             next: () => {
                 this.togglePasswordForm();
             },

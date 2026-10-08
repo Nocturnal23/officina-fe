@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoginRequest, UserRequest } from '../../../models/user.model';
+import { UserRequest } from '../../../models/user.model';
 import { PasswordInputComponent } from '../../../shared/components/password-input-component/password-input-component';
 import { PasswordRequirementsComponent } from '../../../shared/components/password-requirements-component/password-requirements-component';
 import { passwordValidator, checkPasswordRequirements } from '../../../shared/validators/password.validator';
 import { AuthService } from '../../../core/services/auth/auth.service';
+import { LoginRequest } from '../../../models/auth.model';
 
 
 @Component({

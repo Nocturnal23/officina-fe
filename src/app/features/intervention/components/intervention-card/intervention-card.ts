@@ -9,6 +9,7 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
 import { JobService } from '../../../jobs/services/job/job.service';
 import { VehicleService } from '../../../vehicles/services/vehicles/vehicle.service';
 import { InterventionService } from '../../services/intervention/intervention.service';
+import { UserService } from '../../../user/services/user.service';
 
 @Component({
   selector: 'app-intervention-card',
@@ -25,7 +26,7 @@ export class InterventionCard {
   customer = input<UserResponse | null>();
   vehicle = input<VehicleResponse | null>();
 
-  private readonly userService = inject(AuthService);
+  private readonly userService = inject(UserService);
   private readonly vehicleService = inject(VehicleService);
   private readonly jobsService = inject(JobService);
   private readonly interventionService = inject(InterventionService);

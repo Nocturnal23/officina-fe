@@ -5,9 +5,9 @@ import { VehicleResponse } from '../../../../models/vehicle.model';
 import { UserResponse } from '../../../../models/user.model';
 import { AdminBookingAction } from '../../../../pages/admin/admin-dashboard-page/admin-dashboard-page';
 import { BOOKING_STATUS_CONFIG, BookingResponse, BookingStatus, StatusChangeEvent } from '../../../../models/booking.model';
-import { AuthService } from '../../../../core/services/auth/auth.service';
 import { JobService } from '../../../jobs/services/job/job.service';
 import { VehicleService } from '../../../vehicles/services/vehicles/vehicle.service';
+import { UserService } from '../../../user/services/user.service';
 
 
 
@@ -20,7 +20,7 @@ import { VehicleService } from '../../../vehicles/services/vehicles/vehicle.serv
 export class BookingCardView {
   private vehicle = inject(VehicleService);
   private job = inject(JobService);
-  private authService = inject(AuthService);
+  private userService = inject(UserService);
 
   booking = input.required<BookingResponse>();
   isAdmin = input<boolean>(false);
@@ -36,7 +36,7 @@ export class BookingCardView {
 
   ngOnInit(): void {
     if (this.isAdmin() && this.booking().userId) {
-      this.authService.getUserById(this.booking().userId).subscribe({
+      this.userService.getUserById(this.booking().userId).subscribe({
         next: (userData) => this.customer.set(userData),
         error: (err) => console.error('Errore anagrafica cliente:', err)
       });
