@@ -2,7 +2,7 @@ import { Component, inject, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { JobRequest, JobResponse } from '../../../../models/job.model';
-import { JobService } from '../../services/job/job.service';
+import { JobService } from '../../services/job.service';
 
 @Component({
   selector: 'app-services-card',

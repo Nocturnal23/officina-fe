@@ -6,7 +6,7 @@ import { Paginator } from '../../../shared/components/paginator/paginator';
 import { BookingCardView } from '../../../features/booking/components/booking-card-view/booking-card-view';
 import { BasePaginatorComponent } from '../../../core/base/BasePaginatorComponent';
 import { AuthService } from '../../../core/services/auth/auth.service';
-import { BookingService } from '../../../features/booking/services/booking/booking.service';
+import { BookingService } from '../../../features/booking/services/booking.service';
 
 
 export type AdminBookingAction = 'ACCEPT' | 'REFUSE' | 'ADVANCE';

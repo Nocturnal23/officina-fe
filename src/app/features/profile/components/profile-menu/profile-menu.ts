@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
 import { UserInfoTab } from './tabs/user-info-tab/user-info-tab';
 import { UserCredentialTab } from './tabs/user-credential-tab/user-credential-tab';
 import { UserVehicleTab } from './tabs/user-vehicle-tab/user-vehicle-tab';

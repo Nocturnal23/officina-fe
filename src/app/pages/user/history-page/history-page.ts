@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Paginator } from '../../../shared/components/paginator/paginator';
 import { BasePaginatorComponent } from '../../../core/base/BasePaginatorComponent';
 import { BookingCardView } from '../../../features/booking/components/booking-card-view/booking-card-view';
-import { BookingService } from '../../../features/booking/services/booking/booking.service';
+import { BookingService } from '../../../features/booking/services/booking.service';
 
 @Component({
   selector: 'app-history-page',

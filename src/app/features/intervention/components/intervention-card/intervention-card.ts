@@ -5,11 +5,10 @@ import { BookingResponse, BookingStatus } from '../../../../models/booking.model
 import { JobResponse } from '../../../../models/job.model';
 import { UserResponse } from '../../../../models/user.model';
 import { VehicleResponse } from '../../../../models/vehicle.model';
-import { AuthService } from '../../../../core/services/auth/auth.service';
-import { JobService } from '../../../jobs/services/job/job.service';
-import { VehicleService } from '../../../vehicles/services/vehicles/vehicle.service';
-import { InterventionService } from '../../services/intervention/intervention.service';
+import { VehicleService } from '../../../vehicles/services/vehicle.service';
 import { UserService } from '../../../user/services/user.service';
+import { InterventionService } from '../../services/intervention.service';
+import { JobService } from '../../../jobs/services/job.service';
 
 @Component({
   selector: 'app-intervention-card',

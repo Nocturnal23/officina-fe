@@ -3,8 +3,8 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { BOOKING_STATUS_CONFIG } from '../../../../models/booking.model';
 import { InterventionHistoryResponse } from '../../../../models/intervention.models';
 import { VehicleResponse } from '../../../../models/vehicle.model';
-import { JobService } from '../../../jobs/services/job/job.service';
-import { VehicleService } from '../../../vehicles/services/vehicles/vehicle.service';
+import { VehicleService } from '../../../vehicles/services/vehicle.service';
+import { JobService } from '../../../jobs/services/job.service';
 
 
 @Component({

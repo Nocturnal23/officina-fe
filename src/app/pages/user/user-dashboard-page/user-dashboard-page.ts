@@ -7,7 +7,7 @@ import { BasePaginatorComponent } from '../../../core/base/BasePaginatorComponen
 import { BookingCardView } from '../../../features/booking/components/booking-card-view/booking-card-view';
 import { BookingCard } from '../../../features/booking/components/booking-card/booking-card';
 import { AuthService } from '../../../core/services/auth/auth.service';
-import { BookingService } from '../../../features/booking/services/booking/booking.service';
+import { BookingService } from '../../../features/booking/services/booking.service';
 
 
 @Component({

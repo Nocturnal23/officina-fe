@@ -6,7 +6,7 @@ import { BookingStatus } from '../../../models/booking.model';
 import { CommonModule } from '@angular/common';
 import { BasePaginatorComponent } from '../../../core/base/BasePaginatorComponent';
 import { InterventionCardView } from '../../../features/intervention/components/intervention-card-view/intervention-card-view';
-import { InterventionService } from '../../../features/intervention/services/intervention/intervention.service';
+import { InterventionService } from '../../../features/intervention/services/intervention.service';
 
 @Component({
   selector: 'app-intervention-history-page',

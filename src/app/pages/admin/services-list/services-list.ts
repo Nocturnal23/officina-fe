@@ -3,7 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { JobResponse } from '../../../models/job.model';
 import { ServicesCard } from "../../../features/jobs/components/services-card/services-card";
-import { JobService } from '../../../features/jobs/services/job/job.service';
+import { JobService } from '../../../features/jobs/services/job.service';
 
 @Component({
   selector: 'app-services-list',

@@ -5,8 +5,8 @@ import { VehicleResponse } from '../../../../models/vehicle.model';
 import { UserResponse } from '../../../../models/user.model';
 import { AdminBookingAction } from '../../../../pages/admin/admin-dashboard-page/admin-dashboard-page';
 import { BOOKING_STATUS_CONFIG, BookingResponse, BookingStatus, StatusChangeEvent } from '../../../../models/booking.model';
-import { JobService } from '../../../jobs/services/job/job.service';
-import { VehicleService } from '../../../vehicles/services/vehicles/vehicle.service';
+import { JobService } from '../../../jobs/services/job.service';
+import { VehicleService } from '../../../vehicles/services/vehicle.service';
 import { UserService } from '../../../user/services/user.service';
 
 

@@ -3,9 +3,9 @@ import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angu
 import { JobResponse } from '../../../../models/job.model';
 import { VehicleResponse } from '../../../../models/vehicle.model';
 import { AuthService } from '../../../../core/services/auth/auth.service';
-import { JobService } from '../../../jobs/services/job/job.service';
-import { VehicleService } from '../../../vehicles/services/vehicles/vehicle.service';
-import { BookingService } from '../../services/booking/booking.service';
+import { VehicleService } from '../../../vehicles/services/vehicle.service';
+import { BookingService } from '../../services/booking.service';
+import { JobService } from '../../../jobs/services/job.service';
 
 interface ServiceItem {
   id: number;

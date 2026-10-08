@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VehicleRequest, VehicleResponse } from '../../../../../../models/vehicle.model';
 import { BookingCard } from '../../../../../booking/components/booking-card/booking-card';
 import { AuthService } from '../../../../../../core/services/auth/auth.service';
-import { VehicleService } from '../../../../../vehicles/services/vehicles/vehicle.service';
+import { VehicleService } from '../../../../../vehicles/services/vehicle.service';
 
 @Component({
   selector: 'app-user-vehicle-tab',

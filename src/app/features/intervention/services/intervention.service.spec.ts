@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Intervention } from './intervention.service';
+import { InterventionService } from './intervention.service';
 
 describe('Intervention', () => {
-  let service: Intervention;
+  let service: InterventionService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});

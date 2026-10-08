@@ -1,9 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BookingStatus } from '../../../../models/booking.model';
-import { InterventionHistoryRequest, InterventionHistoryResponse } from '../../../../models/intervention.models';
-import { PageResponse } from '../../../../models/pagination.model';
+import { BookingStatus } from '../../../models/booking.model';
+import { InterventionHistoryRequest, InterventionHistoryResponse } from '../../../models/intervention.models';
+import { PageResponse } from '../../../models/pagination.model';
+
 
 @Injectable({
   providedIn: 'root',
