@@ -2,7 +2,7 @@ export interface VehicleRequest {
     brand: string;
     model: string;
     plate: string;
-    year: number;
+    kilometers: number;
 }
 
 export interface VehicleResponse {
@@ -10,6 +10,6 @@ export interface VehicleResponse {
     brand: string;
     model: string;
     plate: string;
-    year: number;
+    kilometers: number;
     userId: number;
 }
