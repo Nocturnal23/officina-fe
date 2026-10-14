@@ -32,9 +32,13 @@
                 <span class="text-sm font-semibold text-slate-800">
                     {{vehicleDetails()?.plate}}
                 </span>
-                <span class="text-xs font-medium text-slate-400">Chilometraggio attuale:</span>
+                <span class="text-xs font-medium text-slate-400">Chilometraggio:</span>
                 <span class="text-sm font-semibold text-slate-800">
-                    {{vehicleDetails()?.kilometers}} KM
+                    @if (intervention().interventionKilometers !== null) {
+                    {{intervention().interventionKilometers}} KM
+                    } @else {
+                    Non disponibile
+                    }
                 </span>
             </div>
 

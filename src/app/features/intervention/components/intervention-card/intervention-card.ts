@@ -235,16 +235,14 @@ export class InterventionCard {
 
     const { vehicleId, userId, kilometers, ...intervention } = formValue;
 
-    const completionRequest = {
-      intervention: {
-        bookingId: this.booking().id,
-        status: this.targetStatus() || this.booking().status,
-        ...intervention
-      },
-      vehicleKilometers: kilometers
+    const request = {
+      bookingId: this.booking().id,
+      status: this.targetStatus() || this.booking().status,
+      interventionKilometers: kilometers,
+      ...intervention
     }
 
-    this.interventionService.createIntervention(vehicleId, completionRequest).subscribe({
+    this.interventionService.createIntervention(vehicleId, request).subscribe({
       next: () => {
         this.confirm.emit();
       },

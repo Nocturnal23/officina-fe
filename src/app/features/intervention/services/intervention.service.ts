@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BookingStatus } from '../../../models/booking.model';
-import { InterventionCompletionRequest, InterventionHistoryRequest, InterventionHistoryResponse } from '../../../models/intervention.models';
+import { InterventionHistoryRequest, InterventionHistoryResponse } from '../../../models/intervention.models';
 import { PageResponse } from '../../../models/pagination.model';
 
 
@@ -14,7 +14,7 @@ export class InterventionService {
   private url = 'http://localhost:8080/api/users/me'
   private adminUrl = 'http://localhost:8080/api/admin'
 
-  createIntervention(vehicleId: number, request: InterventionCompletionRequest): Observable<InterventionHistoryResponse> {
+  createIntervention(vehicleId: number, request: InterventionHistoryRequest): Observable<InterventionHistoryResponse> {
     return this.http.post<InterventionHistoryResponse>(`${this.adminUrl}/vehicles/${vehicleId}/interventions`, request);
   }
 

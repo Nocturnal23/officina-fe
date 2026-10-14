@@ -4,19 +4,15 @@ export interface InterventionHistoryRequest{
     cost?: number | null;
     notes?: string | null;
     completedAt?: string;
+    interventionKilometers: number;
     jobsIds: number[] | null;
     bookingId: number;
     status: BookingStatus;
 }
 
-export interface InterventionCompletionRequest {
-    intervention: InterventionHistoryRequest;
-    vehicleKilometers: number;
-}
-
 export interface InterventionHistoryResponse{
     id: number;
-    kilometers: number;
+    interventionKilometers: number | null;
     cost: number;
     notes: string;
     completedAt: string;
