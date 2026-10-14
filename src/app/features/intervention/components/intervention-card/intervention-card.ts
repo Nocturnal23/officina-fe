@@ -79,7 +79,7 @@ export class InterventionCard {
       this.updateNotesValidation();
 
       if (currentBooking.vehicleId) {
-        this.loadLastKilometers(currentBooking.vehicleId);
+        this.loadVehicleKilometers(currentBooking.vehicleId);
       }
     } else {
       this.loadUsers();
@@ -107,8 +107,9 @@ export class InterventionCard {
 
       this.interventionForm.controls.vehicleId.valueChanges.subscribe(selectedVehicleId => {
         if (selectedVehicleId) {
-          this.loadLastKilometers(selectedVehicleId);
+          this.loadVehicleKilometers(selectedVehicleId);
         } else {
+          this.interventionForm.controls.kilometers.reset();
           this.interventionForm.controls.kilometers.setValidators([Validators.required, Validators.min(0)]);
           this.interventionForm.controls.kilometers.updateValueAndValidity();
         }
@@ -187,21 +188,33 @@ export class InterventionCard {
     });
   }
 
-  private loadLastKilometers(vehicleId: number): void {
-    this.interventionService.getLastVehicleKilometers(vehicleId).subscribe({
-      next: (lastKm) => {
-        const kmControl = this.interventionForm.controls.kilometers;
-        
-        if (this.isRefused()) {
-          kmControl.setValue(lastKm);
-          kmControl.disable();
-        } else {
-          kmControl.setValidators([Validators.required, Validators.min(lastKm)]);
-          kmControl.updateValueAndValidity();
-        }
-      },
+  private loadVehicleKilometers(vehicleId: number): void {
+    const currentVehicle = this.vehicle()?.id === vehicleId
+      ? this.vehicle()
+      : this.vehiclesList().find(vehicle => vehicle.id === vehicleId) ?? null;
+
+    if (currentVehicle) {
+      this.setVehicleKilometers(currentVehicle);
+      return;
+    }
+
+    this.vehicleService.getVehicleById(vehicleId).subscribe({
+      next: (vehicle) => this.setVehicleKilometers(vehicle),
       error: (err) => console.error("Errore durante il recupero dei chilometri: ", err)
     });
+  }
+
+  private setVehicleKilometers(vehicle: VehicleResponse): void {
+    const kmControl = this.interventionForm.controls.kilometers;
+    kmControl.setValue(vehicle.kilometers);
+    kmControl.setValidators([Validators.required, Validators.min(vehicle.kilometers)]);
+    kmControl.updateValueAndValidity();
+
+    if (this.isRefused()) {
+      kmControl.disable();
+    } else {
+      kmControl.enable();
+    }
   }
 
   closeCard() {
@@ -216,21 +229,22 @@ export class InterventionCard {
 
     const formValue = this.interventionForm.getRawValue();
 
-    if(formValue.userId === null || formValue.vehicleId === null || formValue.jobsIds === null) {
+    if(formValue.userId === null || formValue.vehicleId === null || formValue.jobsIds === null || formValue.kilometers === null) {
       return;
     }
 
-    const { vehicleId, userId, ...request } = formValue;
+    const { vehicleId, userId, kilometers, ...intervention } = formValue;
 
-    const finalObj = {
-      bookingId: this.booking().id,
-      status: this.targetStatus() || this.booking().status,
-      ...request
+    const completionRequest = {
+      intervention: {
+        bookingId: this.booking().id,
+        status: this.targetStatus() || this.booking().status,
+        ...intervention
+      },
+      vehicleKilometers: kilometers
     }
 
-    console.log(finalObj);
-
-    this.interventionService.createIntervention(vehicleId, finalObj).subscribe({
+    this.interventionService.createIntervention(vehicleId, completionRequest).subscribe({
       next: () => {
         this.confirm.emit();
       },

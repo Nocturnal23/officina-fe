@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BookingStatus } from '../../../models/booking.model';
-import { InterventionHistoryRequest, InterventionHistoryResponse } from '../../../models/intervention.models';
+import { InterventionCompletionRequest, InterventionHistoryRequest, InterventionHistoryResponse } from '../../../models/intervention.models';
 import { PageResponse } from '../../../models/pagination.model';
 
 
@@ -14,7 +14,7 @@ export class InterventionService {
   private url = 'http://localhost:8080/api/users/me'
   private adminUrl = 'http://localhost:8080/api/admin'
 
-  createIntervention(vehicleId: number, request: InterventionHistoryRequest): Observable<InterventionHistoryResponse> {
+  createIntervention(vehicleId: number, request: InterventionCompletionRequest): Observable<InterventionHistoryResponse> {
     return this.http.post<InterventionHistoryResponse>(`${this.adminUrl}/vehicles/${vehicleId}/interventions`, request);
   }
 
@@ -36,9 +36,5 @@ export class InterventionService {
     }
 
     return this.http.get<PageResponse<InterventionHistoryResponse>>(`${this.url}/history/interventions`, { params });
-  }
-
-  getLastVehicleKilometers(vehicleId: number) : Observable<number>{
-    return this.http.get<number>(`${this.adminUrl}/vehicles/${vehicleId}/kilometers`)
   }
 }
