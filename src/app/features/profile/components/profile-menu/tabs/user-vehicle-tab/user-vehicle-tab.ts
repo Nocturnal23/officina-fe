@@ -26,7 +26,7 @@ export class UserVehicleTab {
     brand: ['', [Validators.required]],
     model: ['', [Validators.required]],
     plate: ['', [Validators.required]],
-    year: [new Date().getFullYear(), [Validators.required, Validators.min(1900)]]
+    kilometers: [0, [Validators.required]]
   });
 
   ngOnInit(): void {
@@ -55,7 +55,10 @@ export class UserVehicleTab {
     if (!user?.id) return;
 
     // Estrae direttamente l'oggetto formattato VehicleRequest
-    const request: VehicleRequest = this.vehicleForm.getRawValue();
+    const { kilometers, ...vehicleData } = this.vehicleForm.getRawValue();
+    if (kilometers === null) return;
+
+    const request: VehicleRequest = { ...vehicleData, kilometers };
     request.plate = request.plate.trim().toUpperCase();
 
     this.vehicleService.createVehicle(user.id, request).subscribe({

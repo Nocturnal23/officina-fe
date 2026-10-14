@@ -13,7 +13,7 @@
         <div class="flex items-center justify-between gap-4 p-3.5 rounded-xl border border-slate-200 bg-white">
           <div>
             <p class="text-sm font-semibold text-slate-800">{{ vehicle.brand }} {{ vehicle.model }}</p>
-            <p class="text-xs text-slate-500">{{ vehicle.plate }} · {{ vehicle.year }}</p>
+            <p class="text-xs text-slate-500">{{ vehicle.plate }} · {{ vehicle.kilometers }} km</p>
           </div>
           <button type="button" (click)="deleteVehicle(vehicle)"
             class="text-xs font-semibold text-red-600 hover:underline cursor-pointer">
@@ -40,7 +40,7 @@
       <input type="text" formControlName="brand" placeholder="Marca (es. Fiat)" class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
       <input type="text" formControlName="model" placeholder="Modello (es. Panda)" class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
       <input type="text" formControlName="plate" placeholder="Targa (es. AB123CD)" class="text-sm p-2 bg-white border border-slate-200 rounded-lg uppercase focus:outline-blue-600" />
-      <input type="number" formControlName="year" placeholder="Anno" class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
+      <input type="number" formControlName="kilometers" placeholder="Chilometri attuali" class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
     </div>
 
     <div class="flex justify-end gap-2 pt-1">
