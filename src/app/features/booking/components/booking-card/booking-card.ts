@@ -1,11 +1,12 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, computed, inject, input, OnDestroy, output, signal } from '@angular/core';
+import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, ValidationErrors} from '@angular/forms';
 import { JobResponse } from '../../../../models/job.model';
 import { VehicleResponse } from '../../../../models/vehicle.model';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { VehicleService } from '../../../vehicles/services/vehicle.service';
 import { BookingService } from '../../services/booking.service';
 import { JobService } from '../../../jobs/services/job.service';
+import { bookingDateValidator, formatLocalDate } from '../../../../shared/validators/booking-date.validator';
 
 interface ServiceItem {
   id: number;
@@ -19,8 +20,7 @@ interface ServiceItem {
   templateUrl: './booking-card.html',
   styleUrl: './booking-card.css',
 })
-
-export class BookingCard {
+export class BookingCard implements OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly vehicleService = inject(VehicleService);
   private readonly bookingService = inject(BookingService);
@@ -37,12 +37,21 @@ export class BookingCard {
   selectedServiceIds = signal<number[]>([]);
 
   idServizioAltro: number | null = null;
+  minDate: string = '';
+  dateErrorMessage = signal<string | null>(null);
+  private errorTimeout: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
+    this.minDate = formatLocalDate(new Date());
+
+    this.bookingForm.controls['appointmentDate'].valueChanges.subscribe(() => {
+      this.handleDateErrors();
+    });
+
     this.loadVehicles();
     this.loadJobs();
     this.bookingForm.patchValue({
-      vehicleId: this.selectedVehicleId()
+      vehicleId: this.selectedVehicleId(),
     });
 
     this.bookingForm.controls.jobsIds.valueChanges.subscribe((selectedIds) => {
@@ -57,8 +66,14 @@ export class BookingCard {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.errorTimeout !== null) {
+      clearTimeout(this.errorTimeout);
+    }
+  }
+
   bookingForm = this.fb.nonNullable.group({
-    appointmentDate: ['', Validators.required],
+    appointmentDate: ['', [Validators.required, bookingDateValidator]],
     vehicleId: [null as number | null, Validators.required],
     jobsIds: [[] as number[], [Validators.required, Validators.minLength(1)]],
     notes: [''],
@@ -66,7 +81,7 @@ export class BookingCard {
 
   selectedServices = computed(() => {
     const ids = this.selectedServiceIds();
-    return this.services().filter(service => ids.includes(service.id));
+    return this.services().filter((service) => ids.includes(service.id));
   });
 
   openServicesModal(): void {
@@ -85,7 +100,7 @@ export class BookingCard {
     const ids = this.selectedServiceIds();
 
     if (ids.includes(id)) {
-      const newIds = ids.filter(serviceId => serviceId !== id);
+      const newIds = ids.filter((serviceId) => serviceId !== id);
       this.selectedServiceIds.set(newIds);
       this.bookingForm.patchValue({ jobsIds: newIds });
     } else {
@@ -110,7 +125,7 @@ export class BookingCard {
     if (user?.id) {
       this.vehicleService.getVehiclesByUser(user.id).subscribe({
         next: (data) => this.vehicles.set(data),
-        error: (err) => console.error('Errore recupero veicoli:', err)
+        error: (err) => console.error('Errore recupero veicoli:', err),
       });
     }
   }
@@ -120,13 +135,13 @@ export class BookingCard {
       next: (data) => {
         this.services.set(data);
 
-        const jobAltro = data.find(job => job.type.toUpperCase() === 'ALTRO');
+        const jobAltro = data.find((job) => job.type.toUpperCase() === 'ALTRO');
         if (jobAltro) {
           this.idServizioAltro = jobAltro.id;
         }
       },
-      error: (err) => console.log("Errore durante il recupero dei serivizi ", err)
-    })
+      error: (err) => console.log('Errore durante il recupero dei serivizi ', err),
+    });
   }
 
   submitBooking(): void {
@@ -146,11 +161,48 @@ export class BookingCard {
     this.bookingService.createBooking(vehicleId, request).subscribe({
       next: () => {
         this.closeCard();
-        this.created.emit()
+        this.created.emit();
       },
       error: (err) => {
-        console.log("Errore durante la prenotazione: ", err);
-      }
-    })
+        console.log('Errore durante la prenotazione: ', err);
+      },
+    });
+  }
+
+  private handleDateErrors(): void {
+    const control = this.bookingForm.controls.appointmentDate;
+    const errors = control.errors;
+
+    if (this.errorTimeout !== null) {
+      clearTimeout(this.errorTimeout);
+      this.errorTimeout = null;
+    }
+
+    const message = this.getDateErrorMessage(errors);
+    if (!message) {
+      this.dateErrorMessage.set(null);
+      return;
+    }
+
+    this.showTemporaryMessage(message);
+    control.setValue('', { emitEvent: false });
+  }
+
+  private showTemporaryMessage(message: string): void {
+    this.dateErrorMessage.set(message);
+    this.errorTimeout = setTimeout(() => {
+      this.dateErrorMessage.set(null);
+      this.errorTimeout = null;
+    }, 4000);
+  }
+
+  private getDateErrorMessage(errors: ValidationErrors | null): string | null {
+    if (errors?.['pastDate']) return 'Non puoi selezionare una data passata.';
+    if (errors?.['weekend']) return 'I sabati e le domeniche non sono disponibili per la prenotazione.';
+    if (errors?.['summerClosure']) return "L'officina è chiusa dal 16 al 31 Agosto per le ferie estive.";
+    if (errors?.['winterClosure']) return "L'officina è chiusa dal 24 al 31 Dicembre per le ferie natalizie."
+    if (errors?.['holiday']) return `L'officina è chiusa per ${errors['holiday']}.`;
+    if (errors?.['invalidDate']) return 'La data selezionata non è valida.';
+    return null;
   }
 }

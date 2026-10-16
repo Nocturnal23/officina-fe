@@ -1,27 +1,63 @@
-<div class="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4" (click)="closeCard()">
-  <div class="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl relative" (click)="$event.stopPropagation()">
-
+<div
+  class="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4"
+  (click)="closeCard()"
+>
+  <div
+    class="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl relative"
+    (click)="$event.stopPropagation()"
+  >
     <h2 class="text-xl font-bold text-gray-800 mb-5">Nuova Prenotazione</h2>
 
     <form [formGroup]="bookingForm" (ngSubmit)="submitBooking()" class="flex flex-col gap-4">
-
       <!-- //Parte del giorno. -->
       <div class="flex flex-col gap-1">
         <label for="appointmentDate" class="text-sm font-semibold text-gray-700">Giorno</label>
-        <input 
-          id="appointmentDate" 
-          type="date" 
+        <input
+          id="appointmentDate"
+          type="date"
+          [min]="minDate"
           formControlName="appointmentDate"
-          class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+          class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        <span class="text-xs text-slate-500"
+          >Non sono disponibili sabati, domeniche, festività nazionali o il mese di agosto.</span
+        >
       </div>
+
+      @if (dateErrorMessage()) {
+        <div
+          class="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between gap-3 rounded-lg bg-red-600 px-4 py-3 text-white shadow-lg transition-all duration-300 animate-slide-up"
+        >
+          <div class="flex items-center gap-2">
+            <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <span class="text-xs sm:text-sm font-medium">{{ dateErrorMessage() }}</span>
+          </div>
+
+          <button
+            type="button"
+            (click)="dateErrorMessage.set(null)"
+            class="text-red-200 hover:text-white transition-colors focus:outline-none"
+          >
+            ✕
+          </button>
+        </div>
+      }
 
       <!-- //Pparte del veicolo. -->
       <div class="flex flex-col gap-1">
         <label for="vehicle" class="text-sm font-semibold text-gray-700">Veicolo</label>
-        <select 
-          id="vehicle" 
+        <select
+          id="vehicle"
           formControlName="vehicleId"
-          class="w-full rounded-md border border-gray-300 p-2 text-sm bg-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+          class="w-full rounded-md border border-gray-300 p-2 text-sm bg-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
           <option [ngValue]="null" disabled>Seleziona un veicolo</option>
           @for (vehicle of vehicles(); track vehicle.id) {
             <option [ngValue]="vehicle.id">
@@ -35,26 +71,31 @@
       <div class="flex flex-col gap-2">
         <div class="flex items-center justify-between">
           <label class="text-sm font-semibold text-gray-700">Servizi richiesti</label>
-          <button 
-            type="button" 
+          <button
+            type="button"
             (click)="openServicesModal()"
-            class="text-xs font-semibold text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 bg-blue-50 px-3 py-1 rounded-md transition-colors">
+            class="text-xs font-semibold text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 bg-blue-50 px-3 py-1 rounded-md transition-colors"
+          >
             + Scegli servizi
           </button>
         </div>
 
-        
-        <div class="flex flex-wrap gap-2 min-h-9.5 p-2 border border-dashed border-gray-300 rounded-md bg-gray-50 items-center">
+        <div
+          class="flex flex-wrap gap-2 min-h-9.5 p-2 border border-dashed border-gray-300 rounded-md bg-gray-50 items-center"
+        >
           @if (selectedServices().length === 0) {
             <span class="text-xs text-gray-400 italic">Nessun servizio selezionato</span>
           } @else {
             @for (service of selectedServices(); track service.id) {
-              <span class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">
+              <span
+                class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200"
+              >
                 <span>{{ service.type }}</span>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   (click)="removeService(service.id)"
-                  class="text-blue-500 hover:text-blue-800 font-bold ml-0.5 focus:outline-none">
+                  class="text-blue-500 hover:text-blue-800 font-bold ml-0.5 focus:outline-none"
+                >
                   X
                 </button>
               </span>
@@ -72,62 +113,77 @@
             <span class="text-red-500 ml-1">*</span>
           }
         </label>
-        <textarea 
-          id="notes" 
-          rows="3" 
-          formControlName="notes" 
+        <textarea
+          id="notes"
+          rows="3"
+          formControlName="notes"
           placeholder="Dettagli sul guasto o richieste particolari..."
-          class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"></textarea>
+          class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+        ></textarea>
 
-          @if (bookingForm.controls.notes.invalid && bookingForm.controls.notes.touched) {
-            @if (bookingForm.controls.notes.errors?.['required']) {
-              <span class="text-xs text-red-500">La descrizione è obbligatoria se selezioni un servizio generico.</span>
-            }
+        @if (bookingForm.controls.notes.invalid && bookingForm.controls.notes.touched) {
+          @if (bookingForm.controls.notes.errors?.['required']) {
+            <span class="text-xs text-red-500"
+              >La descrizione è obbligatoria se selezioni un servizio generico.</span
+            >
           }
+        }
       </div>
 
-      
       <div class="flex items-center justify-end gap-3 mt-4 pt-3 border-t border-gray-100">
-        <button 
-          type="button" 
+        <button
+          type="button"
           (click)="closeCard()"
-          class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+          class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+        >
           Annulla
         </button>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           [disabled]="bookingForm.invalid"
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md shadow transition-colors">
+          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md shadow transition-colors"
+        >
           Conferma prenotazione
         </button>
       </div>
-
     </form>
   </div>
 
   @if (isServicesModalOpen()) {
-    <div class="fixed inset-0 z-30 flex items-center justify-center bg-black/50 p-4" (click)="closeServicesModal()">
-      <div class="w-full max-w-md rounded-lg bg-white p-5 shadow-2xl flex flex-col max-h-[80vh]" (click)="$event.stopPropagation()">
-        
+    <div
+      class="fixed inset-0 z-30 flex items-center justify-center bg-black/50 p-4"
+      (click)="closeServicesModal()"
+    >
+      <div
+        class="w-full max-w-md rounded-lg bg-white p-5 shadow-2xl flex flex-col max-h-[80vh]"
+        (click)="$event.stopPropagation()"
+      >
         <div class="flex items-center justify-between pb-3 border-b border-gray-200">
           <h3 class="text-md font-semibold text-gray-900">Seleziona i servizi</h3>
-          <button type="button" (click)="closeServicesModal()" class="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
+          <button
+            type="button"
+            (click)="closeServicesModal()"
+            class="text-gray-400 hover:text-gray-600 text-lg leading-none"
+          >
+            ✕
+          </button>
         </div>
 
         <div class="overflow-y-auto py-3 space-y-2 flex-1 pr-1">
           @for (service of services(); track service.id) {
-            <label 
+            <label
               class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors"
-              [class.border-blue-600]="isSelected(service.id)" 
+              [class.border-blue-600]="isSelected(service.id)"
               [class.bg-blue-50]="isSelected(service.id)"
-              [class.border-gray-200]="!isSelected(service.id)">
-
-              <input 
-                type="checkbox" 
+              [class.border-gray-200]="!isSelected(service.id)"
+            >
+              <input
+                type="checkbox"
                 class="mt-1 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                [checked]="isSelected(service.id)" 
-                (change)="toggleService(service.id)" />
+                [checked]="isSelected(service.id)"
+                (change)="toggleService(service.id)"
+              />
 
               <div class="flex-1">
                 <p class="font-semibold text-gray-900 text-sm leading-snug">{{ service.type }}</p>
@@ -138,14 +194,14 @@
         </div>
 
         <div class="pt-3 border-t border-gray-200 flex justify-end">
-          <button 
-            type="button" 
+          <button
+            type="button"
             (click)="closeServicesModal()"
-            class="px-4 py-1.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+            class="px-4 py-1.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
+          >
             Fatto
           </button>
         </div>
-
       </div>
     </div>
   }
