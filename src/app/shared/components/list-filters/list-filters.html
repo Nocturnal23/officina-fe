@@ -69,6 +69,42 @@
       }
     </div>
 
+    @if (vehicleOptions(); as availableVehicles) {
+      <div class="flex flex-col gap-3">
+        <label for="vehicleSearch" class="text-sm font-semibold text-slate-700">
+          Veicolo
+        </label>
+        @if (availableVehicles.length > 0) {
+          <input
+            id="vehicleSearch"
+            type="search"
+            placeholder="Cerca marca, modello o targa"
+            (input)="onVehicleSearch($event)"
+            class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
+          />
+          <select
+            id="vehicle"
+            formControlName="vehicleId"
+            class="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
+          >
+            <option [ngValue]="null">Tutti i veicoli</option>
+            @for (group of vehicleGroups(); track group.label) {
+              <optgroup [label]="group.label">
+                @for (vehicle of group.vehicles; track vehicle.id) {
+                  <option [ngValue]="vehicle.id">{{ vehicle.plate }}</option>
+                }
+              </optgroup>
+            }
+          </select>
+          @if (vehicleGroups().length === 0) {
+            <p class="text-xs text-slate-500">Nessun veicolo corrisponde alla ricerca.</p>
+          }
+        } @else {
+          <p class="text-xs text-slate-500">Nessun veicolo disponibile.</p>
+        }
+      </div>
+    }
+
     <div class="col-span-full mt-1 flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-4">
       <button
         type="button"
