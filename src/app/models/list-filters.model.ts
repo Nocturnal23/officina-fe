@@ -3,9 +3,10 @@ export type DateFilter =
     | { mode: 'on' | 'before' | 'after'; date: string };
 
 export interface VehicleFilter {
+    id: number;
     brand: string;
     model: string;
-    plate?: string;
+    plate: string;
 }
 
 export interface ListFilterCriteria {

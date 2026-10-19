@@ -11,5 +11,5 @@ export interface VehicleResponse {
     model: string;
     plate: string;
     kilometers: number;
-    userId: number;
+    userId: number | null;
 }
