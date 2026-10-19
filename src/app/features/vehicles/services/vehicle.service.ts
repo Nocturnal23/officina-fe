@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { VehicleResponse, VehicleRequest } from '../../../models/vehicle.model';
@@ -14,6 +14,16 @@ export class VehicleService {
 
   getVehiclesByUser(userId: number): Observable<VehicleResponse[]> {
     return this.http.get<VehicleResponse[]>(this.url);
+  }
+
+  getAllVehicles(plate?: string): Observable<VehicleResponse[]> {
+    let params = new HttpParams();
+
+    if (plate?.trim()) {
+      params = params.set('plate', plate.trim());
+    }
+
+    return this.http.get<VehicleResponse[]>(this.urlAdmin, { params });
   }
 
   deleteVehicle(userId: number, vehicleId: number): Observable<void> {
