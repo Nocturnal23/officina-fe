@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BookingRequest, BookingResponse, BookingStatus } from '../../../models/booking.model';
 import { PageResponse } from '../../../models/pagination.model';
+import { DateFilter } from '../../../models/list-filters.model';
 
 
 @Injectable({
@@ -55,13 +56,28 @@ export class BookingService {
     return this.http.delete<void>(`${this.adminUrl}/bookings/${bookingId}`)
   }
 
-  getHistory(page: number, size: number, statuses?: BookingStatus[]): Observable<PageResponse<BookingResponse>> {
+  getHistory(
+    page: number,
+    size: number,
+    statuses?: BookingStatus[],
+    dateFilter?: DateFilter
+  ): Observable<PageResponse<BookingResponse>> {
     let params = new HttpParams()
       .set('page', page)
       .set('size', size);
 
     if (statuses && statuses.length > 0) {
       params = params.set('statuses', statuses.join(','));
+    }
+
+    if (dateFilter) {
+      params = params.set('dateMode', dateFilter.mode);
+
+      if (dateFilter.mode === 'range') {
+        params = params.set('dateFrom', dateFilter.from).set('dateTo', dateFilter.to);
+      } else {
+        params = params.set('date', dateFilter.date);
+      }
     }
 
     return this.http.get<PageResponse<BookingResponse>>(`${this.url}/history`, { params });
