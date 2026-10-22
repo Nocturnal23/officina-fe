@@ -105,6 +105,35 @@
       </div>
     }
 
+    <fieldset class="flex min-w-0 flex-col gap-3">
+      <legend class="text-sm font-semibold text-slate-700">Lavori</legend>
+      @if (jobOptions() === null) {
+        <p class="text-xs text-slate-500">Caricamento lavori...</p>
+      } @else if (sortedJobs().length > 0) {
+        <div class="max-h-48 overflow-y-auto rounded-lg border border-slate-200 p-3">
+          <div class="flex flex-col gap-2">
+            @for (job of sortedJobs(); track job.id) {
+              <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  [checked]="selectedJobIds().includes(job.id)"
+                  (change)="onJobSelectionChange(job.id, $event)"
+                  class="size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600/30"
+                />
+                <span>{{ job.type }}</span>
+                @if (job.deleted) {
+                  <span class="text-xs text-slate-500">(non più disponibile)</span>
+                }
+              </label>
+            }
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">Puoi selezionare più lavori.</p>
+      } @else {
+        <p class="text-xs text-slate-500">Nessun lavoro disponibile.</p>
+      }
+    </fieldset>
+
     <div class="col-span-full mt-1 flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-4">
       <button
         type="button"

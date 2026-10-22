@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { JobResponse } from '../../../models/job.model';
 import { DateFilter, ListFilterCriteria } from '../../../models/list-filters.model';
 import { VehicleResponse } from '../../../models/vehicle.model';
 
@@ -19,10 +20,16 @@ export class ListFilters {
 
   filters = input<ListFilterCriteria>({});
   vehicleOptions = input<VehicleResponse[] | null>(null);
+  jobOptions = input<JobResponse[] | null>(null);
   filtersChange = output<ListFilterCriteria>();
   vehicleSearch = output<string>();
   dateRangeError = signal(false);
   private readonly vehicleSearchTerm = signal('');
+  readonly selectedJobIds = signal<number[]>([]);
+
+  readonly sortedJobs = computed(() =>
+    [...(this.jobOptions() ?? [])].sort((left, right) => left.type.localeCompare(right.type, 'it')),
+  );
 
   readonly form = this.fb.nonNullable.group({
     mode: ['range' as DateFilter['mode']],
@@ -66,6 +73,7 @@ export class ListFilters {
       const filters = this.filters();
       const date = filters.date;
       this.dateRangeError.set(false);
+      this.selectedJobIds.set(filters.jobIds ?? []);
 
       if (!date) {
         this.form.patchValue(
@@ -112,11 +120,15 @@ export class ListFilters {
       dateFilter = { mode, date };
     }
 
-    const updatedFilters = { ...this.filters() };
+    const updatedFilters: ListFilterCriteria = { ...this.filters() };
     delete updatedFilters.date;
     delete updatedFilters.vehicle;
+    delete updatedFilters.jobIds;
 
     if (dateFilter) updatedFilters.date = dateFilter;
+
+    const selectedJobIds = this.selectedJobIds();
+    if (selectedJobIds.length > 0) updatedFilters.jobIds = selectedJobIds;
 
     const selectedVehicle = this.vehicleOptions()?.find((vehicle) => vehicle.id === vehicleId);
     if (selectedVehicle) {
@@ -137,10 +149,20 @@ export class ListFilters {
     this.vehicleSearch.emit(query);
   }
 
+  onJobSelectionChange(jobId: number, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.selectedJobIds.update((selectedIds) =>
+      checked
+        ? [...selectedIds, jobId]
+        : selectedIds.filter((selectedId) => selectedId !== jobId),
+    );
+  }
+
   clearFilters(): void {
     this.form.reset({ mode: 'range', date: '', from: '', to: '', vehicleId: null });
     this.vehicleSearchTerm.set('');
     this.vehicleSearch.emit('');
+    this.selectedJobIds.set([]);
     this.dateRangeError.set(false);
     this.filtersChange.emit({});
   }
