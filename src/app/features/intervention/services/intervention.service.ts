@@ -55,6 +55,10 @@ export class InterventionService {
       params = params.set('vehicleId', filters.vehicle.id);
     }
 
+    if (filters?.jobIds?.length) {
+      params = params.set('jobIds', filters.jobIds.join(','));
+    }
+
     return this.http.get<PageResponse<InterventionHistoryResponse>>(`${this.url}/history/interventions`, { params });
   }
 }

@@ -64,6 +64,10 @@ export class BookingService {
       params = params.set('vehicleId', filters.vehicle.id);
     }
 
+    if (filters?.jobIds?.length) {
+      params = params.set('jobIds', filters.jobIds.join(','));
+    }
+
     return this.http.get<PageResponse<BookingResponse>>(`${this.adminUrl}/bookings`, { params });
   }
 
@@ -102,6 +106,10 @@ export class BookingService {
 
     if (filters?.vehicle) {
       params = params.set('vehicleId', filters.vehicle.id);
+    }
+
+    if (filters?.jobIds?.length) {
+      params = params.set('jobIds', filters.jobIds.join(','));
     }
 
     return this.http.get<PageResponse<BookingResponse>>(`${this.url}/history`, { params });
