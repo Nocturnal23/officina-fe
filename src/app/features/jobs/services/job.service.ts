@@ -41,4 +41,8 @@ export class JobService {
     return this.http.get<JobResponse>(`${this.url}/jobs/${jobId}`)
   }
 
+  getHistoryJobs(): Observable<JobResponse[]> {
+    return this.http.get<JobResponse[]>(`${this.url}/jobs/history-options`)
+  }
+
 }
