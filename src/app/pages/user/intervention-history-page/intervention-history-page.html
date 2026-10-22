@@ -24,6 +24,7 @@
             <app-list-filters
                 [filters]="currentListFilters()"
                 [vehicleOptions]="vehicles()"
+                [jobOptions]="jobs()"
                 (filtersChange)="filterState.applyFilters($event)"
                 (vehicleSearch)="filterState.searchVehicles($event)"
             />

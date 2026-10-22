@@ -11,6 +11,8 @@ import { ListFilters } from '../../../shared/components/list-filters/list-filter
 import { ListFilterCriteria } from '../../../models/list-filters.model';
 import { VehicleResponse } from '../../../models/vehicle.model';
 import { VehicleService } from '../../../features/vehicles/services/vehicle.service';
+import { JobService } from '../../../features/jobs/services/job.service';
+import { JobResponse } from '../../../models/job.model';
 
 
 export type AdminBookingAction = 'ACCEPT' | 'REFUSE' | 'ADVANCE';
@@ -26,6 +28,7 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
   private router = inject(Router);
   private bookingService = inject(BookingService);
   private vehicleService = inject(VehicleService);
+  private jobService = inject(JobService);
 
   readonly tabs = BOOKING_TABS;
 
@@ -34,6 +37,7 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
   statusCounts = signal<Record<string, number>>({})
   currentListFilters = signal<ListFilterCriteria>({});
   vehicles = signal<VehicleResponse[]>([]);
+  jobs = signal<JobResponse[] | null>(null);
   
   selectTab(status: BookingStatus): void {
     this.activeTab.set(status);
@@ -53,6 +57,10 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
         next: (vehicles) => this.vehicles.set(vehicles),
         error: (err) => console.error('Errore durante il recupero dei veicoli admin:', err),
       });
+    this.jobService.getHistoryJobs().subscribe({
+      next: (jobs) => this.jobs.set(jobs),
+      error: (err) => console.error('Errore durante il recupero dei lavori per lo storico:', err),
+    });
     this.loadData();
     this.loadCount();
   }

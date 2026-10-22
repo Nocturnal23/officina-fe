@@ -10,6 +10,8 @@ import { ListFilters } from '../../../shared/components/list-filters/list-filter
 import { VehicleService } from '../../../features/vehicles/services/vehicle.service';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { HistoryFilterState } from '../../../shared/state/history-filter-state';
+import { JobService } from '../../../features/jobs/services/job.service';
+import { JobResponse } from '../../../models/job.model';
 
 @Component({
   selector: 'app-history-page',
@@ -22,6 +24,7 @@ export class HistoryPage extends BasePaginatorComponent<BookingResponse> {
   private readonly bookingService = inject(BookingService);
   private readonly vehicleService = inject(VehicleService);
   private readonly authService = inject(AuthService);
+  private readonly jobService = inject(JobService);
   readonly filterState = new HistoryFilterState(
     inject(DestroyRef),
     () => {
@@ -40,10 +43,15 @@ export class HistoryPage extends BasePaginatorComponent<BookingResponse> {
   currentFilters = signal<BookingStatus[]>([BookingStatus.COMPLETED, BookingStatus.REFUSED]);
   currentListFilters = this.filterState.filters;
   vehicles = this.filterState.vehicleOptions;
+  jobs = signal<JobResponse[] | null>(null);
 
   BookingStatuBut = BookingStatus;
 
   ngOnInit() {
+    this.jobService.getHistoryJobs().subscribe({
+      next: (jobs) => this.jobs.set(jobs),
+      error: (err) => console.error('Errore durante il recupero dei lavori per lo storico:', err),
+    });
     this.loadData();
   }
 
