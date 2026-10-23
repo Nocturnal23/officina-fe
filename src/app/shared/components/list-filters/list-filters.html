@@ -6,19 +6,11 @@
     </div>
   </div>
 
-  <form
-    [formGroup]="form"
-    (ngSubmit)="applyFilters()"
-    class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-  >
+  <form [formGroup]="form" (ngSubmit)="applyFilters()" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <div class="flex flex-col gap-3 sm:col-span-2 lg:col-span-1">
       <label for="dateMode" class="text-sm font-semibold text-slate-700">Data</label>
-      <select
-        id="dateMode"
-        formControlName="mode"
-        (change)="dateRangeError.set(false)"
-        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-      >
+      <select id="dateMode" formControlName="mode" (change)="dateRangeError.set(false)"
+        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20">
         <option value="range">Intervallo</option>
         <option value="on">In questa data</option>
         <option value="before">Prima di</option>
@@ -26,303 +18,216 @@
       </select>
 
       @if (form.controls.mode.value === 'range') {
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div class="flex flex-col gap-1">
-            <label for="dateFrom" class="text-xs font-medium text-slate-600">Dal</label>
-            <input
-              id="dateFrom"
-              type="date"
-              formControlName="from"
-              required
-              (input)="dateRangeError.set(false)"
-              class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-            />
-          </div>
-          <div class="flex flex-col gap-1">
-            <label for="dateTo" class="text-xs font-medium text-slate-600">Al</label>
-            <input
-              id="dateTo"
-              type="date"
-              formControlName="to"
-              required
-              (input)="dateRangeError.set(false)"
-              class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-            />
-          </div>
-        </div>
-        @if (dateRangeError()) {
-          <p class="text-xs text-red-600" role="alert">
-            La data iniziale deve essere precedente o uguale a quella finale.
-          </p>
-        }
-      } @else {
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div class="flex flex-col gap-1">
-          <label for="filterDate" class="text-xs font-medium text-slate-600">Giorno</label>
-          <input
-            id="filterDate"
-            type="date"
-            formControlName="date"
-            required
-            class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-          />
+          <label for="dateFrom" class="text-xs font-medium text-slate-600">Dal</label>
+          <input id="dateFrom" type="date" formControlName="from" required (input)="dateRangeError.set(false)"
+            class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20" />
         </div>
+        <div class="flex flex-col gap-1">
+          <label for="dateTo" class="text-xs font-medium text-slate-600">Al</label>
+          <input id="dateTo" type="date" formControlName="to" required (input)="dateRangeError.set(false)"
+            class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20" />
+        </div>
+      </div>
+      @if (dateRangeError()) {
+      <p class="text-xs text-red-600" role="alert">
+        La data iniziale deve essere precedente o uguale a quella finale.
+      </p>
+      }
+      } @else {
+      <div class="flex flex-col gap-1">
+        <label for="filterDate" class="text-xs font-medium text-slate-600">Giorno</label>
+        <input id="filterDate" type="date" formControlName="date" required
+          class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20" />
+      </div>
       }
     </div>
 
     @if (vehicleOptions(); as availableVehicles) {
-      <div class="flex flex-col gap-3">
-        <label for="vehicleSearch" class="text-sm font-semibold text-slate-700">
-          Veicolo
-        </label>
-        @if (availableVehicles.length > 0) {
-          <input
-            id="vehicleSearch"
-            type="search"
-            placeholder="Cerca marca, modello o targa"
-            (input)="onVehicleSearch($event)"
-            class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-          />
-          <select
-            id="vehicle"
-            formControlName="vehicleId"
-            class="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-          >
-            <option [ngValue]="null">Tutti i veicoli</option>
+    <div class="flex min-w-0 flex-col gap-3">
+      <label for="vehicleSearch" class="text-sm font-semibold text-slate-700">
+        Veicolo
+      </label>
+
+      @if (availableVehicles.length > 0) {
+      <input id="vehicleSearch" type="search" placeholder="Cerca marca, modello o targa" [value]="vehicleSearchTerm()"
+        (input)="onVehicleSearch($event)"
+        class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20" />
+
+      <div class="relative" appClickOutside (appClickOutside)="closeMenu('vehicle')">
+        <button type="button" (click)="toggleMenu('vehicle')" [attr.aria-expanded]="activeMenu() === 'vehicle'"
+          aria-haspopup="listbox"
+          class="flex w-full items-center justify-between gap-3 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20">
+          <span class="truncate">
+            {{
+            vehicleOptions()?.find(
+            vehicle => vehicle.id === form.controls.vehicleId.value
+            )?.plate ?? 'Tutti i veicoli'
+            }}
+          </span>
+
+          <svg class="size-4 shrink-0 transition-transform" [class.rotate-180]="activeMenu() === 'vehicle'"
+            viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd"
+              d="M5.22 7.22a.75.75 0 0 1 1.06 0L10 10.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.28a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd" />
+          </svg>
+        </button>
+
+        @if (activeMenu() === 'vehicle') {
+        <div
+          class="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg">
+          <div class="max-h-72 overflow-y-auto p-2">
+            <button type="button" (click)="selectVehicle(null)"
+              class="w-full rounded-md px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50">
+              Tutti i veicoli
+            </button>
+
             @for (group of vehicleGroups(); track group.label) {
-              <optgroup [label]="group.label">
-                @for (vehicle of group.vehicles; track vehicle.id) {
-                  <option [ngValue]="vehicle.id">{{ vehicle.plate }}</option>
-                }
-              </optgroup>
+            <div class="mt-2 border-t border-slate-100 pt-2">
+              <p class="px-3 py-1 text-xs font-semibold text-slate-500">
+                {{ group.label }}
+              </p>
+
+              @for (vehicle of group.items; track vehicle.id) {
+              <button type="button" (click)="selectVehicle(vehicle)"
+                [class.bg-blue-50]="form.controls.vehicleId.value === vehicle.id"
+                [attr.aria-selected]="form.controls.vehicleId.value === vehicle.id" role="option"
+                class="w-full rounded-md px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50">
+                {{ vehicle.plate }}
+              </button>
+              }
+            </div>
             }
-          </select>
-          @if (vehicleGroups().length === 0) {
-            <p class="text-xs text-slate-500">Nessun veicolo corrisponde alla ricerca.</p>
-          }
-        } @else {
-          <p class="text-xs text-slate-500">Nessun veicolo disponibile.</p>
+
+            @if (vehicleGroups().length === 0) {
+            <p class="px-3 py-3 text-xs text-slate-500">
+              Nessun veicolo corrisponde alla ricerca.
+            </p>
+            }
+          </div>
+        </div>
         }
       </div>
+      } @else {
+      <p class="text-xs text-slate-500">
+        Nessun veicolo disponibile.
+      </p>
+      }
+    </div>
     }
 
     <fieldset class="flex min-w-0 flex-col gap-3">
       <legend class="text-sm font-semibold text-slate-700">Lavori</legend>
       @if (jobOptions() === null) {
-        <p class="text-xs text-slate-500">Caricamento lavori...</p>
+      <p class="text-xs text-slate-500">Caricamento lavori...</p>
       } @else if (sortedJobs().length > 0) {
-        <div class="max-h-48 overflow-y-auto rounded-lg border border-slate-200 p-3">
-          <div class="flex flex-col gap-2">
-            @for (job of sortedJobs(); track job.id) {
-              <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-                <input
-                  type="checkbox"
-                  [checked]="selectedJobIds().includes(job.id)"
-                  (change)="onJobSelectionChange(job.id, $event)"
-                  class="size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600/30"
-                />
-                <span>{{ job.type }}</span>
-                @if (job.deleted) {
-                  <span class="text-xs text-slate-500">(non più disponibile)</span>
-                }
-              </label>
+      <div class="max-h-48 overflow-y-auto rounded-lg border border-slate-200 p-3">
+        <div class="flex flex-col gap-2">
+          @for (job of sortedJobs(); track job.id) {
+          <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+            <input type="checkbox" [checked]="selectedJobIds().includes(job.id)"
+              (change)="onJobSelectionChange(job.id, $event)"
+              class="size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600/30" />
+            <span>{{ job.type }}</span>
+            @if (job.deleted) {
+            <span class="text-xs text-slate-500">(non più disponibile)</span>
             }
-          </div>
+          </label>
+          }
         </div>
-        <p class="text-xs text-slate-500">Puoi selezionare più lavori.</p>
+      </div>
+      <p class="text-xs text-slate-500">Puoi selezionare più lavori.</p>
       } @else {
-        <p class="text-xs text-slate-500">Nessun lavoro disponibile.</p>
+      <p class="text-xs text-slate-500">Nessun lavoro disponibile.</p>
       }
     </fieldset>
 
-    
-@if (showUserFilter()) {
-  <div class="flex min-w-0 flex-col gap-3">
-    <label for="userDropdown" class="text-sm font-semibold text-slate-700">
-      Utente
-    </label>
+    @if (showUserFilter()) {
+    <div class="flex min-w-0 flex-col gap-3">
+      <label for="userSearch" class="text-sm font-semibold text-slate-700">
+        Utente
+      </label>
 
-    @if (userOption(); as availableUsers) {
-        <div class="relative">
-          <!-- Pulsante che apre e chiude il menu -->
-          <button
-            id="userDropdown"
-            type="button"
-            [attr.aria-expanded]="userMenuOpen()"
-            aria-haspopup="listbox"
-            (click)="toggleUserMenu()"
-            class="flex w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-          >
-            <span class="truncate">
-              {{ selectedUserLabel() }}
-            </span>
+      @if (userOption(); as availableUsers) {
+      <input id="userSearch" type="search" placeholder="Cerca per anagrafica o email" [value]="userSearchTerm()"
+        (input)="onUserSearch($event)"
+        class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20" />
 
-            <svg
-              class="ml-2 size-4 shrink-0 transition-transform"
-              [class.rotate-180]="userMenuOpen()"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                d="m5 7 5 5 5-5"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </button>
+      <div class="relative" appClickOutside (appClickOutside)="closeMenu('user')">
+        <button type="button" (click)="toggleMenu('user')" [attr.aria-expanded]="activeMenu() === 'user'"
+          aria-haspopup="listbox"
+          class="flex w-full items-center justify-between gap-3 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20">
+          <span class="truncate">
+            {{ selectedUserLabel() }}
+          </span>
 
-          <!-- Menu a tendina -->
-          @if (userMenuOpen()) {
-            <div
-              class="absolute left-0 top-full z-50 mt-1 w-full min-w-0 rounded-lg border border-slate-200 bg-white shadow-lg"
-            >
-              <div class="p-2">
-                <input
-                  id="userSearch"
-                  type="search"
-                  placeholder="Cerca per anagrafica o email"
-                  [value]="userSearchTerm()"
-                  (input)="onUserSearch($event)"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-                />
-              </div>
+          <svg class="size-4 shrink-0 transition-transform" [class.rotate-180]="activeMenu() === 'user'"
+            viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd"
+              d="M5.22 7.22a.75.75 0 0 1 1.06 0L10 10.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.28a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd" />
+          </svg>
+        </button>
 
-              <div
-                class="max-h-64 overflow-y-auto px-2 pb-2"
-                role="listbox"
-                aria-label="Elenco utenti"
-              >
-                <!-- Opzione per rimuovere il filtro -->
-                <button
-                  type="button"
-                  role="option"
-                  [attr.aria-selected]="form.controls.userId.value === null"
-                  (click)="selectUser(null)"
-                  class="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-slate-50"
-                  [class.bg-blue-50]="form.controls.userId.value === null"
-                >
-                  Tutti gli utenti
-                </button>
+        @if (activeMenu() === 'user') {
+        <div
+          class="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg">
+          <div class="max-h-72 overflow-y-auto p-2">
+            <button type="button" (click)="selectUser(null)"
+              class="w-full rounded-md px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50">
+              Tutti gli utenti
+            </button>
 
-                @if (availableUsers.length > 0) {
-                  @for (group of userGroups(); track group.label) {
-                    <div class="pt-2">
-                      <p class="px-3 py-1 text-xs font-semibold text-slate-500">
-                        {{ group.label }}
-                      </p>
-
-                      @for (user of group.users; track user.id) {
-                        <button
-                          type="button"
-                          role="option"
-                          [attr.aria-selected]="form.controls.userId.value === user.id"
-                          (click)="selectUser(user)"
-                          class="w-full truncate rounded-md px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
-                          [class.bg-blue-50]="form.controls.userId.value === user.id"
-                        >
-                          {{ user.email }}
-                        </button>
-                      }
-                    </div>
-                  }
-              }
-
-                @if (userGroups().length === 0) {
-                  <p class="px-3 py-3 text-xs text-slate-500">
-                    Nessun utente corrisponde alla ricerca.
-                  </p>
-                }
-            </div>
-
-              <!-- Paginatore dentro il menu -->
-              @if (userTotalPages() > 1) {
-                <div class="border-t border-slate-200 p-2">
-                  <app-paginator
-                    [compact]="true"
-                    [currentPage]="userPage()"
-                    [totalPages]="userTotalPages()"
-                    [isLastPage]="userIsLastPage()"
-                    (next)="userPageChange.emit(userPage() + 1)"
-                    (prev)="userPageChange.emit(userPage() - 1)"
-                  />
-                </div>
-              }
-            </div>
-          }
-        </div>
-    } @else {
-      <p class="text-xs text-slate-500">Caricamento utenti...</p>
-    }
-  </div>
-}
-
-
-    <!-- @if (showUserFilter()) {
-      <div class="flex flex-col gap-3">
-        <label for="userSearch" class="text-sm font-semibold text-slate-700">
-          Utente
-        </label>
-
-        @if(userOption(); as availableUsers) {
-          @if (availableUsers.length > 0) {
-            <input
-              id="userSearch"
-              type="search"
-              placeholder="Cerca per anagrafica o email"
-              (input)="onUserSearch($event)"
-              class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-            />
-            <select
-              id="user"
-              formControlName="userId"
-              class="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
-            >
-            <option [ngValue]="null">Tutti gli utenti</option>
             @for (group of userGroups(); track group.label) {
-                <optgroup [label]="group.label">
-                  @for (user of group.users; track user.id) {
-                    <option [ngValue]="user.id">{{ user.email }}</option>
-                  }
-                </optgroup>
+            <div class="mt-2 border-t border-slate-100 pt-2">
+              <p class="px-3 py-1 text-xs font-semibold text-slate-500">
+                {{ group.label }}
+              </p>
+
+              @for (user of group.items; track user.id) {
+              <button type="button" (click)="selectUser(user)" [class.bg-blue-50]="form.controls.userId.value === user.id"
+                [attr.aria-selected]="form.controls.userId.value === user.id" role="option"
+                class="w-full rounded-md px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50">
+                {{ user.email }}
+              </button>
               }
-            </select>
-            @if (userTotalPages() > 1) {
-          <app-paginator
-            [compact]="true"
-            [currentPage]="userPage()"
-            [totalPages]="userTotalPages()"
-            [isLastPage]="userIsLastPage()"
-            (next)="userPageChange.emit(userPage() + 1)"
-            (prev)="userPageChange.emit(userPage() - 1)"
-          />
-        }
-            @if (userGroups().length === 0) {
-              <p class="text-xs text-slate-500">Nessun utente corrisponde alla ricerca.</p>
+            </div>
             }
-          } @else {
-            <p class="text-xs text-slate-500">Nessun utente registrato.</p>
-          }
-        } @else {
-          <p class="text-xs text-slate-500">Caricamento utenti...</p>
+
+            @if (userGroups().length === 0) {
+            <p class="px-3 py-3 text-xs text-slate-500">
+              Nessun utente corrisponde alla ricerca.
+            </p>
+            }
+
+            @if (userTotalPages() > 1) {
+            <div class="mt-2 border-t border-slate-100 pt-3">
+              <app-paginator [compact]="true" [currentPage]="userPage()" [totalPages]="userTotalPages()"
+                [isLastPage]="userIsLastPage()" (next)="userPageChange.emit(userPage() + 1)"
+                (prev)="userPageChange.emit(userPage() - 1)" />
+            </div>
+            }
+          </div>
+        </div>
         }
-        
-      </div> 
-    } -->
+      </div>
+      } @else {
+      <p class="text-xs text-slate-500">
+        Caricamento utenti...
+      </p>
+      }
+    </div>
+    }
 
     <div class="col-span-full mt-1 flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-4">
-      <button
-        type="button"
-        (click)="clearFilters()"
-        class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-600/30"
-      >
+      <button type="button" (click)="clearFilters()"
+        class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-600/30">
         Azzera
       </button>
-      <button
-        type="submit"
-        class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600/40"
-      >
+      <button type="submit"
+        class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600/40">
         Applica filtri
       </button>
     </div>
