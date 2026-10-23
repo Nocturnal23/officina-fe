@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Paginator } from '../../../shared/components/paginator/paginator';
 import { InterventionHistoryResponse } from '../../../models/intervention.models';
@@ -43,6 +43,8 @@ export class InterventionHistoryPage extends BasePaginatorComponent<Intervention
   currentListFilters = this.filterState.filters;
   vehicles = this.filterState.vehicleOptions;
   jobs = signal<JobResponse[] | null>(null);
+
+  isAdmin = input(false);
   
   BookingStatuBut = BookingStatus;
 
@@ -59,7 +61,8 @@ export class InterventionHistoryPage extends BasePaginatorComponent<Intervention
       this.currentPage(), 
       this.pageSize(),
       this.currentFilters(),
-      this.currentListFilters()
+      this.currentListFilters(),
+      this.isAdmin(),
     ).subscribe({
         next: (response) => this.updatePaginationState(response),
         error: (err) => console.error('Errore nel recupero dello storico interventi:', err)
