@@ -9,9 +9,16 @@ export interface VehicleFilter {
     plate: string;
 }
 
+export interface UserFilter {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+}
+
 export interface ListFilterCriteria {
     date?: DateFilter;
-    userId?: number;
     vehicle?: VehicleFilter;
     jobIds?: number[];
+    user?: UserFilter;
 }
