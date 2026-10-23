@@ -11,6 +11,7 @@ export class Paginator {
   currentPage = input.required<number>();
   totalPages = input.required<number>();
   isLastPage = input.required<boolean>();
+  compact = input(false);
 
   next = output<void>();
   prev = output<void>();
