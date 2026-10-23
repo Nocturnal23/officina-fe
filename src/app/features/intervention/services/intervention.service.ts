@@ -24,18 +24,14 @@ export class InterventionService {
     return this.http.delete<void>(`${this.adminUrl}/intervention/${interventionId}`);
   }
 
-  updateIntervention(interventionId: number, request: InterventionHistoryRequest): Observable<InterventionHistoryResponse>{
+  updateIntervention(interventionId: number, request: InterventionHistoryRequest): Observable<InterventionHistoryResponse> {
     return this.http.post<InterventionHistoryResponse>(`${this.adminUrl}/interventions/${interventionId}`, request);
   }
 
-  getInterventionHistory(page: number, size: number, statuses?: BookingStatus[], filters?: ListFilterCriteria): Observable<PageResponse<InterventionHistoryResponse>> {
+  getInterventionHistory(page: number, size: number, statuses?: BookingStatus[], filters?: ListFilterCriteria, isAdmin: boolean = false): Observable<PageResponse<InterventionHistoryResponse>> {
     let params = new HttpParams()
       .set('page', page)
       .set('size', size);
-
-    if (statuses && statuses.length > 0) {
-      params = params.set('statuses', statuses.join(','));
-    }
 
     if (statuses && statuses.length > 0) {
       params = params.set('statuses', statuses.join(','));
@@ -59,6 +55,13 @@ export class InterventionService {
       params = params.set('jobIds', filters.jobIds.join(','));
     }
 
-    return this.http.get<PageResponse<InterventionHistoryResponse>>(`${this.url}/history/interventions`, { params });
+    if (!isAdmin) {
+      return this.http.get<PageResponse<InterventionHistoryResponse>>(`${this.url}/history/interventions`, { params });
+    } else {
+      if (filters?.user) {
+        params = params.set('userId', filters.user.id);
+      }
+      return this.http.get<PageResponse<InterventionHistoryResponse>>(`${this.adminUrl}/interventions`, { params });
+    }
   }
 }
