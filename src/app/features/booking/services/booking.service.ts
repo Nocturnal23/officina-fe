@@ -68,6 +68,10 @@ export class BookingService {
       params = params.set('jobIds', filters.jobIds.join(','));
     }
 
+    if (filters?.user) {
+      params = params.set('userId', filters.user.id);
+    }
+
     return this.http.get<PageResponse<BookingResponse>>(`${this.adminUrl}/bookings`, { params });
   }
 
