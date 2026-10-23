@@ -56,6 +56,12 @@
                     [vehicleOptions]="vehicles()"
                     [jobOptions]="jobs()"
                     (filtersChange)="onListFiltersChange($event)" 
+                    [showUserFilter]="true"
+                    [userOption]="userOptions.options()"
+                    [userPage]="userOptions.page()"
+                    [userTotalPages]="userOptions.totalPages()"
+                    (userSearch)="onUserSearch($event)"
+                    (userPageChange)="onUserPageChange($event)"
                 />
             }
 
