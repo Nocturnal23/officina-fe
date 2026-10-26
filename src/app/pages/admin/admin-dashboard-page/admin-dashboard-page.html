@@ -50,13 +50,24 @@
         </div>
 
         <div class="flex flex-col gap-4 w-full max-w-4xl mx-auto">
+            @if( activeTab() === 'COMPLETED' || activeTab() === 'REFUSED'){
+                <app-list-filters 
+                    [filters]="currentListFilters()" 
+                    [vehicleOptions]="vehicles()"
+                    [jobOptions]="jobs()"
+                    (filtersChange)="onListFiltersChange($event)" 
+                    [showUserFilter]="true"
+                    [userOption]="userOptions.options()"
+                    [userPage]="userOptions.page()"
+                    [userTotalPages]="userOptions.totalPages()"
+                    (userSearch)="onUserSearch($event)"
+                    (userPageChange)="onUserPageChange($event)"
+                />
+            }
+
             @for (item of dataList(); track item.id) {
-            <app-booking-card-view
-                [booking]="item"
-                [isAdmin]="true"
-                (statusChange)="handleStatusChange($event)"
-                (delete)="deleteBooking($event)"
-            />
+            <app-booking-card-view [booking]="item" [isAdmin]="true" (statusChange)="handleStatusChange($event)"
+                (delete)="deleteBooking($event)" />
             } @empty {
             <div class="col-span-full text-center py-10 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50">
                 <p class="text-xs text-slate-400">Nessuna prenotazione presente per questo stato.</p>
@@ -65,17 +76,12 @@
         </div>
 
         @if (totalPages() > 1) {
-            <div class="w-full max-w-4xl mx-auto">
-                <app-paginator
-                    [currentPage]="currentPage()" 
-                    [totalPages]="totalPages()" 
-                    [isLastPage]="isLastPage()"
-                    (next)="nextPage()"
-                    (prev)="prevPage()"
-                >
-                </app-paginator>     
-            </div>
-            
+        <div class="w-full max-w-4xl mx-auto">
+            <app-paginator [currentPage]="currentPage()" [totalPages]="totalPages()" [isLastPage]="isLastPage()"
+                (next)="nextPage()" (prev)="prevPage()">
+            </app-paginator>
+        </div>
+
         }
     </div>
 </div>
