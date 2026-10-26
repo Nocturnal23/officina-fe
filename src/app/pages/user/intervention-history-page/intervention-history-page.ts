@@ -13,6 +13,9 @@ import { VehicleService } from '../../../features/vehicles/services/vehicle.serv
 import { HistoryFilterState } from '../../../shared/state/history-filter-state';
 import { JobService } from '../../../features/jobs/services/job.service';
 import { JobResponse } from '../../../models/job.model';
+import { UserService } from '../../../features/user/services/user.service';
+import { PagedOptionsState } from '../../../shared/state/paged-options-state';
+import { UserResponse } from '../../../models/user.model';
 
 @Component({
   selector: 'app-intervention-history-page',
@@ -26,51 +29,84 @@ export class InterventionHistoryPage extends BasePaginatorComponent<Intervention
   private readonly authService = inject(AuthService);
   private readonly vehicleService = inject(VehicleService);
   private readonly jobService = inject(JobService);
-  readonly filterState = new HistoryFilterState(
-    inject(DestroyRef),
-    () => {
-      const userId = this.authService.currentUser()?.id;
-      return userId === undefined ? null : this.vehicleService.getVehiclesByUser(userId);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly userService = inject(UserService);
+
+  readonly userOptions = new PagedOptionsState<UserResponse>(
+    this.destroyRef,
+    (page, size, query) =>
+      this.userService.getAllUsers(page, size, query || undefined),
+    {
+      errorMessage: 'Errore durante il recupero degli utenti:',
     },
-    () => {
-      this.currentPage.set(0);
-      this.loadData();
-    },
-    'Errore durante il recupero dei veicoli utente:',
   );
 
   currentFilters = signal<BookingStatus[]>([BookingStatus.COMPLETED, BookingStatus.REFUSED]);
-  currentListFilters = this.filterState.filters;
-  vehicles = this.filterState.vehicleOptions;
   jobs = signal<JobResponse[] | null>(null);
+  filterState!: HistoryFilterState;
+  currentListFilters!: HistoryFilterState['filters'];
+  vehicles!: HistoryFilterState['vehicleOptions'];
 
   isAdmin = input(false);
-  
+
   BookingStatuBut = BookingStatus;
 
   ngOnInit() {
+    this.filterState = new HistoryFilterState(
+      this.destroyRef,
+      () => {
+        if (this.isAdmin()) {
+          return this.vehicleService.getAllVehicles();
+        }
+
+        const userId = this.authService.currentUser()?.id;
+        return userId == null
+          ? null
+          : this.vehicleService.getVehiclesByUser(userId);
+      },
+      () => {
+        this.currentPage.set(0);
+        this.loadData();
+      },
+      'Errore durante il recupero dei veicoli:',
+    );
+
+    this.currentListFilters = this.filterState.filters;
+    this.vehicles = this.filterState.vehicleOptions;
+
+    if (this.isAdmin()) {
+      this.userOptions.load();
+    }
+
     this.jobService.getHistoryJobs().subscribe({
       next: (jobs) => this.jobs.set(jobs),
-      error: (err) => console.error('Errore durante il recupero dei lavori per lo storico:', err),
+      error: (err) =>
+        console.error('Errore durante il recupero dei lavori per lo storico:', err),
     });
+
     this.loadData();
   }
 
   protected loadData(): void {
     this.interventionService.getInterventionHistory(
-      this.currentPage(), 
+      this.currentPage(),
       this.pageSize(),
       this.currentFilters(),
       this.currentListFilters(),
       this.isAdmin(),
     ).subscribe({
-        next: (response) => this.updatePaginationState(response),
-        error: (err) => console.error('Errore nel recupero dello storico interventi:', err)
-      });
+      next: (response) => this.updatePaginationState(response),
+      error: (err) => console.error('Errore nel recupero dello storico interventi:', err)
+    });
   }
 
   goBackDashboard(): void {
-    this.router.navigate(['user/dashboard']);
+    if (this.isAdmin()) {
+      this.router.navigate(['admin/dashboard']);
+    } else {
+      this.router.navigate(['user/dashboard']);
+    }
+
   }
 
   setFilter(status: BookingStatus | 'ALL') {
@@ -80,8 +116,16 @@ export class InterventionHistoryPage extends BasePaginatorComponent<Intervention
       this.currentFilters.set([status]);
     }
 
-    this.currentPage.set(0); 
+    this.currentPage.set(0);
     this.loadData();
+  }
+
+  onUserSearch(query: string) {
+    this.userOptions.search(query);
+  }
+
+  onUserPageChange(page: number) {
+    this.userOptions.goToPage(page);
   }
 
 }

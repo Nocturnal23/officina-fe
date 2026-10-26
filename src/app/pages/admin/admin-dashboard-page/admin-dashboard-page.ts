@@ -50,8 +50,6 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
   currentListFilters = signal<ListFilterCriteria>({});
   vehicles = signal<VehicleResponse[]>([]);
   jobs = signal<JobResponse[] | null>(null);
-  users = signal<UserResponse[] | null>(null);
-  userPage = signal(0);
 
   selectTab(status: BookingStatus): void {
     this.activeTab.set(status);
@@ -162,4 +160,9 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
   onUserPageChange(page: number): void {
     this.userOptions.goToPage(page);
   }
+
+  openInterventionHistory(): void {
+        this.closeManager();
+        this.router.navigate(['admin/record'])
+    }
 }

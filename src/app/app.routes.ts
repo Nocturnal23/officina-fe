@@ -14,8 +14,9 @@ export const routes: Routes = [
     { path: 'admin/dashboard', component: AdminDashboardPage, canActivate: [authGuard] },
     { path: 'user/dashboard', component: UserDashboardPage, canActivate: [authGuard] },
     { path: 'user/history', component: HistoryPage, canActivate: [authGuard] },
-    { path: 'user/interventionhistory', component: InterventionHistoryPage, canActivate: [authGuard] },
+    { path: 'user/interventionhistory', component: InterventionHistoryPage, canActivate: [authGuard], data: { isAdmin: false } },
     { path: 'admin/services', component: ServicesList },
+    { path: 'admin/record', component: InterventionHistoryPage, canActivate: [authGuard], data: { isAdmin: true } },
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     
 ];
