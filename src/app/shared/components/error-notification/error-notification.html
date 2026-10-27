@@ -1,0 +1,8 @@
+@if (message(); as errorMessage) {
+  <section class="error-notification" role="alert" aria-live="assertive">
+    <p>{{ errorMessage }}</p>
+    <button type="button" aria-label="Chiudi notifica di errore" (click)="dismiss()">
+      Chiudi
+    </button>
+  </section>
+}
