@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BookingRequest, BookingResponse, BookingStatus } from '../../../models/booking.model';
@@ -8,124 +8,143 @@ import { VehicleResponse } from '../../../models/vehicle.model';
 
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
 
 export class BookingService {
-  private http = inject(HttpClient);
-  private url = 'http://localhost:8080/api/users/me'
-  private adminUrl = 'http://localhost:8080/api/admin'
+    private http = inject(HttpClient);
+    private url = 'http://localhost:8080/api/users/me'
+    private adminUrl = 'http://localhost:8080/api/admin'
 
-  createBooking(vehicleId: number, request: BookingRequest): Observable<BookingResponse> {
-    return this.http.post<BookingResponse>(`${this.url}/vehicles/${vehicleId}/bookings`, request);
-  }
-
-  deleteBooking(bookingId: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/bookings/${bookingId}`)
-  }
-
-  getBookings(page: number, size: number, statuses?: BookingStatus[]): Observable<PageResponse<BookingResponse>> {
-    let params = new HttpParams()
-      .set('page', page)
-      .set('size', size);
-
-    if (statuses && statuses.length > 0) {
-      params = params.set('statuses', statuses.join(','));
+    createBooking(vehicleId: number, request: BookingRequest, context?: HttpContext): Observable<BookingResponse> {
+        return this.http.post<BookingResponse>(
+            `${this.url}/vehicles/${vehicleId}/bookings`,
+            request,
+            { context }
+        );
     }
 
-    return this.http.get<PageResponse<BookingResponse>>(`${this.url}/bookings`, { params });
-  }
-
-  getAllBookings(
-    page: number,
-    size: number,
-    statuses?: BookingStatus[],
-    filters?: ListFilterCriteria
-  ): Observable<PageResponse<BookingResponse>> {
-    let params = new HttpParams()
-      .set('page', page)
-      .set('size', size);
-
-    if (statuses && statuses.length > 0) {
-      params = params.set('statuses', statuses.join(','));
+    deleteBooking(bookingId: number, context?: HttpContext): Observable<void> {
+        return this.http.delete<void>(
+            `${this.url}/bookings/${bookingId}`,
+            { context }
+        )
     }
 
-    if (filters?.date) {
-      params = params.set('dateMode', filters.date.mode);
+    getBookings(page: number, size: number, statuses?: BookingStatus[], context?: HttpContext): Observable<PageResponse<BookingResponse>> {
+        let params = new HttpParams()
+            .set('page', page)
+            .set('size', size);
 
-      if (filters.date.mode === 'range') {
-        params = params.set('dateFrom', filters.date.from).set('dateTo', filters.date.to);
-      } else {
-        params = params.set('date', filters.date.date);
-      }
+        if (statuses && statuses.length > 0) {
+            params = params.set('statuses', statuses.join(','));
+        }
+
+        return this.http.get<PageResponse<BookingResponse>>(
+            `${this.url}/bookings`, { params, context },
+        );
     }
 
-    if (filters?.vehicle) {
-      params = params.set('vehicleId', filters.vehicle.id);
+    getAllBookings(
+        page: number,
+        size: number,
+        statuses?: BookingStatus[],
+        filters?: ListFilterCriteria,
+        context?: HttpContext
+    ): Observable<PageResponse<BookingResponse>> {
+        let params = new HttpParams()
+            .set('page', page)
+            .set('size', size);
+
+        if (statuses && statuses.length > 0) {
+            params = params.set('statuses', statuses.join(','));
+        }
+
+        if (filters?.date) {
+            params = params.set('dateMode', filters.date.mode);
+
+            if (filters.date.mode === 'range') {
+                params = params.set('dateFrom', filters.date.from).set('dateTo', filters.date.to);
+            } else {
+                params = params.set('date', filters.date.date);
+            }
+        }
+
+        if (filters?.vehicle) {
+            params = params.set('vehicleId', filters.vehicle.id);
+        }
+
+        if (filters?.jobIds?.length) {
+            params = params.set('jobIds', filters.jobIds.join(','));
+        }
+
+        if (filters?.user) {
+            params = params.set('userId', filters.user.id);
+        }
+
+        return this.http.get<PageResponse<BookingResponse>>(`${this.adminUrl}/bookings`, { params, context });
     }
 
-    if (filters?.jobIds?.length) {
-      params = params.set('jobIds', filters.jobIds.join(','));
+    updateBookingStatus(bookingId: number, status: BookingStatus, context?: HttpContext): Observable<BookingResponse> {
+        return this.http.patch<BookingResponse>(
+            `${this.adminUrl}/bookings/${bookingId}/status`,
+            null,
+            { params: { status }, context }
+        );
     }
 
-    if (filters?.user) {
-      params = params.set('userId', filters.user.id);
+    refuseBooking(bookingId: number, context?: HttpContext): Observable<void> {
+        return this.http.delete<void>(`${this.adminUrl}/bookings/${bookingId}`, { context });
     }
 
-    return this.http.get<PageResponse<BookingResponse>>(`${this.adminUrl}/bookings`, { params });
-  }
+    getHistory(
+        page: number,
+        size: number,
+        statuses?: BookingStatus[],
+        filters?: ListFilterCriteria,
+        context?: HttpContext
+    ): Observable<PageResponse<BookingResponse>> {
+        let params = new HttpParams()
+            .set('page', page)
+            .set('size', size);
 
-  updateBookingStatus(bookingId: number, status: BookingStatus): Observable<BookingResponse> {
-    return this.http.patch<BookingResponse>(`${this.adminUrl}/bookings/${bookingId}/status`, null, { params: { status } }
-    );
-  }
+        if (statuses && statuses.length > 0) {
+            params = params.set('statuses', statuses.join(','));
+        }
 
-  refuseBooking(bookingId: number): Observable<void> {
-    return this.http.delete<void>(`${this.adminUrl}/bookings/${bookingId}`)
-  }
+        if (filters?.date) {
+            params = params.set('dateMode', filters.date.mode);
 
-  getHistory(
-    page: number,
-    size: number,
-    statuses?: BookingStatus[],
-    filters?: ListFilterCriteria
-  ): Observable<PageResponse<BookingResponse>> {
-    let params = new HttpParams()
-      .set('page', page)
-      .set('size', size);
+            if (filters.date.mode === 'range') {
+                params = params.set('dateFrom', filters.date.from).set('dateTo', filters.date.to);
+            } else {
+                params = params.set('date', filters.date.date);
+            }
+        }
 
-    if (statuses && statuses.length > 0) {
-      params = params.set('statuses', statuses.join(','));
+        if (filters?.vehicle) {
+            params = params.set('vehicleId', filters.vehicle.id);
+        }
+
+        if (filters?.jobIds?.length) {
+            params = params.set('jobIds', filters.jobIds.join(','));
+        }
+
+        return this.http.get<PageResponse<BookingResponse>>(
+            `${this.url}/history`, { params, context }
+        );
     }
 
-    if (filters?.date) {
-      params = params.set('dateMode', filters.date.mode);
-
-      if (filters.date.mode === 'range') {
-        params = params.set('dateFrom', filters.date.from).set('dateTo', filters.date.to);
-      } else {
-        params = params.set('date', filters.date.date);
-      }
+    getSumary(context?: HttpContext): Observable<Record<BookingStatus, number>> {
+        return this.http.get<Record<BookingStatus, number>>(
+            `${this.adminUrl}/bookings/summary`,
+            { context },
+        );
     }
 
-    if (filters?.vehicle) {
-      params = params.set('vehicleId', filters.vehicle.id);
+    searchVehiclesInHistory(query: string, context?: HttpContext): Observable<VehicleResponse[]> {
+        const params = new HttpParams().set('query', query.trim());
+
+        return this.http.get<VehicleResponse[]>(`${this.url}/history/vehicle`, { params, context });
     }
-
-    if (filters?.jobIds?.length) {
-      params = params.set('jobIds', filters.jobIds.join(','));
-    }
-
-    return this.http.get<PageResponse<BookingResponse>>(`${this.url}/history`, { params });
-  }
-
-  getSumary(): Observable<Record<BookingStatus, number>> {
-    return this.http.get<Record<BookingStatus, number>>(`${this.adminUrl}/bookings/summary`);
-  }
-
-  searchVehiclesInHistory(query: string): Observable<VehicleResponse[]> {
-    const params = new HttpParams().set('query', query.trim());
-
-    return this.http.get<VehicleResponse[]>(`${this.url}/history/vehicle`, { params });
-  }
 }

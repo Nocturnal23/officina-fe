@@ -1,6 +1,6 @@
 import { BookingStatus } from "./booking.model";
 
-export interface InterventionHistoryRequest{
+export interface InterventionHistoryRequest {
     cost?: number | null;
     notes?: string | null;
     completedAt?: string;
@@ -10,7 +10,7 @@ export interface InterventionHistoryRequest{
     status: BookingStatus;
 }
 
-export interface InterventionHistoryResponse{
+export interface InterventionHistoryResponse {
     id: number;
     interventionKilometers: number | null;
     cost: number;
@@ -19,5 +19,5 @@ export interface InterventionHistoryResponse{
     vehicleId: number;
     bookingId: number;
     jobsIds: number[];
-    status: BookingStatus;    
+    status: BookingStatus;
 }

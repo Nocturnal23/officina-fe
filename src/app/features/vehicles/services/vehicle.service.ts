@@ -1,40 +1,40 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { VehicleResponse, VehicleRequest } from '../../../models/vehicle.model';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
 
 export class VehicleService {
-  private http = inject(HttpClient);
-  private url = 'http://localhost:8080/api/users/me/vehicles';
-  private urlAdmin = 'http://localhost:8080/api/admin/vehicles';
+    private http = inject(HttpClient);
+    private url = 'http://localhost:8080/api/users/me/vehicles';
+    private urlAdmin = 'http://localhost:8080/api/admin/vehicles';
 
-  getVehiclesByUser(userId: number): Observable<VehicleResponse[]> {
-    return this.http.get<VehicleResponse[]>(this.url);
-  }
-
-  getAllVehicles(plate?: string): Observable<VehicleResponse[]> {
-    let params = new HttpParams();
-
-    if (plate?.trim()) {
-      params = params.set('plate', plate.trim());
+    getVehiclesByUser(userId: number, context?: HttpContext): Observable<VehicleResponse[]> {
+        return this.http.get<VehicleResponse[]>(this.url, { context });
     }
 
-    return this.http.get<VehicleResponse[]>(this.urlAdmin, { params });
-  }
+    getAllVehicles(plate?: string, context?: HttpContext): Observable<VehicleResponse[]> {
+        let params = new HttpParams();
 
-  deleteVehicle(userId: number, vehicleId: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/${vehicleId}`);
-  }
+        if (plate?.trim()) {
+            params = params.set('plate', plate.trim());
+        }
 
-  createVehicle(userId: number, vehicleData: VehicleRequest): Observable<VehicleResponse> {
-    return this.http.post<VehicleResponse>(this.url, vehicleData);
-  }
+        return this.http.get<VehicleResponse[]>(this.urlAdmin, { params, context });
+    }
 
-  getVehicleById(vehicleId: number): Observable<VehicleResponse> {
-    return this.http.get<VehicleResponse>(`${this.url}/${vehicleId}`);
-  }
+    deleteVehicle(userId: number, vehicleId: number, context?: HttpContext): Observable<void> {
+        return this.http.delete<void>(`${this.url}/${vehicleId}`, { context });
+    }
+
+    createVehicle(userId: number, vehicleData: VehicleRequest, context?: HttpContext): Observable<VehicleResponse> {
+        return this.http.post<VehicleResponse>(this.url, vehicleData, { context });
+    }
+
+    getVehicleById(vehicleId: number, context?: HttpContext): Observable<VehicleResponse> {
+        return this.http.get<VehicleResponse>(`${this.url}/${vehicleId}`, { context });
+    }
 }

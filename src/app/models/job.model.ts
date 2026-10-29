@@ -11,5 +11,5 @@ export interface JobResponse {
 }
 
 export interface JobAvailabilityRequest {
-  deleted: boolean;
+    deleted: boolean;
 }

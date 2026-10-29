@@ -1,48 +1,52 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { JobResponse, JobRequest, JobAvailabilityRequest } from '../../../models/job.model';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
 export class JobService {
-  private http = inject(HttpClient);
-  private url = 'http://localhost:8080/api';
+    private http = inject(HttpClient);
+    private url = 'http://localhost:8080/api';
 
-  getJobs(): Observable<JobResponse[]> {
-    return this.http.get<JobResponse[]>(`${this.url}/jobs`);
-  } 
+    getJobs(context?: HttpContext): Observable<JobResponse[]> {
+        return this.http.get<JobResponse[]>(
+            `${this.url}/jobs`,
+            { context }
+        );
+    }
 
-  createJobs(request: JobRequest): Observable<JobResponse> {
-    return this.http.post<JobResponse>(`${this.url}/admin/jobs`, request);
-  }
+    createJobs(request: JobRequest, context?: HttpContext): Observable<JobResponse> {
+        return this.http.post<JobResponse>(`${this.url}/admin/jobs`, request, { context });
+    }
 
-  deleteJob(jobId: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/admin/jobs/${jobId}`)
-  }
+    deleteJob(jobId: number, context?: HttpContext): Observable<void> {
+        return this.http.delete<void>(`${this.url}/admin/jobs/${jobId}`, { context })
+    }
 
-  updateJob(jobId: number, changes: Partial<JobRequest>): Observable<JobResponse> {
-    return this.http.patch<JobResponse>(`${this.url}/admin/jobs/${jobId}`, changes);
-  }
+    updateJob(jobId: number, changes: Partial<JobRequest>, context?: HttpContext): Observable<JobResponse> {
+        return this.http.patch<JobResponse>(`${this.url}/admin/jobs/${jobId}`, changes, { context });
+    }
 
-  updateAvailability(jobId: number, request: JobAvailabilityRequest): Observable<JobResponse> {
-    return this.http.patch<JobResponse>(
-      `${this.url}/admin/jobs/${jobId}/availability`,
-      request
-    );
-  }
+    updateAvailability(jobId: number, request: JobAvailabilityRequest, context?: HttpContext): Observable<JobResponse> {
+        return this.http.patch<JobResponse>(
+            `${this.url}/admin/jobs/${jobId}/availability`,
+            request,
+            { context }
+        );
+    }
 
-  getAdminJobs(): Observable<JobResponse[]> {
-    return this.http.get<JobResponse[]>(`${this.url}/admin/jobs`);
-  }
+    getAdminJobs(context?: HttpContext): Observable<JobResponse[]> {
+        return this.http.get<JobResponse[]>(`${this.url}/admin/jobs`, { context });
+    }
 
-  getJobsById(jobId: number): Observable<JobResponse> {
-    return this.http.get<JobResponse>(`${this.url}/jobs/${jobId}`)
-  }
+    getJobsById(jobId: number, context?: HttpContext): Observable<JobResponse> {
+        return this.http.get<JobResponse>(`${this.url}/jobs/${jobId}`, { context });
+    }
 
-  getHistoryJobs(): Observable<JobResponse[]> {
-    return this.http.get<JobResponse[]>(`${this.url}/jobs/history-options`)
-  }
+    getHistoryJobs(context?: HttpContext): Observable<JobResponse[]> {
+        return this.http.get<JobResponse[]>(`${this.url}/jobs/history-options`, { context })
+    }
 
 }
