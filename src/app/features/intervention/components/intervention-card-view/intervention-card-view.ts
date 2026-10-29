@@ -5,55 +5,62 @@ import { InterventionHistoryResponse } from '../../../../models/intervention.mod
 import { VehicleResponse } from '../../../../models/vehicle.model';
 import { VehicleService } from '../../../vehicles/services/vehicle.service';
 import { JobService } from '../../../jobs/services/job.service';
+import { withHttpErrorMessage } from '../../../../core/interceptors/http-error.cotext';
 
 
 @Component({
-  selector: 'app-intervention-card-view',
-  imports: [DatePipe],
-  templateUrl: './intervention-card-view.html',
-  styleUrl: './intervention-card-view.css',
+    selector: 'app-intervention-card-view',
+    imports: [DatePipe],
+    templateUrl: './intervention-card-view.html',
+    styleUrl: './intervention-card-view.css',
 })
 export class InterventionCardView {
-  private vehicle = inject(VehicleService);
-  private job = inject(JobService);
+    private vehicle = inject(VehicleService);
+    private job = inject(JobService);
 
-  intervention = input.required<InterventionHistoryResponse>();
+    intervention = input.required<InterventionHistoryResponse>();
 
-  vehicleDetails = signal<VehicleResponse | null>(null);
-  jobDetails = signal<string[]>([]);
+    vehicleDetails = signal<VehicleResponse | null>(null);
+    jobDetails = signal<string[]>([]);
 
-  currentStatusMeta = computed(() =>
-    BOOKING_STATUS_CONFIG[this.intervention().status] ?? {
-      label: this.intervention().status,
-      badgeClass: 'border-slate-200 bg-slate-50 text-slate-700'
+    currentStatusMeta = computed(() =>
+        BOOKING_STATUS_CONFIG[this.intervention().status] ?? {
+            label: this.intervention().status,
+            badgeClass: 'border-slate-200 bg-slate-50 text-slate-700'
+        }
+    );
+
+    ngOnInit(): void {
+        console.log(this.intervention());
+        this.retrieveVehicleInfo();
+        this.retrieveJobInfo();
     }
-  );
 
-  ngOnInit(): void{
-    console.log(this.intervention());
-    this.retrieveVehicleInfo();
-    this.retrieveJobInfo();
-  }
-
-  private retrieveVehicleInfo(): void {
-    const id = this.intervention().vehicleId;
-    if (id) {
-      this.vehicle.getVehicleById(id).subscribe({
-        next: (res) => this.vehicleDetails.set(res),
-        error: (err) => console.error('Errore recupero veicolo:', err)
-      });
+    private retrieveVehicleInfo(): void {
+        const id = this.intervention().vehicleId;
+        if (id) {
+            this.vehicle.getVehicleById(
+                id,
+                withHttpErrorMessage('Non è stato possibile caricare i dettagli del veicolo dell’intervento.', 'vehicle-details'),
+            ).subscribe({
+                next: (res) => this.vehicleDetails.set(res),
+                error: () => { },
+            });
+        }
     }
-  }
 
-  private retrieveJobInfo(): void {
-    const id = this.intervention().jobsIds;
-    for (var val of id) {
-      this.job.getJobsById(val).subscribe({
-        next: (job) => {
-          this.jobDetails.update((jobs) => [...jobs, job.type]);
-        },
-        error: (err) => console.error('Errore recupero veicolo:', err)
-      });
+    private retrieveJobInfo(): void {
+        const id = this.intervention().jobsIds;
+        for (var val of id) {
+            this.job.getJobsById(
+                val,
+                withHttpErrorMessage('Non è stato possibile caricare i dettagli dei servizi dell’intervento.', 'service-details'),
+            ).subscribe({
+                next: (job) => {
+                    this.jobDetails.update((jobs) => [...jobs, job.type]);
+                },
+                error: () => { },
+            });
+        }
     }
-  }
 }

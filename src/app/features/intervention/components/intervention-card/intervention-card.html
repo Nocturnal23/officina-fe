@@ -1,170 +1,173 @@
 <div class="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4" (click)="closeCard()">
-  <div class="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl relative" (click)="$event.stopPropagation()">
+    <div class="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl relative" (click)="$event.stopPropagation()">
 
-    <h2 class="text-xl font-bold text-gray-800 mb-5">Termina prenotazione</h2>
+        <h2 class="text-xl font-bold text-gray-800 mb-5">Termina prenotazione</h2>
 
-    <form [formGroup]="interventionForm" (ngSubmit)="submitIntervention()" class="flex flex-col gap-4">
+        <form [formGroup]="interventionForm" (ngSubmit)="submitIntervention()" class="flex flex-col gap-4">
 
-      <!-- Parte ddel cliente -->
-      <div class="flex flex-col gap-1.5">
-        <label for="userId" class="text-sm font-semibold text-gray-700">Cliente</label>
+            <!-- Parte ddel cliente -->
+            <div class="flex flex-col gap-1.5">
+                <label for="userId" class="text-sm font-semibold text-gray-700">Cliente</label>
 
-        <select id="userId" formControlName="userId"
-          class="w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500">
-          <option [ngValue]="null" disabled>Seleziona un cliente</option>
+                <select id="userId" formControlName="userId"
+                    class="w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500">
+                    <option [ngValue]="null" disabled>Seleziona un cliente</option>
 
-          @for (user of usersList(); track user.id) {
-          <option [ngValue]="user.id">
-            {{ user.firstName }} {{ user.lastName }}. {{ user.email }}
-          </option>
-          }
-        </select>
-      </div>
+                    @for (user of usersList(); track user.id) {
+                    <option [ngValue]="user.id">
+                        {{ user.firstName }} {{ user.lastName }}. {{ user.email }}
+                    </option>
+                    }
+                </select>
+            </div>
 
-      <!-- Parte del veicolo -->
-      <div class="flex flex-col gap-1.5">
-        <label for="vehicleId" class="text-sm font-semibold text-gray-700">Veicolo</label>
+            <!-- Parte del veicolo -->
+            <div class="flex flex-col gap-1.5">
+                <label for="vehicleId" class="text-sm font-semibold text-gray-700">Veicolo</label>
 
-        <select id="vehicleId" formControlName="vehicleId"
-          class="w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500">
-          <option [ngValue]="null" disabled>Seleziona un veicolo</option>
+                <select id="vehicleId" formControlName="vehicleId"
+                    class="w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500">
+                    <option [ngValue]="null" disabled>Seleziona un veicolo</option>
 
-          @for (vehicle of vehiclesList(); track vehicle.id) {
-          <option [ngValue]="vehicle.id">
-            {{ vehicle.brand }} {{ vehicle.model }}. {{ vehicle.plate }}
-          </option>
-          }
-        </select>
-      </div>
+                    @for (vehicle of vehiclesList(); track vehicle.id) {
+                    <option [ngValue]="vehicle.id">
+                        {{ vehicle.brand }} {{ vehicle.model }}. {{ vehicle.plate }}
+                    </option>
+                    }
+                </select>
+            </div>
 
-      <!-- Parte dei servizi -->
-      <div class="flex flex-col gap-2">
-        <div class="flex items-center justify-between">
-          <label class="text-sm font-semibold text-gray-700">Servizi richiesti</label>
-          <button type="button" (click)="toggleServicesModal()" [disabled]="isRefused()"
-            class="text-xs font-semibold text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 bg-blue-50 px-3 py-1 rounded-md transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed">
-            + Aggiungi servizi
-          </button>
-        </div>
+            <!-- Parte dei servizi -->
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between">
+                    <label class="text-sm font-semibold text-gray-700">Servizi richiesti</label>
+                    <button type="button" (click)="toggleServicesModal()" [disabled]="isRefused()"
+                        class="text-xs font-semibold text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 bg-blue-50 px-3 py-1 rounded-md transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed">
+                        + Aggiungi servizi
+                    </button>
+                </div>
 
 
-        <div
-          class="flex flex-wrap gap-2 min-h-9.5 p-2 border border-dashed border-gray-300 rounded-md bg-gray-50 items-center">
-          @if (selectedServices().length === 0) {
-            <span class="text-xs text-gray-400 italic">Nessun servizio selezionato</span>
-          } @else {
-          @for (service of selectedServices(); track service.id) {
-            <span
-              class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">
-              <span>{{ service.type }}</span>
-              @if(!isOriginalJob(service.id)) {
-                <button type="button" (click)="removeService(service.id)"
-                  class="text-blue-500 hover:text-blue-800 font-bold ml-0.5 focus:outline-none">
-                  X
+                <div
+                    class="flex flex-wrap gap-2 min-h-9.5 p-2 border border-dashed border-gray-300 rounded-md bg-gray-50 items-center">
+                    @if (selectedServices().length === 0) {
+                    <span class="text-xs text-gray-400 italic">Nessun servizio selezionato</span>
+                    } @else {
+                    @for (service of selectedServices(); track service.id) {
+                    <span
+                        class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">
+                        <span>{{ service.type }}</span>
+                        @if(!isOriginalJob(service.id)) {
+                        <button type="button" (click)="removeService(service.id)"
+                            class="text-blue-500 hover:text-blue-800 font-bold ml-0.5 focus:outline-none">
+                            X
+                        </button>
+                        }
+
+                    </span>
+                    }
+                    }
+                </div>
+            </div>
+
+            <!-- Parte chilometraggio e costi -->
+            <div class="flex flex-row justify-between">
+                <div class="flex flex-col gap-1">
+                    <label for="kilometers" class="text-sm font-semibold text-gray-700">Chilometraggio</label>
+                    <input type="number" id="kilometers" rows="1" formControlName="kilometers"
+                        placeholder="Inserire il chilometraggio."
+                        class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none disabled:bg-gray-100 disabled:text-gray-500" />
+
+                    @if(interventionForm.controls.kilometers.hasError('min') &&
+                    interventionForm.controls.kilometers.touched) {
+                    <span class="text-xs text-red-500">
+                        I chilometri non possono essere inferiori a {{
+                        interventionForm.controls.kilometers.getError('min').min }}.
+                    </span>
+                    }
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label for="cost" class="text-sm font-semibold text-gray-700">Costo finale</label>
+                    <input type="number" id="cost" rows="1" formControlName="cost" placeholder="Costo intervento"
+                        class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none disabled:bg-gray-100 disabled:text-gray-500" />
+                </div>
+            </div>
+
+            <!-- Parte descrizione -->
+            <div class="flex flex-col gap-1">
+                <label for="notes" class="text-sm font-semibold text-gray-700">
+                    Note o descrizione aggiuntiva
+
+                    @if (isRefused()) {
+                    <span class="text-red-500 ml-1">*</span>
+                    }
+                </label>
+                <textarea id="notes" rows="3" formControlName="notes"
+                    placeholder="Dettagli sul guasto o richieste particolari..."
+                    class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"></textarea>
+
+                @if (notesErrorMessage) {
+                <span class="text-xs text-red-500">{{ notesErrorMessage }}</span>
+                }
+            </div>
+
+
+            <div class="flex items-center justify-end gap-3 mt-4 pt-3 border-t border-gray-100">
+                <button type="button" (click)="closeCard()"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                    Annulla
                 </button>
-              }
-              
-            </span>
-            }
-          }
-        </div>
-      </div>
 
-      <!-- Parte chilometraggio e costi -->
-      <div class="flex flex-row justify-between">
-        <div class="flex flex-col gap-1">
-          <label for="kilometers" class="text-sm font-semibold text-gray-700">Chilometraggio</label>
-          <input type="number" id="kilometers" rows="1" formControlName="kilometers"
-            placeholder="Inserire il chilometraggio."
-            class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none disabled:bg-gray-100 disabled:text-gray-500" />
+                <button type="submit" [disabled]="interventionForm.invalid"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md shadow transition-colors">
+                    Conferma prenotazione
+                </button>
+            </div>
 
-          @if(interventionForm.controls.kilometers.hasError('min') && interventionForm.controls.kilometers.touched) {
-            <span class="text-xs text-red-500">
-              I chilometri non possono essere inferiori a {{ interventionForm.controls.kilometers.getError('min').min }}.
-            </span>
-          }
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label for="cost" class="text-sm font-semibold text-gray-700">Costo finale</label>
-          <input type="number" id="cost" rows="1" formControlName="cost" placeholder="Costo intervento"
-            class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none disabled:bg-gray-100 disabled:text-gray-500" />
-        </div>
-      </div>
-
-      <!-- Parte descrizione -->
-      <div class="flex flex-col gap-1">
-        <label for="notes" class="text-sm font-semibold text-gray-700">
-          Note o descrizione aggiuntiva
-
-          @if (isRefused()) {
-            <span class="text-red-500 ml-1">*</span>
-          }
-        </label>
-        <textarea id="notes" rows="3" formControlName="notes"
-          placeholder="Dettagli sul guasto o richieste particolari..."
-          class="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"></textarea>
-
-        @if (notesErrorMessage) {
-          <span class="text-xs text-red-500">{{ notesErrorMessage }}</span>
-        }
-      </div>
-
-
-      <div class="flex items-center justify-end gap-3 mt-4 pt-3 border-t border-gray-100">
-        <button type="button" (click)="closeCard()"
-          class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
-          Annulla
-        </button>
-
-        <button type="submit" [disabled]="interventionForm.invalid"
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md shadow transition-colors">
-          Conferma prenotazione
-        </button>
-      </div>
-
-    </form>
-
-  </div>
-
-  @if (isServicesModalOpen()) {
-  <div class="fixed inset-0 z-30 flex items-center justify-center bg-black/50 p-4" (click)="toggleServicesModal()">
-    <div class="w-full max-w-md rounded-lg bg-white p-5 shadow-2xl flex flex-col max-h-[80vh]"
-      (click)="$event.stopPropagation()">
-
-      <div class="flex items-center justify-between pb-3 border-b border-gray-200">
-        <h3 class="text-md font-semibold text-gray-900">Seleziona i servizi</h3>
-        <button type="button" (click)="toggleServicesModal()"
-          class="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
-      </div>
-
-      <div class="overflow-y-auto py-3 space-y-2 flex-1 pr-1">
-        @for (service of jobsList(); track service.id) {
-        <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors"
-          [class.border-blue-600]="isSelected(service.id)" [class.bg-blue-50]="isSelected(service.id)"
-          [class.border-gray-200]="!isSelected(service.id)">
-
-          <input type="checkbox" class="mt-1 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-            [checked]="isSelected(service.id)" (change)="toggleService(service.id)" />
-
-          <div class="flex-1">
-            <p class="font-semibold text-gray-900 text-sm leading-snug">{{ service.type }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">{{ service.description }}</p>
-          </div>
-        </label>
-        }
-      </div>
-
-      <div class="pt-3 border-t border-gray-200 flex justify-end">
-        <button type="button" (click)="toggleServicesModal()"
-          class="px-4 py-1.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
-          Fatto
-        </button>
-      </div>
+        </form>
 
     </div>
-  </div>
-  }
+
+    @if (isServicesModalOpen()) {
+    <div class="fixed inset-0 z-30 flex items-center justify-center bg-black/50 p-4" (click)="toggleServicesModal()">
+        <div class="w-full max-w-md rounded-lg bg-white p-5 shadow-2xl flex flex-col max-h-[80vh]"
+            (click)="$event.stopPropagation()">
+
+            <div class="flex items-center justify-between pb-3 border-b border-gray-200">
+                <h3 class="text-md font-semibold text-gray-900">Seleziona i servizi</h3>
+                <button type="button" (click)="toggleServicesModal()"
+                    class="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
+            </div>
+
+            <div class="overflow-y-auto py-3 space-y-2 flex-1 pr-1">
+                @for (service of jobsList(); track service.id) {
+                <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors"
+                    [class.border-blue-600]="isSelected(service.id)" [class.bg-blue-50]="isSelected(service.id)"
+                    [class.border-gray-200]="!isSelected(service.id)">
+
+                    <input type="checkbox"
+                        class="mt-1 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                        [checked]="isSelected(service.id)" (change)="toggleService(service.id)" />
+
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-900 text-sm leading-snug">{{ service.type }}</p>
+                        <p class="text-xs text-gray-500 mt-0.5">{{ service.description }}</p>
+                    </div>
+                </label>
+                }
+            </div>
+
+            <div class="pt-3 border-t border-gray-200 flex justify-end">
+                <button type="button" (click)="toggleServicesModal()"
+                    class="px-4 py-1.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+                    Fatto
+                </button>
+            </div>
+
+        </div>
+    </div>
+    }
 </div>
 
 <!-- <pre>{{ selectedServiceIds() | json }}</pre> -->

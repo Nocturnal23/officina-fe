@@ -90,14 +90,8 @@
             }
         </div>
         @if(isInterventionOpen()){
-            <app-intervention-card 
-                [booking]="booking()"
-                [targetStatus]="pendingStatus()"
-                [customer]="customer()"
-                [vehicle]="vehicleDetails()"
-                (confirm)="onInterventionConfirmed()"
-                (close)="closeInterventionCard()" 
-            />
+        <app-intervention-card [booking]="booking()" [targetStatus]="pendingStatus()" [customer]="customer()"
+            [vehicle]="vehicleDetails()" (confirm)="onInterventionConfirmed()" (close)="closeInterventionCard()" />
         }
     </div>
 </div>

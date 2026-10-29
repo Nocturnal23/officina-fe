@@ -53,18 +53,32 @@
       <!-- //Pparte del veicolo. -->
       <div class="flex flex-col gap-1">
         <label for="vehicle" class="text-sm font-semibold text-gray-700">Veicolo</label>
-        <select
-          id="vehicle"
-          formControlName="vehicleId"
-          class="w-full rounded-md border border-gray-300 p-2 text-sm bg-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        >
-          <option [ngValue]="null" disabled>Seleziona un veicolo</option>
-          @for (vehicle of vehicles(); track vehicle.id) {
-            <option [ngValue]="vehicle.id">
-              {{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.plate }}
-            </option>
-          }
-        </select>
+        @if (vehiclesLoading()) {
+          <p class="text-sm text-slate-500" role="status">Caricamento dei veicoli...</p>
+        } @else if (vehiclesLoadFailed()) {
+          <div class="flex items-center justify-between gap-3" role="alert">
+            <p class="text-sm text-red-600">Non è stato possibile caricare i tuoi veicoli.</p>
+            <button type="button" (click)="retryLoadVehicles()"
+              class="text-sm font-semibold text-blue-600 hover:underline">
+              Riprova
+            </button>
+          </div>
+        } @else if (vehicles().length === 0) {
+          <p class="text-sm text-slate-500">Non hai ancora veicoli associati.</p>
+        } @else {
+          <select
+            id="vehicle"
+            formControlName="vehicleId"
+            class="w-full rounded-md border border-gray-300 p-2 text-sm bg-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option [ngValue]="null" disabled>Seleziona un veicolo</option>
+            @for (vehicle of vehicles(); track vehicle.id) {
+              <option [ngValue]="vehicle.id">
+                {{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.plate }}
+              </option>
+            }
+          </select>
+        }
       </div>
 
       <!-- //Parte dei servizi. -->
@@ -141,7 +155,7 @@
 
         <button
           type="submit"
-          [disabled]="bookingForm.invalid"
+          [disabled]="bookingForm.invalid || vehiclesLoading() || vehiclesLoadFailed() || vehicles().length === 0 || servicesLoading() || servicesLoadFailed() || services().length === 0"
           class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md shadow transition-colors"
         >
           Conferma prenotazione
@@ -171,6 +185,19 @@
         </div>
 
         <div class="overflow-y-auto py-3 space-y-2 flex-1 pr-1">
+          @if (servicesLoading()) {
+            <p class="text-sm text-slate-500" role="status">Caricamento dei servizi...</p>
+          } @else if (servicesLoadFailed()) {
+            <div class="flex items-center justify-between gap-3" role="alert">
+              <p class="text-sm text-red-600">Non è stato possibile caricare i servizi.</p>
+              <button type="button" (click)="retryLoadJobs()"
+                class="text-sm font-semibold text-blue-600 hover:underline">
+                Riprova
+              </button>
+            </div>
+          } @else if (services().length === 0) {
+            <p class="text-sm text-slate-500">Nessun servizio disponibile.</p>
+          } @else {
           @for (service of services(); track service.id) {
             <label
               class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors"
@@ -190,6 +217,7 @@
                 <p class="text-xs text-gray-500 mt-0.5">{{ service.description }}</p>
               </div>
             </label>
+          }
           }
         </div>
 
