@@ -42,6 +42,21 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm">
+                @if (loading()) {
+                <p role="status">Caricamento servizi…</p>
+                } @else if (loadFailed()) {
+                <tr>
+                    <td colspan="4" class="py-8 text-center" role="alert">
+                        <p class="mb-3 text-sm text-red-600">
+                            Non è stato possibile caricare il catalogo dei servizi.
+                        </p>
+                        <button type="button" (click)="loadJobs()"
+                            class="text-sm font-semibold text-blue-600 hover:underline">
+                            Riprova
+                        </button>
+                    </td>
+                </tr>
+                } @else {
                 @for (job of sortedJobs(); track job.id) {
                 <tr>
                     <td class="py-4 px-6 text-sm"
@@ -76,6 +91,7 @@
                         Nessun servizio presente nel catalogo.
                     </td>
                 </tr>
+                }
                 }
             </tbody>
         </table>
