@@ -1,46 +1,48 @@
 :host {
-  position: fixed;
-  z-index: 1000;
-  top: 1rem;
-  right: 1rem;
-  left: 1rem;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
+    position: fixed;
+    z-index: 1000;
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    pointer-events: none;
 }
 
 .error-notification {
-  display: flex;
-  width: min(100%, 42rem);
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  border: 1px solid #b42318;
-  border-radius: 0.5rem;
-  background: #fff;
-  padding: 1rem;
-  color: #7a271a;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
-  pointer-events: auto;
+    display: flex;
+    width: min(100%, 42rem);
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid #b42318;
+    border-radius: 0.5rem;
+    background: #fff;
+    padding: 1rem;
+    color: #7a271a;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+    pointer-events: auto;
 }
 
 .error-notification p {
-  margin: 0;
+    margin: 0;
 }
 
 .error-notification button {
-  flex: 0 0 auto;
-  border: 0;
-  background: transparent;
-  padding: 0.25rem;
-  color: inherit;
-  font: inherit;
-  font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
+    flex: 0 0 auto;
+    border: 0;
+    background: transparent;
+    padding: 0.25rem;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .error-notification button:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
 }

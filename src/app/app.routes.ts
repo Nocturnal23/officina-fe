@@ -18,5 +18,5 @@ export const routes: Routes = [
     { path: 'admin/services', component: ServicesList },
     { path: 'admin/record', component: InterventionHistoryPage, canActivate: [authGuard], data: { isAdmin: true } },
     { path: '', redirectTo: 'login', pathMatch: 'full' },
-    
+
 ];
