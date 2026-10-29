@@ -53,20 +53,24 @@
 
         <div class="flex flex-col gap-4 w-full max-w-4xl mx-auto">
             @if( activeTab() === 'COMPLETED' || activeTab() === 'REFUSED'){
-                <app-list-filters 
-                    [filters]="currentListFilters()" 
-                    [vehicleOptions]="vehicles()"
-                    [jobOptions]="jobs()"
-                    (filtersChange)="onListFiltersChange($event)" 
-                    [showUserFilter]="true"
-                    [userOption]="userOptions.options()"
-                    [userPage]="userOptions.page()"
-                    [userTotalPages]="userOptions.totalPages()"
-                    (userSearch)="onUserSearch($event)"
-                    (userPageChange)="onUserPageChange($event)"
-                />
+            <app-list-filters [filters]="currentListFilters()" [vehicleOptions]="vehicles()"
+                [vehicleLoading]="vehiclesLoading()" [vehicleError]="vehiclesError()" [jobOptions]="jobs()"
+                [jobError]="jobError()" (jobRetry)="loadJobs()" (vehicleRetry)="loadVehicles()"
+                (filtersChange)="onListFiltersChange($event)" [showUserFilter]="true"
+                [userOption]="userOptions.options()" [userLoading]="userOptions.loading()"
+                [userError]="userOptions.error()" [userPage]="userOptions.page()"
+                [userTotalPages]="userOptions.totalPages()" (userSearch)="onUserSearch($event)"
+                (userPageChange)="onUserPageChange($event)" (userRetry)="userOptions.load()" />
             }
 
+            @if (loading()) {
+            <p role="status">Caricamento prenotazioni…</p>
+            } @else if (loadFailed()) {
+            <p role="alert" class="mb-3 text-sm text-red-600">Non è stato possibile caricare le prenotazioni.</p>
+            <button type="button" (click)="loadData()" class="text-sm font-semibold text-blue-600 hover:underline">
+                Riprova
+            </button>
+            } @else {
             @for (item of dataList(); track item.id) {
             <app-booking-card-view [booking]="item" [isAdmin]="true" (statusChange)="handleStatusChange($event)"
                 (delete)="deleteBooking($event)" />
@@ -75,9 +79,10 @@
                 <p class="text-xs text-slate-400">Nessuna prenotazione presente per questo stato.</p>
             </div>
             }
+            }
         </div>
 
-        @if (totalPages() > 1) {
+        @if (!loading() && !loadFailed() && totalPages() > 1) {
         <div class="w-full max-w-4xl mx-auto">
             <app-paginator [currentPage]="currentPage()" [totalPages]="totalPages()" [isLastPage]="isLastPage()"
                 (next)="nextPage()" (prev)="prevPage()">

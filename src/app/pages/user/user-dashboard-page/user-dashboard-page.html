@@ -33,15 +33,22 @@
 
     <main class="flex-1 p-6 overflow-y-auto">
         <div class="flex flex-col gap-4 w-full max-w-4xl mx-auto">
-            @for (b of dataList(); track b.id) {
-                <app-booking-card-view 
-                    [booking]="b" 
-                    [isAdmin]="false" 
-                    (delete)="deleteBooking($event)"
-                />
-            } @empty {
-            <div class="text-center p-8 bg-white rounded-xl border border-slate-200 text-slate-500">
-                Non hai nessun intervento in corso.
+            @if (loading()) {
+            <p role="status">Caricamento prenotazioni…</p>
+            } @else if (loadFailed()) {
+            <p role="alert" class="mb-3 text-sm text-red-600">Non è stato possibile caricare le prenotazioni.</p>
+            <button type="button" (click)="loadData()" class="text-sm font-semibold text-blue-600 hover:underline">
+                Riprova
+            </button>
+            } @else {
+            <div class="flex flex-col gap-4 w-full max-w-4xl mx-auto">
+                @for (b of dataList(); track b.id) {
+                <app-booking-card-view [booking]="b" [isAdmin]="false" (delete)="deleteBooking($event)" />
+                } @empty {
+                <div class="text-center p-8 bg-white rounded-xl border border-slate-200 text-slate-500">
+                    Non hai nessun intervento in corso.
+                </div>
+                }
             </div>
             }
         </div>
@@ -53,20 +60,15 @@
         </div>
 
         @if (showBookingCard()) {
-            <app-booking-card (close)="closeBookingCard()" (created)="onBookingCreated()" />
+        <app-booking-card (close)="closeBookingCard()" (created)="onBookingCreated()" />
         }
 
-            @if (totalPages() > 1) {
-                <div class="w-full max-w-4xl mx-auto">
-                    <app-paginator
-                        [currentPage]="currentPage()" 
-                        [totalPages]="totalPages()" 
-                        [isLastPage]="isLastPage()"
-                        (next)="nextPage()"
-                        (prev)="prevPage()"
-                    >
-                    </app-paginator>     
-                </div>
-            }
+        @if (totalPages() > 1) {
+        <div class="w-full max-w-4xl mx-auto">
+            <app-paginator [currentPage]="currentPage()" [totalPages]="totalPages()" [isLastPage]="isLastPage()"
+                (next)="nextPage()" (prev)="prevPage()">
+            </app-paginator>
+        </div>
+        }
     </main>
 </div>

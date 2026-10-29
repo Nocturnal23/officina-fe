@@ -8,6 +8,7 @@ import { BookingCardView } from '../../../features/booking/components/booking-ca
 import { BookingCard } from '../../../features/booking/components/booking-card/booking-card';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { BookingService } from '../../../features/booking/services/booking.service';
+import { withHttpErrorMessage, withLocalHttpErrorHandling } from '../../../core/interceptors/http-error.cotext';
 
 
 @Component({
@@ -24,6 +25,8 @@ export class UserDashboardPage extends BasePaginatorComponent<BookingResponse> {
     isMenuOpen = signal<boolean>(false);
     isProfileOpen = signal<boolean>(false);
     showBookingCard = signal<boolean>(false);
+    loading = signal(true);
+    loadFailed = signal(false);
 
     ngOnInit(): void {
         this.loadData();
@@ -77,28 +80,35 @@ export class UserDashboardPage extends BasePaginatorComponent<BookingResponse> {
     }
 
     protected loadData(): void {
+        this.loading.set(true);
+        this.loadFailed.set(false);
+
         this.bookingService.getBookings(
             this.currentPage(),
             this.pageSize(),
-            [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS]
+            [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS],
+            withLocalHttpErrorHandling(),
         ).subscribe({
             next: (data) => {
-                this.updatePaginationState(data); 
+                this.updatePaginationState(data);
+                this.loading.set(false);
             },
-            error: (err) => {
-                console.log("Nessuna prenotazione: ", err);
+            error: () => {
+                this.loadFailed.set(true);
+                this.loading.set(false);
             }
         });
     }
 
     deleteBooking(bookingId: number): void {
-        this.bookingService.deleteBooking(bookingId).subscribe({
+        this.bookingService.deleteBooking(
+            bookingId,
+            withHttpErrorMessage('Non è stato possibile eliminare la prenotazione.'),
+        ).subscribe({
             next: () => {
                 this.dataList.update(list => list.filter(b => b.id !== bookingId));
             },
-            error: (err) => {
-                console.error('Errore durante l\'eliminazione della prenotazione', err);
-            }
+            error: () => { },
         });
     }
 }
