@@ -5,92 +5,120 @@ import { VehicleRequest, VehicleResponse } from '../../../../../../models/vehicl
 import { BookingCard } from '../../../../../booking/components/booking-card/booking-card';
 import { AuthService } from '../../../../../../core/services/auth/auth.service';
 import { VehicleService } from '../../../../../vehicles/services/vehicle.service';
+import { withHttpErrorMessage, withLocalHttpErrorHandling } from '../../../../../../core/interceptors/http-error.cotext';
 
 @Component({
-  selector: 'app-user-vehicle-tab',
-  imports: [CommonModule, ReactiveFormsModule, BookingCard],
-  templateUrl: './user-vehicle-tab.html',
-  styleUrl: './user-vehicle-tab.css',
+    selector: 'app-user-vehicle-tab',
+    imports: [CommonModule, ReactiveFormsModule, BookingCard],
+    templateUrl: './user-vehicle-tab.html',
+    styleUrl: './user-vehicle-tab.css',
 })
 export class UserVehicleTab {
-  private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
-  private readonly vehicleService = inject(VehicleService);
+    private readonly fb = inject(FormBuilder);
+    private readonly authService = inject(AuthService);
+    private readonly vehicleService = inject(VehicleService);
 
-  vehicles = signal<VehicleResponse[]>([]);
-  isAdding = signal<boolean>(false);
-  showBookingCard = signal<boolean>(false);
-  selectedVehicleId = signal<number | null>(null);
+    vehicles = signal<VehicleResponse[]>([]);
+    isAdding = signal<boolean>(false);
+    showBookingCard = signal<boolean>(false);
+    selectedVehicleId = signal<number | null>(null);
+    loadingVehicles = signal(true);
+    vehiclesLoadFailed = signal(false);
 
-  vehicleForm = this.fb.nonNullable.group({
-    brand: ['', [Validators.required]],
-    model: ['', [Validators.required]],
-    plate: ['', [Validators.required]],
-    kilometers: [0, [Validators.required]]
-  });
+    vehicleForm = this.fb.nonNullable.group({
+        brand: ['', [Validators.required]],
+        model: ['', [Validators.required]],
+        plate: ['', [Validators.required]],
+        kilometers: [0, [Validators.required]]
+    });
 
-  ngOnInit(): void {
-    this.loadVehicles();
-  }
-
-  loadVehicles(): void {
-    const user = this.authService.currentUser();
-    if (user?.id) {
-      this.vehicleService.getVehiclesByUser(user.id).subscribe({
-        next: (data) => this.vehicles.set(data),
-        error: (err) => console.error('Errore recupero veicoli:', err)
-      });
+    ngOnInit(): void {
+        this.loadVehicles();
     }
-  }
 
-  toggleAddForm(): void {
-    this.isAdding.update(v => !v);
-    this.vehicleForm.reset();
-  }
+    loadVehicles(): void {
+        const user = this.authService.currentUser();
 
-  saveVehicle(): void {
-    if (this.vehicleForm.invalid) return;
+        if (!user?.id) {
+            this.loadingVehicles.set(false);
+            this.vehiclesLoadFailed.set(true);
+            return;
+        }
 
-    const user = this.authService.currentUser();
-    if (!user?.id) return;
+        this.loadingVehicles.set(true);
+        this.vehiclesLoadFailed.set(false);
 
-    // Estrae direttamente l'oggetto formattato VehicleRequest
-    const { kilometers, ...vehicleData } = this.vehicleForm.getRawValue();
-    if (kilometers === null) return;
+        this.vehicleService.getVehiclesByUser(
+            user.id,
+            withLocalHttpErrorHandling(),
+        ).subscribe({
+            next: (data) => {
+                this.vehicles.set(data);
+                this.loadingVehicles.set(false);
+            },
+            error: () => {
+                this.vehiclesLoadFailed.set(true);
+                this.loadingVehicles.set(false);
+            },
+        });
+    }
 
-    const request: VehicleRequest = { ...vehicleData, kilometers };
-    request.plate = request.plate.trim().toUpperCase();
+    toggleAddForm(): void {
+        this.isAdding.update(v => !v);
+        this.vehicleForm.reset();
+    }
 
-    this.vehicleService.createVehicle(user.id, request).subscribe({
-      next: (savedVehicle) => {
-        this.vehicles.update(list => [...list, savedVehicle]);
-        this.toggleAddForm();
-      },
-      error: (err) => console.error('Errore salvataggio auto:', err)
-    });
-  }
+    saveVehicle(): void {
+        if (this.vehicleForm.invalid) return;
 
-  deleteVehicle(vehicle: VehicleResponse): void {
-    const confirmed = confirm('Sei sicuro di voler eliminare definitivamente il tuo profilo? Questa azione è irreversibile.');
-    if (!confirmed) return;
+        const user = this.authService.currentUser();
+        if (!user?.id) return;
 
-    const user = this.authService.currentUser();
-    if (!user?.id) return;
+        // Estrae direttamente l'oggetto formattato VehicleRequest
+        const { kilometers, ...vehicleData } = this.vehicleForm.getRawValue();
+        if (kilometers === null) return;
 
-    this.vehicleService.deleteVehicle(user.id, vehicle.id).subscribe({
-      next: () => this.vehicles.update(list => list.filter(item => item.id !== vehicle.id)),
-      error: (err) => console.error('Errore eliminazione veicolo:', err)
-    });
-  }
+        const request: VehicleRequest = { ...vehicleData, kilometers };
+        request.plate = request.plate.trim().toUpperCase();
 
-  openBookingCard(vehicleId: number): void {
-    this.selectedVehicleId.set(vehicleId);
-    this.showBookingCard.set(true);
-  }
+        this.vehicleService.createVehicle(
+            user.id,
+            request,
+            withHttpErrorMessage('Non è stato possibile salvare il veicolo.'),
+        ).subscribe({
+            next: (savedVehicle) => {
+                this.vehicles.update(list => [...list, savedVehicle]);
+                this.toggleAddForm();
+            },
+            error: () => { },
+        });
+    }
 
-  closeBookingCard(): void {
-    this.showBookingCard.set(false);
-    this.selectedVehicleId.set(null);
-  }
+    deleteVehicle(vehicle: VehicleResponse): void {
+        const confirmed = confirm('Sei sicuro di voler eliminare definitivamente il tuo profilo? Questa azione è irreversibile.');
+        if (!confirmed) return;
+
+        const user = this.authService.currentUser();
+        if (!user?.id) return;
+
+        this.vehicleService.deleteVehicle(
+            user.id,
+            vehicle.id,
+            withHttpErrorMessage('Non è stato possibile eliminare il veicolo.'),
+        ).subscribe({
+            next: () => this.vehicles.update(list => list.filter(item => item.id !== vehicle.id)),
+            error: () => { },
+        });
+    }
+
+    openBookingCard(vehicleId: number): void {
+        this.selectedVehicleId.set(vehicleId);
+        this.showBookingCard.set(true);
+    }
+
+    closeBookingCard(): void {
+        this.showBookingCard.set(false);
+        this.selectedVehicleId.set(null);
+    }
 
 }

@@ -32,15 +32,15 @@
             <main>
                 <div>
                     @switch (activeTab()) {
-                        @case ('Anagrafica') {
-                            <app-user-info-tab />
-                        }
-                        @case ('Credenziali') {
-                            <app-user-credential-tab />
-                        }
-                        @case ('Le tue auto') {
-                            <app-user-vehicle-tab />
-                        }
+                    @case ('Anagrafica') {
+                    <app-user-info-tab />
+                    }
+                    @case ('Credenziali') {
+                    <app-user-credential-tab />
+                    }
+                    @case ('Le tue auto') {
+                    <app-user-vehicle-tab />
+                    }
                     }
                 </div>
             </main>

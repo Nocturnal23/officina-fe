@@ -1,147 +1,106 @@
 <div class="space-y-6">
-  <div>
-    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Dati Anagrafici</h3>
+    <div>
+        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Dati Anagrafici</h3>
 
-    <div class="space-y-3">
-      
-      <!-- 1. Campo Nome -->
-      <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
-        @if (editingField() === 'firstName') {
-          <div class="flex-1 flex items-center gap-2 mr-2">
-            <input 
-              type="text" 
-              [ngModel]="tempFirstName()" 
-              (ngModelChange)="tempFirstName.set($event)"
-              class="w-full text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
-              placeholder="Nome"
-            />
-            <button 
-              type="button" 
-              (click)="saveField('firstName')" 
-              class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer"
-            >
-              Salva
-            </button>
-            <button 
-              type="button" 
-              (click)="cancelEdit()" 
-              class="px-2.5 py-1.5 text-xs bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 cursor-pointer"
-            >
-              Annulla
-            </button>
-          </div>
-        } @else {
-          <div>
-            <p class="text-xs text-slate-400 font-medium">Nome</p>
-            <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.firstName }}</p>
-          </div>
-          <button 
-            type="button" 
-            (click)="startEdit('firstName')"
-            class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
-          >
-            Modifica
-          </button>
-        }
-      </div>
+        <div class="space-y-3">
 
-      <!-- 2. Campo Cognome -->
-      <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
-        @if (editingField() === 'lastName') {
-          <div class="flex-1 flex items-center gap-2 mr-2">
-            <input 
-              type="text" 
-              [ngModel]="tempLastName()" 
-              (ngModelChange)="tempLastName.set($event)"
-              class="w-full text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
-              placeholder="Cognome"
-            />
-            <button 
-              type="button" 
-              (click)="saveField('lastName')" 
-              class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer"
-            >
-              Salva
-            </button>
-            <button 
-              type="button" 
-              (click)="cancelEdit()" 
-              class="px-2.5 py-1.5 text-xs bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 cursor-pointer"
-            >
-              Annulla
-            </button>
-          </div>
-        } @else {
-          <div>
-            <p class="text-xs text-slate-400 font-medium">Cognome</p>
-            <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.lastName }}</p>
-          </div>
-          <button 
-            type="button" 
-            (click)="startEdit('lastName')"
-            class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
-          >
-            Modifica
-          </button>
-        }
-      </div>
+            <!-- 1. Campo Nome -->
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                @if (editingField() === 'firstName') {
+                <div class="flex-1 flex items-center gap-2 mr-2">
+                    <input type="text" [ngModel]="tempFirstName()" (ngModelChange)="tempFirstName.set($event)"
+                        class="w-full text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
+                        placeholder="Nome" />
+                    <button type="button" (click)="saveField('firstName')"
+                        class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer">
+                        Salva
+                    </button>
+                    <button type="button" (click)="cancelEdit()"
+                        class="px-2.5 py-1.5 text-xs bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 cursor-pointer">
+                        Annulla
+                    </button>
+                </div>
+                } @else {
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Nome</p>
+                    <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.firstName }}</p>
+                </div>
+                <button type="button" (click)="startEdit('firstName')"
+                    class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
+                    Modifica
+                </button>
+                }
+            </div>
 
-      <!-- 3. Campo Telefono (Condizionato dal Ruolo) -->
-      <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
-        @if (editingField() === 'phoneNumber') {
-          <div class="flex-1 flex items-center gap-2 mr-2">
-            <input 
-              type="tel" 
-              [ngModel]="tempPhoneNumber()" 
-              (ngModelChange)="tempPhoneNumber.set($event)"
-              class="w-full text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
-              placeholder="Numero di telefono"
-            />
-            <button 
-              type="button" 
-              (click)="saveField('phoneNumber')" 
-              class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer"
-            >
-              Salva
-            </button>
-            <button 
-              type="button" 
-              (click)="cancelEdit()" 
-              class="px-2.5 py-1.5 text-xs bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 cursor-pointer"
-            >
-              Annulla
-            </button>
-          </div>
-        } @else {
-          <div>
-            <p class="text-xs text-slate-400 font-medium">Telefono {{ isAdmin ? '(Recapito Officina)' : 'Personale' }}</p>
-            <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.phoneNumber }}</p>
-          </div>
+            <!-- 2. Campo Cognome -->
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                @if (editingField() === 'lastName') {
+                <div class="flex-1 flex items-center gap-2 mr-2">
+                    <input type="text" [ngModel]="tempLastName()" (ngModelChange)="tempLastName.set($event)"
+                        class="w-full text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
+                        placeholder="Cognome" />
+                    <button type="button" (click)="saveField('lastName')"
+                        class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer">
+                        Salva
+                    </button>
+                    <button type="button" (click)="cancelEdit()"
+                        class="px-2.5 py-1.5 text-xs bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 cursor-pointer">
+                        Annulla
+                    </button>
+                </div>
+                } @else {
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Cognome</p>
+                    <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.lastName }}</p>
+                </div>
+                <button type="button" (click)="startEdit('lastName')"
+                    class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
+                    Modifica
+                </button>
+                }
+            </div>
 
-          @if (!isAdmin) {
-            <button 
-              type="button" 
-              (click)="startEdit('phoneNumber')"
-              class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
-            >
-              Modifica
+            <!-- 3. Campo Telefono (Condizionato dal Ruolo) -->
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                @if (editingField() === 'phoneNumber') {
+                <div class="flex-1 flex items-center gap-2 mr-2">
+                    <input type="tel" [ngModel]="tempPhoneNumber()" (ngModelChange)="tempPhoneNumber.set($event)"
+                        class="w-full text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
+                        placeholder="Numero di telefono" />
+                    <button type="button" (click)="saveField('phoneNumber')"
+                        class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer">
+                        Salva
+                    </button>
+                    <button type="button" (click)="cancelEdit()"
+                        class="px-2.5 py-1.5 text-xs bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 cursor-pointer">
+                        Annulla
+                    </button>
+                </div>
+                } @else {
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Telefono {{ isAdmin ? '(Recapito Officina)' :
+                        'Personale' }}</p>
+                    <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.phoneNumber }}</p>
+                </div>
+
+                @if (!isAdmin) {
+                <button type="button" (click)="startEdit('phoneNumber')"
+                    class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
+                    Modifica
+                </button>
+                } @else {
+                <span class="text-xs text-slate-400 italic">Bloccato da policy</span>
+                }
+                }
+            </div>
+            @if (!isAdmin) {
+            <button type="button" (click)="deleteUser()"
+                class="text-xl font-semibold text-red-600 hover:underline cursor-pointer">
+                Elimina profilo
             </button>
-          } @else {
+            } @else {
             <span class="text-xs text-slate-400 italic">Bloccato da policy</span>
-          }
-        }
-      </div>
-        @if (!isAdmin) {
-          <button
-            type="button"
-            (click)="deleteUser()"
-            class="text-xl font-semibold text-red-600 hover:underline cursor-pointer"
-          >
-            Elimina profilo
-          </button>
-        } @else {
-            <span class="text-xs text-slate-400 italic">Bloccato da policy</span>
-        }
+            }
+        </div>
     </div>
-  </div>
 </div>

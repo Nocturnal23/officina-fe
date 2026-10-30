@@ -1,57 +1,66 @@
 <div class="space-y-4">
-  <div class="flex items-center justify-between gap-4">
-    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">I tuoi veicoli</h3>
-    <button type="button" (click)="toggleAddForm()"
-      class="px-3 py-1.5 text-xs bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition cursor-pointer">
-      {{ isAdding() ? 'Annulla' : 'Aggiungi veicolo' }}
-    </button>
-  </div>
+    <div class="flex items-center justify-between gap-4">
+        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">I tuoi veicoli</h3>
+        <button type="button" (click)="toggleAddForm()"
+            class="px-3 py-1.5 text-xs bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition cursor-pointer">
+            {{ isAdding() ? 'Annulla' : 'Aggiungi veicolo' }}
+        </button>
+    </div>
 
-  @if (vehicles().length > 0) {
+
+    @if(loadingVehicles()) {
+    <p role="status">Caricamento veicoli...</p>
+    } @else if(vehiclesLoadFailed()) {
+    <p role="alert">Non è stato possibile caricare i veicoli.</p>
+    } @else {
+    @if (vehicles().length > 0) {
     <div class="space-y-2">
-      @for (vehicle of vehicles(); track vehicle.id) {
+        @for (vehicle of vehicles(); track vehicle.id) {
         <div class="flex items-center justify-between gap-4 p-3.5 rounded-xl border border-slate-200 bg-white">
-          <div>
-            <p class="text-sm font-semibold text-slate-800">{{ vehicle.brand }} {{ vehicle.model }}</p>
-            <p class="text-xs text-slate-500">{{ vehicle.plate }} · {{ vehicle.kilometers }} km</p>
-          </div>
-          <button type="button" (click)="deleteVehicle(vehicle)"
-            class="text-xs font-semibold text-red-600 hover:underline cursor-pointer">
-            Elimina
-          </button>
+            <div>
+                <p class="text-sm font-semibold text-slate-800">{{ vehicle.brand }} {{ vehicle.model }}</p>
+                <p class="text-xs text-slate-500">{{ vehicle.plate }} · {{ vehicle.kilometers }} km</p>
+            </div>
+            <button type="button" (click)="deleteVehicle(vehicle)"
+                class="text-xs font-semibold text-red-600 hover:underline cursor-pointer">
+                Elimina
+            </button>
 
-          <button type="button" (click)="openBookingCard(vehicle.id)"
-            class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
-            Richiedi intervento
-          </button>
+            <button type="button" (click)="openBookingCard(vehicle.id)"
+                class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
+                Richiedi intervento
+            </button>
         </div>
-      }
-      @if (showBookingCard()) {
+        }
+        @if (showBookingCard()) {
         <app-booking-card [selectedVehicleId]="selectedVehicleId()" (close)="closeBookingCard()" />
-      }
+        }
     </div>
-  } @else if (!isAdding()) {
+    } @else if (!isAdding()) {
     <p class="text-sm text-slate-500">Non hai ancora veicoli associati.</p>
-  }
+    }
+    }
 
-  @if (isAdding()) {
-  <form [formGroup]="vehicleForm" (ngSubmit)="saveVehicle()" class="p-4 rounded-xl border border-blue-200 bg-blue-50/40 space-y-3">
-    <div class="grid grid-cols-2 gap-2">
-      <input type="text" formControlName="brand" placeholder="Marca (es. Fiat)" class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
-      <input type="text" formControlName="model" placeholder="Modello (es. Panda)" class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
-      <input type="text" formControlName="plate" placeholder="Targa (es. AB123CD)" class="text-sm p-2 bg-white border border-slate-200 rounded-lg uppercase focus:outline-blue-600" />
-      <input type="number" formControlName="kilometers" placeholder="Chilometri attuali" class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
-    </div>
+    @if (isAdding()) {
+    <form [formGroup]="vehicleForm" (ngSubmit)="saveVehicle()"
+        class="p-4 rounded-xl border border-blue-200 bg-blue-50/40 space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+            <input type="text" formControlName="brand" placeholder="Marca (es. Fiat)"
+                class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
+            <input type="text" formControlName="model" placeholder="Modello (es. Panda)"
+                class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
+            <input type="text" formControlName="plate" placeholder="Targa (es. AB123CD)"
+                class="text-sm p-2 bg-white border border-slate-200 rounded-lg uppercase focus:outline-blue-600" />
+            <input type="number" formControlName="kilometers" placeholder="Chilometri attuali"
+                class="text-sm p-2 bg-white border border-slate-200 rounded-lg focus:outline-blue-600" />
+        </div>
 
-    <div class="flex justify-end gap-2 pt-1">
-      <button 
-        type="submit" 
-        [disabled]="vehicleForm.invalid" 
-        class="px-4 py-1.5 text-xs bg-blue-600 disabled:opacity-50 text-white font-semibold rounded-lg hover:bg-blue-700 transition cursor-pointer"
-      >
-        Conferma Inserimento
-      </button>
-    </div>
-  </form>
-  }
+        <div class="flex justify-end gap-2 pt-1">
+            <button type="submit" [disabled]="vehicleForm.invalid"
+                class="px-4 py-1.5 text-xs bg-blue-600 disabled:opacity-50 text-white font-semibold rounded-lg hover:bg-blue-700 transition cursor-pointer">
+                Conferma Inserimento
+            </button>
+        </div>
+    </form>
+    }
 </div>

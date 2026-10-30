@@ -7,6 +7,7 @@ import { PasswordRequirementsComponent } from '../../../../../../shared/componen
 import { PasswordInputComponent } from '../../../../../../shared/components/password-input-component/password-input-component';
 import { AuthService } from '../../../../../../core/services/auth/auth.service';
 import { UserService } from '../../../../../user/services/user.service';
+import { withHttpErrorMessage } from '../../../../../../core/interceptors/http-error.cotext';
 
 type EditableField = 'email' | null;
 
@@ -56,15 +57,18 @@ export class UserCredentialTab {
             email: this.tempEmail(),
         };
 
-        this.userService.updateUser({ [field]: values[field] }).subscribe({
+        this.userService.updateUser(
+            { [field]: values[field] },
+            withHttpErrorMessage('Non è stato possibile aggiornare l’indirizzo email.'),
+        ).subscribe({
             next: () => this.cancelEdit(),
-            error: (error) => console.error(`Errore aggiornamento ${field}:`, error),
+            error: () => { },
         });
     }
 
     togglePasswordForm(): void {
         this.isChangingPassword.update(prev => !prev);
-        if(!this.isChangingPassword()){
+        if (!this.isChangingPassword()) {
             this.passwordForm.reset();
         }
     }
@@ -80,13 +84,14 @@ export class UserCredentialTab {
             newPassword: this.passwordForm.value.newPassword ?? ''
         };
 
-        this.userService.changePassword(request).subscribe({
+        this.userService.changePassword(
+            request,
+            withHttpErrorMessage('Non è stato possibile cambiare la password. Verifica la password attuale e riprova.'),
+        ).subscribe({
             next: () => {
                 this.togglePasswordForm();
             },
-            error: (error) => {
-                console.error('Errore cambio password:', error);
-            }
+            error: () => { },
         });
     }
 
@@ -95,4 +100,3 @@ export class UserCredentialTab {
         return checkPasswordRequirements(value);
     }
 }
-

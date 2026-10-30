@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../../../core/services/auth/auth.service';
 import { UserService } from '../../../../../user/services/user.service';
+import { withHttpErrorMessage } from '../../../../../../core/interceptors/http-error.cotext';
 
 type EditableField = 'firstName' | 'lastName' | 'phoneNumber' | null;
 
@@ -55,22 +56,27 @@ export class UserInfoTab {
             phoneNumber: this.tempPhoneNumber(),
         };
 
-        this.userService.updateUser({ [field]: values[field] }).subscribe({
+        this.userService.updateUser(
+            { [field]: values[field] },
+            withHttpErrorMessage('Non è stato possibile aggiornare i dati del profilo.'),
+        ).subscribe({
             next: () => this.cancelEdit(),
-            error: (error) => console.error(`Errore aggiornamento ${field}:`, error),
+            error: () => { },
         });
     }
 
-    deleteUser() : void {
+    deleteUser(): void {
         const confirmed = confirm('Sei sicuro di voler eliminare definitivamente il tuo profilo? Questa azione è irreversibile.');
         if (!confirmed) return;
 
-        this.userService.deleteUser().subscribe({
+        this.userService.deleteUser(
+            withHttpErrorMessage('Non è stato possibile eliminare il profilo.'),
+        ).subscribe({
             next: () => {
                 this.authService.logout();
                 this.router.navigate(['/login']);
             },
-            error: (err) => console.error('Errore durante l\'eliminazione del profilo:', err)
+            error: () => { },
         });
     }
 }
