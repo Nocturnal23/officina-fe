@@ -16,116 +16,143 @@ import { JobResponse } from '../../../models/job.model';
 import { UserService } from '../../../features/user/services/user.service';
 import { PagedOptionsState } from '../../../shared/state/paged-options-state';
 import { UserResponse } from '../../../models/user.model';
+import { withLocalHttpErrorHandling } from '../../../core/interceptors/http-error.cotext';
 
 @Component({
-  selector: 'app-intervention-history-page',
-  imports: [Paginator, CommonModule, InterventionCardView, ListFilters],
-  templateUrl: './intervention-history-page.html',
-  styleUrl: './intervention-history-page.css',
+    selector: 'app-intervention-history-page',
+    imports: [Paginator, CommonModule, InterventionCardView, ListFilters],
+    templateUrl: './intervention-history-page.html',
+    styleUrl: './intervention-history-page.css',
 })
 export class InterventionHistoryPage extends BasePaginatorComponent<InterventionHistoryResponse> {
-  private readonly router = inject(Router);
-  private readonly interventionService = inject(InterventionService);
-  private readonly authService = inject(AuthService);
-  private readonly vehicleService = inject(VehicleService);
-  private readonly jobService = inject(JobService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly userService = inject(UserService);
+    private readonly router = inject(Router);
+    private readonly interventionService = inject(InterventionService);
+    private readonly authService = inject(AuthService);
+    private readonly vehicleService = inject(VehicleService);
+    private readonly jobService = inject(JobService);
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly userService = inject(UserService);
 
-  readonly userOptions = new PagedOptionsState<UserResponse>(
-    this.destroyRef,
-    (page, size, query) =>
-      this.userService.getAllUsers(page, size, query || undefined),
-    {
-      errorMessage: 'Errore durante il recupero degli utenti:',
-    },
-  );
-
-  currentFilters = signal<BookingStatus[]>([BookingStatus.COMPLETED, BookingStatus.REFUSED]);
-  jobs = signal<JobResponse[] | null>(null);
-  filterState!: HistoryFilterState;
-  currentListFilters!: HistoryFilterState['filters'];
-  vehicles!: HistoryFilterState['vehicleOptions'];
-
-  isAdmin = input(false);
-
-  BookingStatuBut = BookingStatus;
-
-  ngOnInit() {
-    this.filterState = new HistoryFilterState(
-      this.destroyRef,
-      () => {
-        if (this.isAdmin()) {
-          return this.vehicleService.getAllVehicles();
-        }
-
-        const userId = this.authService.currentUser()?.id;
-        return userId == null
-          ? null
-          : this.vehicleService.getVehiclesByUser(userId);
-      },
-      () => {
-        this.currentPage.set(0);
-        this.loadData();
-      },
-      'Errore durante il recupero dei veicoli:',
+    readonly userOptions = new PagedOptionsState<UserResponse>(
+        this.destroyRef,
+        (page, size, query) =>
+            this.userService.getAllUsers(
+                page,
+                size,
+                query || undefined,
+                withLocalHttpErrorHandling(),
+            ),
     );
 
-    this.currentListFilters = this.filterState.filters;
-    this.vehicles = this.filterState.vehicleOptions;
+    currentFilters = signal<BookingStatus[]>([BookingStatus.COMPLETED, BookingStatus.REFUSED]);
+    jobs = signal<JobResponse[] | null>(null);
+    jobError = signal(false);
 
-    if (this.isAdmin()) {
-      this.userOptions.load();
+    filterState!: HistoryFilterState;
+    currentListFilters!: HistoryFilterState['filters'];
+    vehicles!: HistoryFilterState['vehicleOptions'];
+    loading = signal(true);
+    loadFailed = signal(false);
+
+    isAdmin = input(false);
+
+    BookingStatuBut = BookingStatus;
+
+    ngOnInit() {
+        this.filterState = new HistoryFilterState(
+            this.destroyRef,
+            () => {
+                if (this.isAdmin()) {
+                    return this.vehicleService.getAllVehicles(
+                        undefined,
+                        withLocalHttpErrorHandling(),
+                    );
+                }
+
+                const userId = this.authService.currentUser()?.id;
+                return userId == null
+                    ? null
+                    : this.vehicleService.getVehiclesByUser(
+                        userId,
+                        withLocalHttpErrorHandling(),
+                    );
+            },
+            () => {
+                this.currentPage.set(0);
+                this.loadData();
+            },
+        );
+
+        this.currentListFilters = this.filterState.filters;
+        this.vehicles = this.filterState.vehicleOptions;
+
+        if (this.isAdmin()) {
+            this.userOptions.load();
+        }
+
+        this.loadJobs();
+
+        this.loadData();
     }
 
-    this.jobService.getHistoryJobs().subscribe({
-      next: (jobs) => this.jobs.set(jobs),
-      error: (err) =>
-        console.error('Errore durante il recupero dei lavori per lo storico:', err),
-    });
-
-    this.loadData();
-  }
-
-  protected loadData(): void {
-    this.interventionService.getInterventionHistory(
-      this.currentPage(),
-      this.pageSize(),
-      this.currentFilters(),
-      this.currentListFilters(),
-      this.isAdmin(),
-    ).subscribe({
-      next: (response) => this.updatePaginationState(response),
-      error: (err) => console.error('Errore nel recupero dello storico interventi:', err)
-    });
-  }
-
-  goBackDashboard(): void {
-    if (this.isAdmin()) {
-      this.router.navigate(['admin/dashboard']);
-    } else {
-      this.router.navigate(['user/dashboard']);
+    loadJobs(): void {
+        this.jobs.set(null);
+        this.jobError.set(false);
+        this.jobService.getHistoryJobs(withLocalHttpErrorHandling()).subscribe({
+            next: (jobs) => this.jobs.set(jobs),
+            error: () => this.jobError.set(true),
+        });
     }
 
-  }
+    protected loadData(): void {
+        this.loading.set(true);
+        this.loadFailed.set(false);
 
-  setFilter(status: BookingStatus | 'ALL') {
-    if (status === 'ALL') {
-      this.currentFilters.set([BookingStatus.COMPLETED, BookingStatus.REFUSED]);
-    } else {
-      this.currentFilters.set([status]);
+        this.interventionService.getInterventionHistory(
+            this.currentPage(),
+            this.pageSize(),
+            this.currentFilters(),
+            this.currentListFilters(),
+            this.isAdmin(),
+            withLocalHttpErrorHandling(),
+        ).subscribe({
+            next: (data) => {
+                this.updatePaginationState(data);
+                this.loading.set(false);
+            },
+            error: () => {
+                this.loadFailed.set(true);
+                this.loading.set(false);
+            }
+        });
     }
 
-    this.currentPage.set(0);
-    this.loadData();
-  }
+    goBackDashboard(): void {
+        if (this.isAdmin()) {
+            this.router.navigate(['admin/dashboard']);
+        } else {
+            this.router.navigate(['user/dashboard']);
+        }
 
-  onUserSearch(query: string) {
-    this.userOptions.search(query);
-  }
+    }
 
-  onUserPageChange(page: number) {
-    this.userOptions.goToPage(page);
-  }
+    setFilter(status: BookingStatus | 'ALL') {
+        if (status === 'ALL') {
+            this.currentFilters.set([BookingStatus.COMPLETED, BookingStatus.REFUSED]);
+        } else {
+            this.currentFilters.set([status]);
+        }
+
+        this.currentPage.set(0);
+        this.loadData();
+    }
+
+    onUserSearch(query: string) {
+        this.userOptions.search(query);
+    }
+
+    onUserPageChange(page: number) {
+        this.userOptions.goToPage(page);
+    }
 
 }
