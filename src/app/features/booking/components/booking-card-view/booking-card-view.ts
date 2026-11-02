@@ -89,7 +89,6 @@ export class BookingCardView {
     }
 
     onInterventionConfirmed(): void {
-        const currentBooking = this.booking();
         const targetStatus = this.pendingStatus();
 
         if (targetStatus) {

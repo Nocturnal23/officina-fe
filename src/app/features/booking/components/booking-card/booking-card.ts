@@ -9,12 +9,6 @@ import { JobService } from '../../../jobs/services/job.service';
 import { bookingDateValidator, formatLocalDate } from '../../../../shared/validators/booking-date.validator';
 import { withHttpErrorMessage, withLocalHttpErrorHandling } from '../../../../core/interceptors/http-error.cotext';
 
-interface ServiceItem {
-    id: number;
-    type: string;
-    description: string;
-}
-
 @Component({
     selector: 'app-booking-card',
     imports: [FormsModule, ReactiveFormsModule],
@@ -134,7 +128,7 @@ export class BookingCard implements OnDestroy {
 
         this.vehiclesLoading.set(true);
         this.vehiclesLoadFailed.set(false);
-        this.vehicleService.getVehiclesByUser(user.id, withLocalHttpErrorHandling()).subscribe({
+        this.vehicleService.getVehiclesByUser(withLocalHttpErrorHandling()).subscribe({
             next: (data) => this.vehicles.set(data),
             error: () => {
                 this.vehiclesLoadFailed.set(true);

@@ -73,7 +73,6 @@ export class InterventionHistoryPage extends BasePaginatorComponent<Intervention
                 return userId == null
                     ? null
                     : this.vehicleService.getVehiclesByUser(
-                        userId,
                         withLocalHttpErrorHandling(),
                     );
             },

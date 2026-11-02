@@ -33,7 +33,6 @@ export class HistoryPage extends BasePaginatorComponent<BookingResponse> {
             return userId === undefined
                 ? null
                 : this.vehicleService.getVehiclesByUser(
-                    userId,
                     withLocalHttpErrorHandling(),
                 );
         },

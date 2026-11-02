@@ -12,7 +12,7 @@ export class VehicleService {
     private url = 'http://localhost:8080/api/users/me/vehicles';
     private urlAdmin = 'http://localhost:8080/api/admin/vehicles';
 
-    getVehiclesByUser(userId: number, context?: HttpContext): Observable<VehicleResponse[]> {
+    getVehiclesByUser(context?: HttpContext): Observable<VehicleResponse[]> {
         return this.http.get<VehicleResponse[]>(this.url, { context });
     }
 
@@ -26,11 +26,11 @@ export class VehicleService {
         return this.http.get<VehicleResponse[]>(this.urlAdmin, { params, context });
     }
 
-    deleteVehicle(userId: number, vehicleId: number, context?: HttpContext): Observable<void> {
+    deleteVehicle(vehicleId: number, context?: HttpContext): Observable<void> {
         return this.http.delete<void>(`${this.url}/${vehicleId}`, { context });
     }
 
-    createVehicle(userId: number, vehicleData: VehicleRequest, context?: HttpContext): Observable<VehicleResponse> {
+    createVehicle(vehicleData: VehicleRequest, context?: HttpContext): Observable<VehicleResponse> {
         return this.http.post<VehicleResponse>(this.url, vehicleData, { context });
     }
 

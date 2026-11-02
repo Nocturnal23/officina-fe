@@ -49,7 +49,6 @@ export class UserVehicleTab {
         this.vehiclesLoadFailed.set(false);
 
         this.vehicleService.getVehiclesByUser(
-            user.id,
             withLocalHttpErrorHandling(),
         ).subscribe({
             next: (data) => {
@@ -82,7 +81,6 @@ export class UserVehicleTab {
         request.plate = request.plate.trim().toUpperCase();
 
         this.vehicleService.createVehicle(
-            user.id,
             request,
             withHttpErrorMessage('Non è stato possibile salvare il veicolo.'),
         ).subscribe({
@@ -102,7 +100,6 @@ export class UserVehicleTab {
         if (!user?.id) return;
 
         this.vehicleService.deleteVehicle(
-            user.id,
             vehicle.id,
             withHttpErrorMessage('Non è stato possibile eliminare il veicolo.'),
         ).subscribe({
