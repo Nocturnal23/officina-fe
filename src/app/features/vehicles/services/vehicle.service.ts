@@ -37,4 +37,8 @@ export class VehicleService {
     getVehicleById(vehicleId: number, context?: HttpContext): Observable<VehicleResponse> {
         return this.http.get<VehicleResponse>(`${this.url}/${vehicleId}`, { context });
     }
+
+    getVehiclesByAdminUser(userId: number, context?: HttpContext): Observable<VehicleResponse[]> {
+        return this.http.get<VehicleResponse[]>(`${this.urlAdmin}/users/${userId}`, {context});
+    }
 }

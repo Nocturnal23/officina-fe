@@ -22,7 +22,7 @@ export class InterventionCard {
     close = output<void>();
     confirm = output<void>();
 
-    booking = input.required<BookingResponse>();
+    booking = input<BookingResponse>();
     targetStatus = input<BookingStatus | null>();
     customer = input<UserResponse | null>();
     vehicle = input<VehicleResponse | null>();
@@ -195,7 +195,7 @@ export class InterventionCard {
     }
 
     private loadVehiclesByUser(userId: number) {
-        this.vehicleService.getVehiclesByUser(
+        this.vehicleService.getVehiclesByAdminUser(
             userId,
             withHttpErrorMessage('Non è stato possibile caricare i veicoli del cliente.'),
         ).subscribe({
