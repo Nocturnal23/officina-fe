@@ -6,7 +6,7 @@ export interface InterventionHistoryRequest {
     completedAt?: string;
     interventionKilometers: number;
     jobsIds: number[] | null;
-    bookingId: number;
+    bookingId: number | null;
     status: BookingStatus;
 }
 
@@ -17,7 +17,7 @@ export interface InterventionHistoryResponse {
     notes: string;
     completedAt: string;
     vehicleId: number;
-    bookingId: number;
+    bookingId: number | null;
     jobsIds: number[];
     status: BookingStatus;
 }

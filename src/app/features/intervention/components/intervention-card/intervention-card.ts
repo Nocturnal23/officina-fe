@@ -2,6 +2,7 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { FormBuilder, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EMPTY, catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { BookingResponse, BookingStatus } from '../../../../models/booking.model';
+import { InterventionHistoryRequest } from '../../../../models/intervention.models';
 import { JobResponse } from '../../../../models/job.model';
 import { UserResponse } from '../../../../models/user.model';
 import { VehicleResponse } from '../../../../models/vehicle.model';
@@ -253,9 +254,9 @@ export class InterventionCard {
 
         const { vehicleId, userId, kilometers, ...intervention } = formValue;
 
-        const request = {
-            bookingId: this.booking().id,
-            status: this.targetStatus() || this.booking().status,
+        const request: InterventionHistoryRequest = {
+            bookingId: this.booking()?.id ?? null,
+            status: this.targetStatus() ?? this.booking()?.status ?? BookingStatus.COMPLETED,
             interventionKilometers: kilometers,
             ...intervention
         }
