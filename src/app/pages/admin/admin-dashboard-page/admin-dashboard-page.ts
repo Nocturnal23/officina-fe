@@ -16,17 +16,15 @@ import { JobResponse } from '../../../models/job.model';
 import { UserResponse } from '../../../models/user.model';
 import { UserService } from '../../../features/user/services/user.service';
 import { PagedOptionsState } from '../../../shared/state/paged-options-state';
-import {
-    withHttpErrorMessage,
-    withLocalHttpErrorHandling,
-} from '../../../core/interceptors/http-error.cotext';
+import { withHttpErrorMessage, withLocalHttpErrorHandling } from '../../../core/interceptors/http-error.cotext';
+import { InterventionCard } from '../../../features/intervention/components/intervention-card/intervention-card';
 
 
 export type AdminBookingAction = 'ACCEPT' | 'REFUSE' | 'ADVANCE';
 
 @Component({
     selector: 'app-admin-dashboard-page',
-    imports: [CommonModule, BookingCardView, Paginator, ListFilters],
+    imports: [CommonModule, BookingCardView, Paginator, ListFilters, InterventionCard],
     templateUrl: './admin-dashboard-page.html',
     styleUrl: './admin-dashboard-page.css',
 })
@@ -61,6 +59,7 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
     jobError = signal(false);
     loading = signal(true);
     loadFailed = signal(false);
+    openIntervention = signal(false);
 
     selectTab(status: BookingStatus): void {
         this.activeTab.set(status);
@@ -206,5 +205,14 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
     openInterventionHistory(): void {
         this.closeManager();
         this.router.navigate(['admin/record'])
+    }
+
+    emitIntervention() {
+        this.closeManager()
+        this.openIntervention.set(true);
+    }
+
+    closeIntervention() {
+        this.openIntervention.set(false)
     }
 }
