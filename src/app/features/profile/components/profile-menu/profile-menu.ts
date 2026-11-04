@@ -14,10 +14,16 @@ export type ProfileTab = 'Anagrafica' | 'Credenziali' | 'Le tue auto';
 })
 export class ProfileMenu {
     activeTab = signal<ProfileTab>('Anagrafica');
+    isNavigationOpen = signal(false);
     close = output<void>();
 
     setTab(tab: ProfileTab): void {
         this.activeTab.set(tab);
+        this.isNavigationOpen.set(false);
+    }
+
+    toggleNavigation(): void {
+        this.isNavigationOpen.update(isOpen => !isOpen);
     }
 
     onClose(): void {
