@@ -69,6 +69,8 @@ export class ListFilters {
     vehicleSearch = output<string>();
     userSearch = output<string>();
     userPageChange = output<number>();
+    userSelectionChange = output<number | null>();
+    vehicleSelectionChange = output<number | null>();
 
     readonly vehicleSearchTerm = signal('');
     readonly userSearchTerm = signal('');
@@ -237,6 +239,8 @@ export class ListFilters {
 
     clearFilters(): void {
         this.form.reset({ mode: 'range', date: '', from: '', to: '', vehicleId: null, userId: null });
+        this.userSelectionChange.emit(null);
+        this.vehicleSelectionChange.emit(null);
         this.vehicleSearchTerm.set('');
         this.vehicleSearch.emit('');
 
@@ -253,7 +257,15 @@ export class ListFilters {
     }
 
     selectUser(user: UserResponse | null): void {
+        const previousUserId = this.form.controls.userId.value;
+        const userChanged = previousUserId !== null && previousUserId !== (user?.id ?? null);
+
         this.form.controls.userId.setValue(user?.id ?? null);
+
+        if (userChanged) {
+            this.form.controls.vehicleId.setValue(null);
+            this.vehicleSelectionChange.emit(null);
+        }
 
         this.selectedUser.set(user ? {
             id: user.id,
@@ -262,11 +274,13 @@ export class ListFilters {
             email: user.email,
         } : null);
 
+        this.userSelectionChange.emit(user?.id ?? null);
         this.closeMenu();
     }
 
     selectVehicle(vehicle: VehicleResponse | null): void {
         this.form.controls.vehicleId.setValue(vehicle?.id ?? null);
+        this.vehicleSelectionChange.emit(vehicle?.id ?? null);
         this.closeMenu();
     }
 
