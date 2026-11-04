@@ -66,6 +66,11 @@ export class PagedOptionsState<T> {
         this.requestPage(this.page(), false);
     }
 
+    reload(): void {
+        this.page.set(0);
+        this.requestPage(0, false);
+    }
+
     search(query: string): void {
         const normalizedQuery = query.trim();
         this.query.set(normalizedQuery);
