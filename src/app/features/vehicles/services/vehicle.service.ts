@@ -41,4 +41,8 @@ export class VehicleService {
     getVehiclesByAdminUser(userId: number, context?: HttpContext): Observable<VehicleResponse[]> {
         return this.http.get<VehicleResponse[]>(`${this.urlAdmin}/users/${userId}`, {context});
     }
+
+    getVehiclesBookedByUser(userId: number, context?: HttpContext): Observable<VehicleResponse[]> {
+        return this.http.get<VehicleResponse[]>(`http://localhost:8080/api/admin/users/${userId}/booking-vehicles`, { context });
+    }
 }

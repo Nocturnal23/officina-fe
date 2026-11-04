@@ -43,6 +43,27 @@ export class UserService {
         return this.http.get<PageResponse<UserResponse>>(`${this.adminUrl}/users`, { params, context });
     }
 
+    getUsersWithBookingsForVehicle(
+        vehicleId: number,
+        page: number,
+        size: number,
+        query?: string,
+        context?: HttpContext,
+    ): Observable<PageResponse<UserResponse>> {
+        let params = new HttpParams()
+            .set('page', page.toString())
+            .set('size', size.toString());
+
+        if (query) {
+            params = params.set('query', query);
+        }
+
+        return this.http.get<PageResponse<UserResponse>>(
+            `${this.adminUrl}/vehicles/${vehicleId}/booking-users`,
+            { params, context },
+        );
+    }
+
     changePassword(passwords: ChangePasswordRequest, context?: HttpContext): Observable<void> {
         return this.http.patch<void>(`${this.userUrl}/me/password`, passwords, { context });
     }
