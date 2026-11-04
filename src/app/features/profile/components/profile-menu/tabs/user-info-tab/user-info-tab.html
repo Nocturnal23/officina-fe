@@ -5,11 +5,13 @@
         <div class="space-y-3">
 
             <!-- 1. Campo Nome -->
-            <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+            <!-- Sui viewport stretti input e azioni vanno a capo, da 640px tornano affiancati senza restringere il campo. -->
+            <div
+                class="p-3.5 rounded-xl border border-slate-200 bg-white flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
                 @if (editingField() === 'firstName') {
-                <div class="flex-1 flex items-center gap-2 mr-2">
+                <div class="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
                     <input type="text" [ngModel]="tempFirstName()" (ngModelChange)="tempFirstName.set($event)"
-                        class="w-full text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
+                        class="w-full min-w-0 flex-1 text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
                         placeholder="Nome" />
                     <button type="button" (click)="saveField('firstName')"
                         class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer">
@@ -21,9 +23,17 @@
                     </button>
                 </div>
                 } @else {
-                <div>
-                    <p class="text-xs text-slate-400 font-medium">Nome</p>
-                    <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.firstName }}</p>
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-medium text-slate-400">Nome</p>
+                    <div class="flex min-w-0 items-center justify-between gap-3">
+                        <p class="min-w-0 wrap-break-word text-sm font-semibold text-slate-800">
+                            {{ authService.currentUser()?.firstName }}
+                        </p>
+                        <button type="button" (click)="startEdit('firstName')"
+                            class="shrink-0 text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
+                            Modifica
+                        </button>
+                    </div>
                 </div>
                 <button type="button" (click)="startEdit('firstName')"
                     class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
@@ -33,11 +43,12 @@
             </div>
 
             <!-- 2. Campo Cognome -->
-            <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+            <div
+                class="p-3.5 rounded-xl border border-slate-200 bg-white flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
                 @if (editingField() === 'lastName') {
-                <div class="flex-1 flex items-center gap-2 mr-2">
+                <div class="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
                     <input type="text" [ngModel]="tempLastName()" (ngModelChange)="tempLastName.set($event)"
-                        class="w-full text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
+                        class="w-full min-w-0 flex-1 text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
                         placeholder="Cognome" />
                     <button type="button" (click)="saveField('lastName')"
                         class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer">
@@ -49,9 +60,17 @@
                     </button>
                 </div>
                 } @else {
-                <div>
-                    <p class="text-xs text-slate-400 font-medium">Cognome</p>
-                    <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.lastName }}</p>
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-medium text-slate-400">Cognome</p>
+                    <div class="flex min-w-0 items-center justify-between gap-3">
+                        <p class="min-w-0 wrap-break-word text-sm font-semibold text-slate-800">
+                            {{ authService.currentUser()?.lastName }}
+                        </p>
+                        <button type="button" (click)="startEdit('lastName')"
+                            class="shrink-0 text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
+                            Modifica
+                        </button>
+                    </div>
                 </div>
                 <button type="button" (click)="startEdit('lastName')"
                     class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
@@ -61,11 +80,12 @@
             </div>
 
             <!-- 3. Campo Telefono (Condizionato dal Ruolo) -->
-            <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+            <div
+                class="p-3.5 rounded-xl border border-slate-200 bg-white flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
                 @if (editingField() === 'phoneNumber') {
-                <div class="flex-1 flex items-center gap-2 mr-2">
+                <div class="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
                     <input type="tel" [ngModel]="tempPhoneNumber()" (ngModelChange)="tempPhoneNumber.set($event)"
-                        class="w-full text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
+                        class="w-full min-w-0 flex-1 text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
                         placeholder="Numero di telefono" />
                     <button type="button" (click)="saveField('phoneNumber')"
                         class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer">
@@ -77,29 +97,33 @@
                     </button>
                 </div>
                 } @else {
-                <div>
-                    <p class="text-xs text-slate-400 font-medium">Telefono {{ isAdmin ? '(Recapito Officina)' :
-                        'Personale' }}</p>
-                    <p class="text-sm font-semibold text-slate-800">{{ authService.currentUser()?.phoneNumber }}</p>
-                </div>
-
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-medium text-slate-400">
+                        Telefono {{ isAdmin ? '(Recapito Officina)' : 'Personale' }}
+                    </p>
+                    <div class="flex min-w-0 items-center justify-between gap-3">
+                        <p class="min-w-0 wrap-break-word text-sm font-semibold text-slate-800">
+                            {{ authService.currentUser()?.phoneNumber }}
+                        </p>
                 @if (!isAdmin) {
                 <button type="button" (click)="startEdit('phoneNumber')"
-                    class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
+                            class="shrink-0 text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
                     Modifica
                 </button>
                 } @else {
-                <span class="text-xs text-slate-400 italic">Bloccato da policy</span>
+                        <span class="shrink-0 text-xs text-slate-400 italic">Bloccato da policy</span>
                 }
+                    </div>
+                </div>
                 }
             </div>
             @if (!isAdmin) {
+            <div class="flex justify-center w-full">
             <button type="button" (click)="deleteUser()"
                 class="text-xl font-semibold text-red-600 hover:underline cursor-pointer">
                 Elimina profilo
             </button>
-            } @else {
-            <span class="text-xs text-slate-400 italic">Bloccato da policy</span>
+            </div>
             }
         </div>
     </div>

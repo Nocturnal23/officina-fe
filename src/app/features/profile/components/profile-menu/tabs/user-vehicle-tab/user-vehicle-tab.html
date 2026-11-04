@@ -14,10 +14,10 @@
     <p role="alert">Non è stato possibile caricare i veicoli.</p>
     } @else {
     @if (vehicles().length > 0) {
-    <div class="space-y-2">
+    <div class="space-y-3">
         @for (vehicle of vehicles(); track vehicle.id) {
-        <div class="flex items-center justify-between gap-4 p-3.5 rounded-xl border border-slate-200 bg-white">
-            <div>
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex flex-col items-stretch gap-2">
+            <div class="w-full min-w-0 flex-1 text-sm p-1.5 flex items-center justify-between">
                 <p class="text-sm font-semibold text-slate-800">{{ vehicle.brand }} {{ vehicle.model }}</p>
                 <p class="text-xs text-slate-500">{{ vehicle.plate }} · {{ vehicle.kilometers }} km</p>
             </div>
