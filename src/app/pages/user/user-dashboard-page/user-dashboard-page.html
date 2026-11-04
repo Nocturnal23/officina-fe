@@ -5,7 +5,7 @@
             Benvenuto, {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}!
         </p>
 
-        <div class="relative">
+        <div class="relative" appClickOutside (appClickOutside)="closeMenu()">
             <button type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen()" aria-haspopup="menu"
                 class="cursor-pointer">
                 Menu

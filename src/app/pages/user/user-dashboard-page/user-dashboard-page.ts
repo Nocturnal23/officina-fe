@@ -9,11 +9,12 @@ import { BookingCard } from '../../../features/booking/components/booking-card/b
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { BookingService } from '../../../features/booking/services/booking.service';
 import { withHttpErrorMessage, withLocalHttpErrorHandling } from '../../../core/interceptors/http-error.cotext';
+import { ClickOutsideDirective } from '../../../shared/directive/click-outside.directive';
 
 
 @Component({
     selector: 'app-user-dashboard-page',
-    imports: [ProfileMenu, BookingCard, BookingCardView, Paginator],
+    imports: [ProfileMenu, BookingCard, BookingCardView, Paginator, ClickOutsideDirective],
     templateUrl: './user-dashboard-page.html',
     styleUrl: './user-dashboard-page.css',
 })
