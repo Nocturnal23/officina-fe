@@ -58,14 +58,16 @@
 
         <div class="flex flex-col gap-4 w-full max-w-4xl mx-auto">
             @if( activeTab() === 'COMPLETED' || activeTab() === 'REFUSED'){
-            <app-list-filters [filters]="currentListFilters()" [vehicleOptions]="vehicles()"
-                [vehicleLoading]="vehiclesLoading()" [vehicleError]="vehiclesError()" [jobOptions]="jobs()"
+            <app-list-filters [filters]="currentListFilters()" [vehicleOptions]="filterOptions.vehicles()"
+                [vehicleLoading]="filterOptions.vehiclesLoading()" [vehicleError]="filterOptions.vehiclesError()" [jobOptions]="jobs()"
                 [jobError]="jobError()" (jobRetry)="loadJobs()" (vehicleRetry)="loadVehicles()"
                 (filtersChange)="onListFiltersChange($event)" [showUserFilter]="true"
                 [userOption]="userOptions.options()" [userLoading]="userOptions.loading()"
                 [userError]="userOptions.error()" [userPage]="userOptions.page()"
                 [userTotalPages]="userOptions.totalPages()" (userSearch)="onUserSearch($event)"
-                (userPageChange)="onUserPageChange($event)" (userRetry)="userOptions.load()" />
+                (userPageChange)="onUserPageChange($event)" (userRetry)="userOptions.load()"
+                (userSelectionChange)="onUserSelectionChange($event)"
+                (vehicleSelectionChange)="onVehicleSelectionChange($event)" />
             }
 
             @if (loading()) {

@@ -17,6 +17,8 @@ import { UserService } from '../../../features/user/services/user.service';
 import { PagedOptionsState } from '../../../shared/state/paged-options-state';
 import { UserResponse } from '../../../models/user.model';
 import { withLocalHttpErrorHandling } from '../../../core/interceptors/http-error.cotext';
+import { AdminFilterOptionsState } from '../../../shared/state/admin-filter-options-state';
+import { VehicleResponse } from '../../../models/vehicle.model';
 
 @Component({
     selector: 'app-intervention-history-page',
@@ -32,16 +34,27 @@ export class InterventionHistoryPage extends BasePaginatorComponent<Intervention
     private readonly jobService = inject(JobService);
     private readonly destroyRef = inject(DestroyRef);
     private readonly userService = inject(UserService);
+    private readonly userFilterVehicleId = signal<number | null>(null);
 
     readonly userOptions = new PagedOptionsState<UserResponse>(
         this.destroyRef,
-        (page, size, query) =>
-            this.userService.getAllUsers(
-                page,
-                size,
-                query || undefined,
-                withLocalHttpErrorHandling(),
-            ),
+        (page, size, query) => {
+            const vehicleId = this.userFilterVehicleId();
+            return vehicleId === null
+                ? this.userService.getAllUsers(
+                    page,
+                    size,
+                    query || undefined,
+                    withLocalHttpErrorHandling(),
+                )
+                : this.userService.getUsersWithBookingsForVehicle(
+                    vehicleId,
+                    page,
+                    size,
+                    query || undefined,
+                    withLocalHttpErrorHandling(),
+                );
+        },
     );
 
     currentFilters = signal<BookingStatus[]>([BookingStatus.COMPLETED, BookingStatus.REFUSED]);
@@ -51,6 +64,7 @@ export class InterventionHistoryPage extends BasePaginatorComponent<Intervention
     filterState!: HistoryFilterState;
     currentListFilters!: HistoryFilterState['filters'];
     vehicles!: HistoryFilterState['vehicleOptions'];
+    adminFilterOptions: AdminFilterOptionsState | null = null;
     loading = signal(true);
     loadFailed = signal(false);
 
@@ -59,14 +73,19 @@ export class InterventionHistoryPage extends BasePaginatorComponent<Intervention
     BookingStatuBut = BookingStatus;
 
     ngOnInit() {
+        if (this.isAdmin()) {
+            this.adminFilterOptions = new AdminFilterOptionsState(
+                this.destroyRef,
+                () => this.vehicleService.getAllVehicles(undefined, withLocalHttpErrorHandling()),
+                (userId) => this.vehicleService.getVehiclesBookedByUser(userId, withLocalHttpErrorHandling()),
+            );
+        }
+
         this.filterState = new HistoryFilterState(
             this.destroyRef,
             () => {
                 if (this.isAdmin()) {
-                    return this.vehicleService.getAllVehicles(
-                        undefined,
-                        withLocalHttpErrorHandling(),
-                    );
+                    return null;
                 }
 
                 const userId = this.authService.currentUser()?.id;
@@ -154,4 +173,38 @@ export class InterventionHistoryPage extends BasePaginatorComponent<Intervention
         this.userOptions.goToPage(page);
     }
 
+    onUserSelectionChange(userId: number | null): void {
+        this.adminFilterOptions?.loadForUser(userId);
+    }
+
+    onVehicleSelectionChange(vehicleId: number | null): void {
+        this.userFilterVehicleId.set(vehicleId);
+        this.userOptions.reload();
+    }
+
+    vehicleOptions(): VehicleResponse[] {
+        return this.isAdmin()
+            ? this.adminFilterOptions?.vehicles() ?? []
+            : this.vehicles();
+    }
+
+    vehicleOptionsLoading(): boolean {
+        return this.isAdmin()
+            ? this.adminFilterOptions?.vehiclesLoading() ?? false
+            : this.filterState.vehiclesLoading();
+    }
+
+    vehicleOptionsError(): boolean {
+        return this.isAdmin()
+            ? this.adminFilterOptions?.vehiclesError() ?? false
+            : this.filterState.vehiclesError();
+    }
+
+    retryVehicleOptions(): void {
+        if (this.isAdmin()) {
+            this.adminFilterOptions?.retry();
+        } else {
+            this.filterState.retryVehicles();
+        }
+    }
 }

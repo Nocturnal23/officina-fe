@@ -9,13 +9,13 @@ import { AuthService } from '../../../core/services/auth/auth.service';
 import { BookingService } from '../../../features/booking/services/booking.service';
 import { ListFilters } from '../../../shared/components/list-filters/list-filters';
 import { ListFilterCriteria } from '../../../models/list-filters.model';
-import { VehicleResponse } from '../../../models/vehicle.model';
 import { VehicleService } from '../../../features/vehicles/services/vehicle.service';
 import { JobService } from '../../../features/jobs/services/job.service';
 import { JobResponse } from '../../../models/job.model';
 import { UserResponse } from '../../../models/user.model';
 import { UserService } from '../../../features/user/services/user.service';
 import { PagedOptionsState } from '../../../shared/state/paged-options-state';
+import { AdminFilterOptionsState } from '../../../shared/state/admin-filter-options-state';
 import { withHttpErrorMessage, withLocalHttpErrorHandling } from '../../../core/interceptors/http-error.cotext';
 import { InterventionCard } from '../../../features/intervention/components/intervention-card/intervention-card';
 
@@ -35,26 +35,39 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
     private vehicleService = inject(VehicleService);
     private jobService = inject(JobService);
     private userService = inject(UserService);
+    private readonly userFilterVehicleId = signal<number | null>(null);
 
     readonly tabs = BOOKING_TABS;
     readonly userOptions = new PagedOptionsState<UserResponse>(
         inject(DestroyRef),
-        (page, size, query) =>
-            this.userService.getAllUsers(
-                page,
-                size,
-                query || undefined,
-                withLocalHttpErrorHandling(),
-            ),
+        (page, size, query) => {
+            const vehicleId = this.userFilterVehicleId();
+            return vehicleId === null
+                ? this.userService.getAllUsers(
+                    page,
+                    size,
+                    query || undefined,
+                    withLocalHttpErrorHandling(),
+                )
+                : this.userService.getUsersWithBookingsForVehicle(
+                    vehicleId,
+                    page,
+                    size,
+                    query || undefined,
+                    withLocalHttpErrorHandling(),
+                );
+        },
+    );
+    readonly filterOptions = new AdminFilterOptionsState(
+        inject(DestroyRef),
+        () => this.vehicleService.getAllVehicles(undefined, withLocalHttpErrorHandling()),
+        (userId) => this.vehicleService.getVehiclesBookedByUser(userId, withLocalHttpErrorHandling()),
     );
 
     isManagerOpen = signal<boolean>(false)
     activeTab = signal<BookingStatus>(BookingStatus.PENDING);
     statusCounts = signal<Record<string, number>>({})
     currentListFilters = signal<ListFilterCriteria>({});
-    vehicles = signal<VehicleResponse[]>([]);
-    vehiclesLoading = signal(false);
-    vehiclesError = signal(false);
     jobs = signal<JobResponse[] | null>(null);
     jobError = signal(false);
     loading = signal(true);
@@ -65,6 +78,9 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
         this.activeTab.set(status);
         if (status !== BookingStatus.COMPLETED && status !== BookingStatus.REFUSED) {
             this.currentListFilters.set({});
+            this.filterOptions.loadForUser(null);
+            this.userFilterVehicleId.set(null);
+            this.userOptions.reload();
         }
         this.currentPage.set(0);
         this.loadData();
@@ -75,7 +91,6 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
     }
 
     ngOnInit(): void {
-        this.loadVehicles();
         this.loadJobs();
         this.userOptions.load();
         this.loadData();
@@ -83,17 +98,7 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
     }
 
     loadVehicles(): void {
-        this.vehicles.set([]);
-        this.vehiclesLoading.set(true);
-        this.vehiclesError.set(false);
-        this.vehicleService.getAllVehicles(undefined, withLocalHttpErrorHandling()).subscribe({
-            next: (vehicles) => this.vehicles.set(vehicles),
-            error: () => {
-                this.vehiclesError.set(true);
-                this.vehiclesLoading.set(false);
-            },
-            complete: () => this.vehiclesLoading.set(false),
-        });
+        this.filterOptions.retry();
     }
 
     loadJobs(): void {
@@ -200,6 +205,15 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
 
     onUserPageChange(page: number): void {
         this.userOptions.goToPage(page);
+    }
+
+    onUserSelectionChange(userId: number | null): void {
+        this.filterOptions.loadForUser(userId);
+    }
+
+    onVehicleSelectionChange(vehicleId: number | null): void {
+        this.userFilterVehicleId.set(vehicleId);
+        this.userOptions.reload();
     }
 
     openInterventionHistory(): void {
