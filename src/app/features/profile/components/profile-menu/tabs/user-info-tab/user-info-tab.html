@@ -13,14 +13,7 @@
                     <input type="text" [ngModel]="tempFirstName()" (ngModelChange)="tempFirstName.set($event)"
                         class="w-full min-w-0 flex-1 text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
                         placeholder="Nome" />
-                    <button type="button" (click)="saveField('firstName')"
-                        class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer">
-                        Salva
-                    </button>
-                    <button type="button" (click)="cancelEdit()"
-                        class="px-2.5 py-1.5 text-xs bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 cursor-pointer">
-                        Annulla
-                    </button>
+                    <app-profile-edit-actions (save)="saveField('firstName')" (cancel)="cancelEdit()" />
                 </div>
                 } @else {
                 <div class="min-w-0 flex-1">
@@ -35,10 +28,6 @@
                         </button>
                     </div>
                 </div>
-                <button type="button" (click)="startEdit('firstName')"
-                    class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
-                    Modifica
-                </button>
                 }
             </div>
 
@@ -50,14 +39,7 @@
                     <input type="text" [ngModel]="tempLastName()" (ngModelChange)="tempLastName.set($event)"
                         class="w-full min-w-0 flex-1 text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
                         placeholder="Cognome" />
-                    <button type="button" (click)="saveField('lastName')"
-                        class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer">
-                        Salva
-                    </button>
-                    <button type="button" (click)="cancelEdit()"
-                        class="px-2.5 py-1.5 text-xs bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 cursor-pointer">
-                        Annulla
-                    </button>
+                    <app-profile-edit-actions (save)="saveField('lastName')" (cancel)="cancelEdit()" />
                 </div>
                 } @else {
                 <div class="min-w-0 flex-1">
@@ -72,10 +54,6 @@
                         </button>
                     </div>
                 </div>
-                <button type="button" (click)="startEdit('lastName')"
-                    class="text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
-                    Modifica
-                </button>
                 }
             </div>
 
@@ -87,14 +65,7 @@
                     <input type="tel" [ngModel]="tempPhoneNumber()" (ngModelChange)="tempPhoneNumber.set($event)"
                         class="w-full min-w-0 flex-1 text-sm p-1.5 border border-slate-300 rounded-lg focus:outline-blue-600"
                         placeholder="Numero di telefono" />
-                    <button type="button" (click)="saveField('phoneNumber')"
-                        class="px-2.5 py-1.5 text-xs bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer">
-                        Salva
-                    </button>
-                    <button type="button" (click)="cancelEdit()"
-                        class="px-2.5 py-1.5 text-xs bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 cursor-pointer">
-                        Annulla
-                    </button>
+                    <app-profile-edit-actions (save)="saveField('phoneNumber')" (cancel)="cancelEdit()" />
                 </div>
                 } @else {
                 <div class="min-w-0 flex-1">
@@ -105,24 +76,24 @@
                         <p class="min-w-0 wrap-break-word text-sm font-semibold text-slate-800">
                             {{ authService.currentUser()?.phoneNumber }}
                         </p>
-                @if (!isAdmin) {
-                <button type="button" (click)="startEdit('phoneNumber')"
+                        @if (!isAdmin) {
+                        <button type="button" (click)="startEdit('phoneNumber')"
                             class="shrink-0 text-xs font-semibold text-blue-600 hover:underline cursor-pointer">
-                    Modifica
-                </button>
-                } @else {
+                            Modifica
+                        </button>
+                        } @else {
                         <span class="shrink-0 text-xs text-slate-400 italic">Bloccato da policy</span>
-                }
+                        }
                     </div>
                 </div>
                 }
             </div>
             @if (!isAdmin) {
             <div class="flex justify-center w-full">
-            <button type="button" (click)="deleteUser()"
-                class="text-xl font-semibold text-red-600 hover:underline cursor-pointer">
-                Elimina profilo
-            </button>
+                <button type="button" (click)="deleteUser()"
+                    class="text-xl font-semibold text-red-600 hover:underline cursor-pointer">
+                    Elimina profilo
+                </button>
             </div>
             }
         </div>

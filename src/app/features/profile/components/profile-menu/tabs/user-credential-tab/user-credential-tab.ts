@@ -8,12 +8,13 @@ import { PasswordInputComponent } from '../../../../../../shared/components/pass
 import { AuthService } from '../../../../../../core/services/auth/auth.service';
 import { UserService } from '../../../../../user/services/user.service';
 import { withHttpErrorMessage } from '../../../../../../core/interceptors/http-error.cotext';
+import { ProfileEditActions } from '../../../profile-edit-actions/profile-edit-actions';
 
 type EditableField = 'email' | null;
 
 @Component({
     selector: 'app-user-credential-tab',
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordRequirementsComponent, PasswordInputComponent],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordRequirementsComponent, PasswordInputComponent, ProfileEditActions],
     templateUrl: './user-credential-tab.html',
     styleUrl: './user-credential-tab.css',
 })

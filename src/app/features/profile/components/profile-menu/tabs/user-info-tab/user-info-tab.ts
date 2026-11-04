@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../../../../core/services/auth/auth.service';
 import { UserService } from '../../../../../user/services/user.service';
 import { withHttpErrorMessage } from '../../../../../../core/interceptors/http-error.cotext';
+import { ProfileEditActions } from '../../../profile-edit-actions/profile-edit-actions';
 
 type EditableField = 'firstName' | 'lastName' | 'phoneNumber' | null;
 
 @Component({
     selector: 'app-user-info-tab',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, ProfileEditActions],
     templateUrl: './user-info-tab.html',
     styleUrl: './user-info-tab.css',
 })
