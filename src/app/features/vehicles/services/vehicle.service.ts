@@ -2,6 +2,7 @@ import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { VehicleResponse, VehicleRequest } from '../../../models/vehicle.model';
+import { API_BASE_URL } from '../../../core/services/api-url';
 
 @Injectable({
     providedIn: 'root',
@@ -9,8 +10,8 @@ import { VehicleResponse, VehicleRequest } from '../../../models/vehicle.model';
 
 export class VehicleService {
     private http = inject(HttpClient);
-    private url = 'http://localhost:8080/api/users/me/vehicles';
-    private urlAdmin = 'http://localhost:8080/api/admin/vehicles';
+    private url = `${API_BASE_URL}/users/me/vehicles`;
+    private urlAdmin = `${API_BASE_URL}/admin/vehicles`;
 
     getVehiclesByUser(context?: HttpContext): Observable<VehicleResponse[]> {
         return this.http.get<VehicleResponse[]>(this.url, { context });
@@ -43,6 +44,6 @@ export class VehicleService {
     }
 
     getVehiclesBookedByUser(userId: number, context?: HttpContext): Observable<VehicleResponse[]> {
-        return this.http.get<VehicleResponse[]>(`http://localhost:8080/api/admin/users/${userId}/booking-vehicles`, { context });
+        return this.http.get<VehicleResponse[]>(`${API_BASE_URL}/admin/users/${userId}/booking-vehicles`, { context });
     }
 }

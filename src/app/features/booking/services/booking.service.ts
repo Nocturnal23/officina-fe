@@ -5,6 +5,7 @@ import { BookingRequest, BookingResponse, BookingStatus } from '../../../models/
 import { PageResponse } from '../../../models/pagination.model';
 import { ListFilterCriteria } from '../../../models/list-filters.model';
 import { VehicleResponse } from '../../../models/vehicle.model';
+import { API_BASE_URL } from '../../../core/services/api-url';
 
 
 @Injectable({
@@ -13,8 +14,8 @@ import { VehicleResponse } from '../../../models/vehicle.model';
 
 export class BookingService {
     private http = inject(HttpClient);
-    private url = 'http://localhost:8080/api/users/me'
-    private adminUrl = 'http://localhost:8080/api/admin'
+    private url = `${API_BASE_URL}/users/me`;
+    private adminUrl = `${API_BASE_URL}/admin`;
 
     createBooking(vehicleId: number, request: BookingRequest, context?: HttpContext): Observable<BookingResponse> {
         return this.http.post<BookingResponse>(

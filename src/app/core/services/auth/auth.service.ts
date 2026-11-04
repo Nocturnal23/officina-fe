@@ -3,13 +3,14 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { UserResponse, UserRequest } from '../../../models/user.model';
 import { LoginRequest, LoginResponse } from '../../../models/auth.model';
+import { API_BASE_URL } from '../api-url';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthService {
     private http = inject(HttpClient);
-    private authUrl = 'http://localhost:8080/api/auth';
+    private authUrl = `${API_BASE_URL}/auth`;
 
     currentUser = signal<UserResponse | null>(this.getUserFromStorage())
 

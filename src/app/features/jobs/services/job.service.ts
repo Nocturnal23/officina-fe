@@ -2,13 +2,14 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { JobResponse, JobRequest, JobAvailabilityRequest } from '../../../models/job.model';
+import { API_BASE_URL } from '../../../core/services/api-url';
 
 @Injectable({
     providedIn: 'root',
 })
 export class JobService {
     private http = inject(HttpClient);
-    private url = 'http://localhost:8080/api';
+    private url = API_BASE_URL;
 
     getJobs(context?: HttpContext): Observable<JobResponse[]> {
         return this.http.get<JobResponse[]>(

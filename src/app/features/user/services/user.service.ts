@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { PageResponse } from '../../../models/pagination.model';
 import { UserRequest, UserResponse, ChangePasswordRequest } from '../../../models/user.model';
 import { AuthService } from '../../../core/services/auth/auth.service';
+import { API_BASE_URL } from '../../../core/services/api-url';
 
 @Injectable({
     providedIn: 'root',
@@ -12,8 +13,8 @@ export class UserService {
     private http = inject(HttpClient);
     private authService = inject(AuthService);
 
-    private userUrl = 'http://localhost:8080/api/users';
-    private adminUrl = 'http://localhost:8080/api/admin';
+    private userUrl = `${API_BASE_URL}/users`;
+    private adminUrl = `${API_BASE_URL}/admin`;
 
     updateUser(changes: Partial<UserRequest>, context?: HttpContext): Observable<UserResponse> {
         return this.http.patch<UserResponse>(`${this.userUrl}/me`, changes, { context }).pipe(

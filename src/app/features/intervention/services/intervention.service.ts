@@ -5,6 +5,7 @@ import { BookingStatus } from '../../../models/booking.model';
 import { InterventionHistoryRequest, InterventionHistoryResponse } from '../../../models/intervention.models';
 import { PageResponse } from '../../../models/pagination.model';
 import { ListFilterCriteria } from '../../../models/list-filters.model';
+import { API_BASE_URL } from '../../../core/services/api-url';
 
 
 @Injectable({
@@ -12,8 +13,8 @@ import { ListFilterCriteria } from '../../../models/list-filters.model';
 })
 export class InterventionService {
     private http = inject(HttpClient);
-    private url = 'http://localhost:8080/api/users/me'
-    private adminUrl = 'http://localhost:8080/api/admin'
+    private url = `${API_BASE_URL}/users/me`;
+    private adminUrl = `${API_BASE_URL}/admin`;
 
     createIntervention(vehicleId: number, request: InterventionHistoryRequest, context?: HttpContext): Observable<InterventionHistoryResponse> {
         return this.http.post<InterventionHistoryResponse>(
