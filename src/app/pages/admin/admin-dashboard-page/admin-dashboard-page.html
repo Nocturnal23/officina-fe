@@ -80,7 +80,7 @@
             } @else {
             @for (item of dataList(); track item.id) {
             <app-booking-card-view [booking]="item" [isAdmin]="true" (statusChange)="handleStatusChange($event)"
-                (delete)="deleteBooking($event)" />
+                (bookingUpdated)="refreshBookings()" (delete)="deleteBooking($event)" />
             } @empty {
             <div class="col-span-full text-center py-10 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50">
                 <p class="text-xs text-slate-400">Nessuna prenotazione presente per questo stato.</p>

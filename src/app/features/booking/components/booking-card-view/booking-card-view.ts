@@ -28,6 +28,7 @@ export class BookingCardView {
 
     delete = output<number>();
     statusChange = output<StatusChangeEvent>();
+    bookingUpdated = output<void>();
 
     vehicleDetails = signal<VehicleResponse | null>(null);
     jobDetails = signal<string[]>([]);
@@ -89,15 +90,7 @@ export class BookingCardView {
     }
 
     onInterventionConfirmed(): void {
-        const targetStatus = this.pendingStatus();
-
-        if (targetStatus) {
-            this.statusChange.emit({
-                id: this.booking().id,
-                status: targetStatus
-            });
-        }
-
+        this.bookingUpdated.emit();
         this.closeInterventionCard();
     }
 

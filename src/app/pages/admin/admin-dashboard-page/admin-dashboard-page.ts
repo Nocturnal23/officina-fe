@@ -178,6 +178,11 @@ export class AdminDashboardPage extends BasePaginatorComponent<BookingResponse> 
         });
     }
 
+    refreshBookings(): void {
+        this.loadCount();
+        this.loadData();
+    }
+
     deleteBooking(bookingId: number): void {
         this.bookingService.refuseBooking(
             bookingId,
