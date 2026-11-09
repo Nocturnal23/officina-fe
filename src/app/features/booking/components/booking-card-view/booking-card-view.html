@@ -17,29 +17,37 @@
 
 
     <!-- <div class="flex flex-col md:fkex-row md:items-center justify-between gap-4 md:gap-6"> -->
-    <div class="flex flex-col items-center md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+    <div class="flex flex-row items-center justify-start gap-4 md:gap-6">
         <div
-            class="rounded-xl bg-blue-50/80 p-2.5 text-blue-600 font-bold text-center shrink-0 border border-blue-100 min-w-14">
+            class="rounded-xl bg-blue-50/80 p-2.5 text-blue-600 font-bold text-center shrink-0 border border-blue-100 min-w-14 self-stretch flex flex-col justify-center">
             <span class="block text-[11px] uppercase text-slate-500 font-medium leading-none">
                 {{ booking().appointmentDate | date:'MMM' }}
+            </span>
+            <span class="block text-[11px] uppercase text-slate-500 font-medium leading-none">
+                {{ booking().appointmentDate | date:'y' }}
             </span>
             <span class="text-xl">
                 {{ booking().appointmentDate | date:'dd' }}
             </span>
         </div>
 
-        <!-- <div class="flex flex-col gap-1 min-w-0"> -->
-        <div class="flex flex-col gap-1 min-w-0 items-center md:items-start">
-            <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs font-medium text-slate-400">Veicolo:</span>
-                <span class="text-sm font-semibold text-slate-800">
-                    {{ vehicleDetails()?.brand }} {{ vehicleDetails()?.model }}
-                </span>
-                <span class="text-xs font-medium text-slate-400">Targa:</span>
-                <span class="text-sm font-semibold text-slate-800">
-                    {{vehicleDetails()?.plate}}
-                </span>
-            </div>
+        <div class="grid grid-cols-1 gap-3 lg:flex-1 lg:grid-cols-2 lg:items-center">
+            <div class="flex flex-col items-start gap-1">
+                <div class="flex flex-col items-start gap-1 w-full lg:flex-row lg:gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-medium text-slate-400">Veicolo:</span>
+                        <span class="text-sm font-semibold text-slate-800">
+                            {{ vehicleDetails()?.brand }} {{ vehicleDetails()?.model }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-medium text-slate-400">Targa:</span>
+                        <span class="text-sm font-semibold text-slate-800">
+                            {{vehicleDetails()?.plate}}
+                        </span>
+                    </div>
+                </div>
 
                 <div class="flex min-w-0 items-start gap-2">
                     <span class="shrink-0 text-xs font-medium text-slate-400">Interventi:</span>
@@ -47,7 +55,7 @@
                         @for (job of visibleJobDetails(); track $index) {
                         <span class="max-w-full wrap-break-word rounded-md bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-700">
                             {{ job }}@if ($index < jobDetails().length - 1) {;}
-                </span>
+                        </span>
                         }
                         @if (hiddenJobCount() > 0) {
                         <button type="button" (click)="openJobList()"
@@ -58,35 +66,37 @@
                     </div>
                 </div>
             </div>
-        </div>
 
 
-        <div class="md:max-w-xs shrink-0">
-            <span class="block text-[11px] uppercase tracking-wider font-medium text-slate-400">Note cliente</span>
-            @if (booking().notes) {
-            <p class="text-xs text-slate-600 italic line-clamp-2 mt-0.5">
-                "{{ booking().notes }}"
-            </p>
-            } @else {
-            <span class="text-xs text-slate-400 italic">Nessuna nota presente</span>
-            }
+
+            <div class="w-full shrink-0  text-center">
+                <span class="block text-[11px] uppercase tracking-wider font-medium text-slate-400">Note cliente</span>
+                @if (booking().notes) {
+                <p class="text-xs text-slate-600 italic line-clamp-2 mt-0.5">
+                    "{{ booking().notes }}"
+                </p>
+                } @else {
+                <p class="text-xs text-slate-400 italic line-clamp-2 mt-0.5">Nessuna nota presente</p>
+                }
+            </div>
         </div>
+    </div>
 
     <div class="flex flex-wrap items-center justify-center gap-2">
-            @if (canBeDeleted && !isAdmin()) {
-            <button class="booking-action booking-action--danger">Annulla prenotazione</button>
-            } @else if(isAdmin() && canBeDeleted) {
-            <button class="booking-action booking-action--danger">Rifiuta prenotazione</button>
+        @if (canBeDeleted && !isAdmin()) {
+        <button type="button" (click)="onDelete()" class="booking-action booking-action--danger">Annulla prenotazione</button>
+        } @else if(isAdmin() && canBeDeleted) {
+        <button type="button" (click)="onStatusChange('REFUSE')" class="booking-action booking-action--danger">Rifiuta prenotazione</button>
 
-            <button class="booking-action booking-action--success">Accetta prenotazione</button>
-            } @else if(booking().status !== 'COMPLETED' && booking().status !== 'REFUSED' && isAdmin()){
-            <button class="booking-action booking-action--success">Aggiorna stato</button>
-            }
-        </div>
-        @if(isInterventionOpen()){
-        <app-intervention-card [booking]="booking()" [targetStatus]="pendingStatus()" [customer]="customer()"
-            [vehicle]="vehicleDetails()" (confirm)="onInterventionConfirmed()" (close)="closeInterventionCard()" />
+        <button type="button" (click)="onStatusChange('ACCEPT')" class="booking-action booking-action--success">Accetta prenotazione</button>
+        } @else if(booking().status !== 'COMPLETED' && booking().status !== 'REFUSED' && isAdmin()){
+        <button type="button" (click)="onStatusChange('ADVANCE')" class="booking-action booking-action--success">Aggiorna stato</button>
         }
+    </div>
+    @if(isInterventionOpen()){
+    <app-intervention-card [booking]="booking()" [targetStatus]="pendingStatus()" [customer]="customer()"
+        [vehicle]="vehicleDetails()" (confirm)="onInterventionConfirmed()" (close)="closeInterventionCard()" />
+    }
     @if (isJobListOpen()) {
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" role="presentation">
         <button type="button" aria-label="Chiudi elenco interventi" (click)="closeJobList()"
