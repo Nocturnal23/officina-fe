@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, input, output, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { InterventionCard } from '../../../intervention/components/intervention-card/intervention-card';
 import { VehicleResponse } from '../../../../models/vehicle.model';
@@ -34,7 +34,11 @@ export class BookingCardView {
     jobDetails = signal<string[]>([]);
     customer = signal<UserResponse | null>(null);
     isInterventionOpen = signal<boolean>(false);
+    isJobListOpen = signal<boolean>(false);
     pendingStatus = signal<BookingStatus | null>(null);
+
+    visibleJobDetails = computed(() => this.jobDetails().slice(0, 2));
+    hiddenJobCount = computed(() => Math.max(0, this.jobDetails().length - 2));
 
     ngOnInit(): void {
         if (this.isAdmin() && this.booking().userId) {
@@ -97,6 +101,21 @@ export class BookingCardView {
     closeInterventionCard() {
         this.isInterventionOpen.set(false);
         this.pendingStatus.set(null);
+    }
+
+    openJobList(): void {
+        this.isJobListOpen.set(true);
+    }
+
+    closeJobList(): void {
+        this.isJobListOpen.set(false);
+    }
+
+    @HostListener('document:keydown.escape')
+    closeJobListOnEscape(): void {
+        if (this.isJobListOpen()) {
+            this.closeJobList();
+        }
     }
 
     private retrieveVehicleInfo(): void {
