@@ -48,6 +48,13 @@ export function getErrorMessage(
     error: unknown,
     contextualMessage?: string,
 ): string {
+    if (error instanceof HttpErrorResponse) {
+        const backendMessage = getBackendErrorMessage(error.error);
+        if (backendMessage) {
+            return backendMessage;
+        }
+    }
+
     if (contextualMessage) {
         return contextualMessage;
     }
@@ -78,4 +85,23 @@ export function getErrorMessage(
                 ? 'Si è verificato un errore del server. Riprova più tardi.'
                 : 'Si è verificato un errore. Riprova più tardi.';
     }
+}
+
+function getBackendErrorMessage(body: unknown): string | null {
+    if (typeof body === 'string') {
+        const message = body.trim();
+        return message || null;
+    }
+
+    if (typeof body !== 'object' || body === null || !('message' in body)) {
+        return null;
+    }
+
+    const message = body.message;
+    if (typeof message !== 'string') {
+        return null;
+    }
+
+    const trimmedMessage = message.trim();
+    return trimmedMessage || null;
 }
