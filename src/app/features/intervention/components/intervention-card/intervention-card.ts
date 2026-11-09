@@ -258,6 +258,7 @@ export class InterventionCard {
             bookingId: this.booking()?.id ?? null,
             status: this.targetStatus() ?? this.booking()?.status ?? BookingStatus.COMPLETED,
             interventionKilometers: kilometers,
+            customerNotes: this.booking()?.notes ?? null,
             ...intervention
         }
 
