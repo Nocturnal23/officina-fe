@@ -22,6 +22,7 @@ export class InterventionCardView {
 
     vehicleDetails = signal<VehicleResponse | null>(null);
     jobDetails = signal<string[]>([]);
+    isJobListOpen = signal<boolean>(false);
 
     currentStatusMeta = computed(() =>
         BOOKING_STATUS_CONFIG[this.intervention().status] ?? {
@@ -29,6 +30,9 @@ export class InterventionCardView {
             badgeClass: 'border-slate-200 bg-slate-50 text-slate-700'
         }
     );
+
+    visibleJobDetails = computed(() => this.jobDetails().slice(0, 1));
+    hiddenJobCount = computed(() => Math.max(0, this.jobDetails().length - 1));
 
     ngOnInit(): void {
         console.log(this.intervention());
@@ -62,5 +66,13 @@ export class InterventionCardView {
                 error: () => { },
             });
         }
+    }
+
+    openJobList(): void {
+        this.isJobListOpen.set(true);
+    }
+
+    closeJobList(): void {
+        this.isJobListOpen.set(false);
     }
 }

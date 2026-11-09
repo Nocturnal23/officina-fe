@@ -11,9 +11,9 @@
         </span>
     </div>
 
-    <div class="flex flex-col items-center md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+    <div class="flex flex-row items-center justify-start gap-4 md:gap-6">
         <div
-            class="rounded-xl bg-blue-50/80 p-2.5 text-blue-600 font-bold text-center shrink-0 border border-blue-100 min-w-14">
+            class="rounded-xl bg-blue-50/80 p-2.5 text-blue-600 font-bold text-center shrink-0 border border-blue-100 min-w-14 self-stretch flex flex-col justify-center">
             <span class="block text-[11px] uppercase text-slate-500 font-medium leading-none">
                 {{ intervention().completedAt | date:'MMM' }}
             </span>
@@ -25,51 +25,94 @@
             </span>
         </div>
 
-        <div class="flex flex-col gap-1 min-w-0 items-center md:items-start">
-            <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs font-medium text-slate-400">Veicolo:</span>
-                <span class="text-sm font-semibold text-slate-800">
-                    {{ vehicleDetails()?.brand }} {{ vehicleDetails()?.model }}
-                </span>
-                <span class="text-xs font-medium text-slate-400">Targa:</span>
-                <span class="text-sm font-semibold text-slate-800">
-                    {{vehicleDetails()?.plate}}
-                </span>
-                <span class="text-xs font-medium text-slate-400">Chilometraggio:</span>
-                <span class="text-sm font-semibold text-slate-800">
-                    @if (intervention().interventionKilometers !== null) {
-                    {{intervention().interventionKilometers}} KM
-                    } @else {
-                    Non disponibile
-                    }
-                </span>
+        <div class="grid grid-cols-1 gap-3 lg:flex-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-center">
+            <div class="flex min-w-0 flex-col items-start gap-1">
+                <div class="flex w-full flex-col items-start gap-1 lg:flex-row lg:flex-wrap lg:gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-medium text-slate-400">Veicolo:</span>
+                        <span class="text-sm font-semibold text-slate-800">
+                            {{ vehicleDetails()?.brand }} {{ vehicleDetails()?.model }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-medium text-slate-400">Targa:</span>
+                        <span class="text-sm font-semibold text-slate-800">
+                            {{vehicleDetails()?.plate}}
+                        </span>
+                    </div>
+
+                    <div class="flex min-w-0 items-start gap-2">
+                        <span class="text-xs font-medium text-slate-400">Chilometraggio:</span>
+                        <span class="text-sm font-semibold text-slate-800">
+                            @if (intervention().interventionKilometers !== null) {
+                            {{intervention().interventionKilometers}} KM
+                            } @else {
+                            Non disponibile
+                            }
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex min-w-0 flex-col items-start gap-2">
+                    <div class="flex min-w-0 flex-row items-start gap-2">
+                        <span class="shrink-0 text-xs font-medium text-slate-400">Interventi:</span>
+                        <div class="flex min-w-0 flex-col items-start">
+                            @for (job of visibleJobDetails(); track $index) {
+                            <span
+                                class="max-w-full wrap-break-word rounded-md bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-700">
+                                {{ job }}@if ($index < jobDetails().length - 1) {;} </span>
+                                    }
+                                    @if (hiddenJobCount() > 0) {
+                                    <button type="button" (click)="openJobList()"
+                                        class="text-xs font-medium text-blue-700 underline underline-offset-2 hover:text-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                                        Continua... ({{ hiddenJobCount() }} altri)
+                                    </button>
+                                    }
+                        </div>
+                    </div>
+
+                    <div class="flex min-w-0 items-start gap-2">
+                        <span class="text-xs font-medium text-slate-400">Costo:</span>
+                        <span
+                            class="text-xs font-medium px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-slate-700">
+                            {{ intervention().cost }} €
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs font-medium text-slate-400">Interventi:</span>
-                <span
-                    class="text-xs font-medium px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-slate-700">
-                    {{ jobDetails() }}
-                </span>
-
-                <span class="text-xs font-medium text-slate-400">Costo:</span>
-                <span
-                    class="text-xs font-medium px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-slate-700">
-                    {{ intervention().cost }} €
-                </span>
+            <div class="w-full shrink-0  text-center">
+                <span class="block text-[11px] uppercase tracking-wider font-medium text-slate-400">Note del
+                    meccanico</span>
+                @if (intervention().notes) {
+                <p class="text-xs text-slate-600 italic line-clamp-2 mt-0.5">
+                    "{{ intervention().notes }}"
+                </p>
+                } @else {
+                <span class="text-xs text-slate-400 italic line-clamp-2 mt-0.5">Nessuna nota presente</span>
+                }
             </div>
-        </div>
-
-        <div class="md:max-w-xs shrink-0">
-            <span class="block text-[11px] uppercase tracking-wider font-medium text-slate-400">Note del
-                meccanico</span>
-            @if (intervention().notes) {
-            <p class="text-xs text-slate-600 italic line-clamp-2 mt-0.5">
-                "{{ intervention().notes }}"
-            </p>
-            } @else {
-            <span class="text-xs text-slate-400 italic">Nessuna nota presente</span>
-            }
         </div>
     </div>
+
+    @if (isJobListOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" role="presentation">
+        <button type="button" aria-label="Chiudi elenco interventi" (click)="closeJobList()"
+            class="absolute inset-0 cursor-default"></button>
+        <section role="dialog" aria-modal="true" aria-labelledby="intervention-jobs-title"
+            class="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-xl bg-white p-5 shadow-xl">
+            <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
+                <h2 id="intervention-jobs-title" class="text-lg font-semibold text-slate-800">Interventi eseguiti</h2>
+                <button type="button" (click)="closeJobList()" aria-label="Chiudi elenco interventi"
+                    class="rounded px-2 py-1 text-xl text-slate-500 hover:bg-slate-100">&times;</button>
+            </div>
+            <ul class="mt-4 flex flex-col gap-2">
+                @for (job of jobDetails(); track $index) {
+                <li class="wrap-break-word rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-700">{{ job }}</li>
+                }
+            </ul>
+        </section>
+    </div>
+    }
 </div>
