@@ -18,13 +18,14 @@ import { PagedOptionsState } from '../../../shared/state/paged-options-state';
 import { AdminFilterOptionsState } from '../../../shared/state/admin-filter-options-state';
 import { withHttpErrorMessage, withLocalHttpErrorHandling } from '../../../core/interceptors/http-error.cotext';
 import { InterventionCard } from '../../../features/intervention/components/intervention-card/intervention-card';
+import { ClickOutsideDirective } from '../../../shared/directive/click-outside.directive';
 
 
 export type AdminBookingAction = 'ACCEPT' | 'REFUSE' | 'ADVANCE';
 
 @Component({
     selector: 'app-admin-dashboard-page',
-    imports: [CommonModule, BookingCardView, Paginator, ListFilters, InterventionCard],
+    imports: [CommonModule, BookingCardView, Paginator, ListFilters, InterventionCard, ClickOutsideDirective],
     templateUrl: './admin-dashboard-page.html',
     styleUrl: './admin-dashboard-page.css',
 })
