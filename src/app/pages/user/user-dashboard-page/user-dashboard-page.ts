@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProfileMenu } from "../../../features/profile/components/profile-menu/profile-menu";
 import { BookingResponse, BookingStatus } from '../../../models/booking.model';
@@ -10,6 +10,10 @@ import { AuthService } from '../../../core/services/auth/auth.service';
 import { BookingService } from '../../../features/booking/services/booking.service';
 import { withHttpErrorMessage, withLocalHttpErrorHandling } from '../../../core/interceptors/http-error.cotext';
 import { ClickOutsideDirective } from '../../../shared/directive/click-outside.directive';
+import { PollingService } from '../../../core/services/polling/polling.services';
+import { catchError, EMPTY, exhaustMap, forkJoin } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PageResponse } from '../../../models/pagination.model';
 
 
 @Component({
@@ -20,17 +24,71 @@ import { ClickOutsideDirective } from '../../../shared/directive/click-outside.d
 })
 export class UserDashboardPage extends BasePaginatorComponent<BookingResponse> {
     protected readonly authService = inject(AuthService);
-    private router = inject(Router);
-    private bookingService = inject(BookingService);
+    private readonly router = inject(Router);
+    private readonly bookingService = inject(BookingService);
+    private readonly pollingService = inject(PollingService);
+    private readonly destroyRef = inject(DestroyRef);
 
-    isMenuOpen = signal<boolean>(false);
-    isProfileOpen = signal<boolean>(false);
-    showBookingCard = signal<boolean>(false);
-    loading = signal(true);
-    loadFailed = signal(false);
+    readonly isMenuOpen = signal<boolean>(false);
+    readonly isProfileOpen = signal<boolean>(false);
+    readonly showBookingCard = signal<boolean>(false);
+    readonly loading = signal(true);
+    readonly loadFailed = signal(false);
 
     ngOnInit(): void {
         this.loadData();
+
+        this.pollingService.poll().pipe(
+            exhaustMap(() =>
+                this.fetchBookingsPage().pipe(
+                    catchError(() => EMPTY),
+                ),
+            ),
+            takeUntilDestroyed(this.destroyRef),
+        ).subscribe(page => this.updatePaginationState(page));
+    }
+
+    protected override loadData(): void {
+        this.loading.set(true);
+        this.loadFailed.set(false);
+
+        this.fetchBookingsPage().subscribe({
+            next: page => {
+                this.updatePaginationState(page);
+                this.loading.set(false);
+            },
+            error: () => {
+                this.loadFailed.set(true);
+                this.loading.set(false);
+            },
+        });
+    }
+
+    private fetchBookingsPage() {
+        return this.bookingService.getBookings(
+            this.currentPage(),
+            this.pageSize(),
+            [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS],
+            withLocalHttpErrorHandling(),
+        );
+    }
+
+    onBookingCreated(): void {
+        this.closeBookingCard();
+        this.currentPage.set(0);
+        this.loadData();
+    }
+
+    deleteBooking(bookingId: number): void {
+        this.bookingService.deleteBooking(
+            bookingId,
+            withHttpErrorMessage('Non è stato possibile eliminare la prenotazione.'),
+        ).subscribe({
+            next: () => {
+                this.dataList.update(list => list.filter(b => b.id !== bookingId));
+            },
+            error: () => { },
+        });
     }
 
     toggleMenu(): void {
@@ -58,58 +116,19 @@ export class UserDashboardPage extends BasePaginatorComponent<BookingResponse> {
         this.showBookingCard.set(false);
     }
 
-    onBookingCreated(): void {
-        this.closeBookingCard();
-        this.currentPage.set(0);
-        this.loadData();
-    }
-
     openHistory(): void {
         this.closeMenu();
-        this.router.navigate(['user/history'])
+        this.router.navigate(['user/history']);
     }
 
     openInterventionHistory(): void {
         this.closeMenu();
-        this.router.navigate(['user/interventionhistory'])
+        this.router.navigate(['user/interventionhistory']);
     }
 
     logout(): void {
         this.closeMenu();
         this.authService.logout();
         this.router.navigate(['/login']);
-    }
-
-    protected loadData(): void {
-        this.loading.set(true);
-        this.loadFailed.set(false);
-
-        this.bookingService.getBookings(
-            this.currentPage(),
-            this.pageSize(),
-            [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS],
-            withLocalHttpErrorHandling(),
-        ).subscribe({
-            next: (data) => {
-                this.updatePaginationState(data);
-                this.loading.set(false);
-            },
-            error: () => {
-                this.loadFailed.set(true);
-                this.loading.set(false);
-            }
-        });
-    }
-
-    deleteBooking(bookingId: number): void {
-        this.bookingService.deleteBooking(
-            bookingId,
-            withHttpErrorMessage('Non è stato possibile eliminare la prenotazione.'),
-        ).subscribe({
-            next: () => {
-                this.dataList.update(list => list.filter(b => b.id !== bookingId));
-            },
-            error: () => { },
-        });
     }
 }
