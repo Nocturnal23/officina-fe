@@ -43,6 +43,35 @@ export class AuthService {
         return localStorage.getItem('token');
     }
 
+    hasValidSession(): boolean {
+        const token = this.getToken();
+        return token !== null && this.currentUser() !== null && this.hasUnexpiredToken(token);
+    }
+
+    private hasUnexpiredToken(token: string): boolean {
+        const payload = token.split('.')[1];
+        if (!payload) {
+            return false;
+        }
+
+        try {
+            const base64 = payload
+                .replace(/-/g, '+')
+                .replace(/_/g, '/')
+                .padEnd(Math.ceil(payload.length / 4) * 4, '=');
+            const claims: unknown = JSON.parse(atob(base64));
+
+            return typeof claims === 'object'
+                && claims !== null
+                && 'exp' in claims
+                && typeof claims.exp === 'number'
+                && Number.isFinite(claims.exp)
+                && claims.exp * 1000 > Date.now();
+        } catch {
+            return false;
+        }
+    }
+
     private getUserFromStorage(): UserResponse | null {
         const userJson = localStorage.getItem('currentUser');
         return userJson ? JSON.parse(userJson) : null;
