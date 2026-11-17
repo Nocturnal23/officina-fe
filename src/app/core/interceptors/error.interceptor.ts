@@ -20,8 +20,12 @@ export const errorInterceptor: HttpInterceptorFn = (request, next) => {
                 request.headers.has('Authorization') &&
                 !isAuthenticationRequest
             ) {
-                auth.logout();
-                void router.navigate(['/login'], { replaceUrl: true });
+                if (auth.getToken()) {
+                    auth.logout();
+                    router.navigate(['/unauthorized'], { replaceUrl: true });
+                }
+
+                return throwError(() => error);
             }
 
             if (!request.context.get(HTTP_ERROR_NOTIFICATION_ENABLED)) {
