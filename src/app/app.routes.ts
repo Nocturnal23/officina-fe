@@ -8,6 +8,9 @@ import { InterventionHistoryPage } from './pages/user/intervention-history-page/
 import { UserDashboardPage } from './pages/user/user-dashboard-page/user-dashboard-page';
 import { guestGuard } from './core/guards/guest.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { NotFound } from './pages/errors/not-found/not-found';
+import { Forbidden } from './pages/errors/forbidden/forbidden';
+import { Unauthorized } from './pages/errors/unauthorized/unauthorized';
 
 
 export const routes: Routes = [
@@ -20,5 +23,8 @@ export const routes: Routes = [
     { path: 'admin/services', component: ServicesList, canActivate: [adminGuard] },
     { path: 'admin/record', component: InterventionHistoryPage, canActivate: [adminGuard], data: { isAdmin: true } },
     { path: '', redirectTo: 'login', pathMatch: 'full' },
-
+    { path: 'not-found', component: NotFound },
+    { path: 'unauthorized', component: Unauthorized },
+    { path: 'forbidden', component: Forbidden},
+    { path: '**', redirectTo: 'not-found' }
 ];
