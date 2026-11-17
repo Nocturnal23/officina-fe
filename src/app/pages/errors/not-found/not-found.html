@@ -1,0 +1,23 @@
+<div class="error-wrapper">
+    <mat-card class="error-card">
+        <mat-card-header class="error-header">
+            <mat-icon class="error-icon" color="warn">error_outline</mat-icon>
+            <mat-card-title class="error-code">404</mat-card-title>
+            <mat-card-subtitle>Pagina non trovata</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <p class="error-message">
+                L'indirizzo che stai cercando non esiste.
+            </p>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-button type="button" class="inline-flex items-center gap-2" (click)="goBackDashboard()">
+                <mat-icon aria-hidden="true">home</mat-icon>
+                Torna alla dashboard
+            </button>
+        </mat-card-actions>
+
+    </mat-card>
+</div>

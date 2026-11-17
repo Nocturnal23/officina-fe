@@ -1,0 +1,22 @@
+<div class="error-wrapper">
+    <mat-card class="error-card">
+        <mat-card-header class="error-header">
+            <mat-icon class="error-icon" color="warn" aria-hidden="true">lock_clock</mat-icon>
+            <mat-card-title class="error-code">401</mat-card-title>
+            <mat-card-subtitle>Sessione scaduta</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <p class="error-message">
+                La tua sessione è scaduta. Accedi nuovamente per continuare.
+            </p>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-button type="button" class="inline-flex items-center gap-2" (click)="goToLogin()">
+                <mat-icon aria-hidden="true">login</mat-icon>
+                Vai al login
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>

@@ -1,0 +1,23 @@
+<div class="error-wrapper">
+    <mat-card class="error-card">
+        <mat-card-header class="error-header">
+            <mat-icon class="error-icon" color="warn">error_outline</mat-icon>
+            <mat-card-title class="error-code">403</mat-card-title>
+            <mat-card-subtitle>Permessi necessari</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <p class="error-message">
+                Accesso negato: non hai i permessi necessari.
+            </p>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-button type="button" class="inline-flex items-center gap-2" (click)="goBackDashboard()">
+                <mat-icon aria-hidden="true">home</mat-icon>
+                Torna alla dashboard
+            </button>
+        </mat-card-actions>
+
+    </mat-card>
+</div>

@@ -1,0 +1,25 @@
+@reference "tailwindcss";
+
+.error-wrapper {
+  @apply flex items-center justify-center min-h-screen bg-gray-100 p-4;
+}
+
+.error-card {
+  @apply max-w-md w-full p-6 text-center shadow-lg rounded-xl;
+}
+
+.error-header {
+  @apply flex flex-col items-center justify-center mb-4;
+}
+
+.error-icon {
+  @apply !text-5xl !w-12 !h-12 mb-2;
+}
+
+.error-code {
+  @apply !text-4xl !font-bold tracking-tight;
+}
+
+.error-message {
+  @apply text-gray-600 my-4 text-sm leading-relaxed;
+}
